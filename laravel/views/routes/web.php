@@ -1,7 +1,7 @@
 <?php
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('pagina');
 });
 
 Route::get('/view', function(){
@@ -28,3 +28,15 @@ if(View::exists('email')){
 }else 
 	return view('erro');
 });
+
+Route::get('/produtos','ProdutoControlador@listar');
+
+Route::get('/secaoprodutos/{palavra}','ProdutoControlador@secaoprodutos');
+
+Route::get('/mostrar_opcoes','ProdutoControlador@mostrar_opcoes');
+
+Route::get('/opcoes/{opcao}','ProdutoControlador@opcoes');
+
+Route::get('/loop/for/{n}','ProdutoControlador@loopFor');
+
+Route::get('/loop/foreach','ProdutoControlador@loopForEach');
