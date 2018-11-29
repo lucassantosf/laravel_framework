@@ -110,3 +110,46 @@ Route::get('/novascategorias',function(){
 	);
 	echo "ùltimo id inserido - $id";
 });
+
+//Atualizar registros
+Route::get('/atualizarcategoria',function(){
+
+	$cat = DB::table('categorias')->where('id',1)->first();
+	echo "<p>Antes da atualização</p>";
+	echo "id: ".$cat->id."; ";
+	echo "nome: ".$cat->nome."<br>";
+	
+	DB::table('categorias')->where('id',1)->update([
+		'nome'=>'Roupas infantis b'
+	]);
+	
+	$cat = DB::table('categorias')->where('id',1)->first();
+	echo "<p>Depois da atualização</p>";
+	echo "id: ".$cat->id."; ";
+	echo "nome: ".$cat->nome."<br>";
+});
+
+//Apagar Registros
+Route::get('/removercategoria',function(){
+
+	echo "<p>Antes do delete</p>";
+	
+	$cats = DB::table('categorias')->get();
+	foreach ($cats as $cat) {
+		echo "id: ".$cat->id."; ";
+		echo "nome: ".$cat->nome."<br>";
+	}
+	
+	echo "<hr>";
+	
+	echo "<p>Antes do delete</p>";
+	
+	//DB::table('categorias')->where('id',1)->delete();
+	DB::table('categorias')->whereNotIn('id',[1,2,3,4])->delete();
+	$cats = DB::table('categorias')->get();
+	foreach ($cats as $cat) {
+		echo "id: ".$cat->id."; ";
+		echo "nome: ".$cat->nome."<br>";
+	}
+	
+});
