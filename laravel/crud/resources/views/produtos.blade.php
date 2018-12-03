@@ -3,8 +3,8 @@
 @section('body')
 <div class="card border">
 	<div class="card-body">
-		<h5 class="card-title">Cadstro de categorias</h5>
-	@if(count($cats) > 0)
+		<h5 class="card-title">Cadastro de produtos</h5>
+	@if(count($prods) > 0)
 		<table class="table table-ordered table-hover">
 			<thead>
 				<tr>
@@ -31,6 +31,9 @@
 			</tbody>
 		</table>
 	@endif
+	</div>	
+	<div class="card-footer">
+		<a href="/produtos/novo" class="btn btn-sm btn-primary" role="button">Cadastrar produto</a>
 	</div>
 </div>
 @endsection
