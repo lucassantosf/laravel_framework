@@ -20,7 +20,8 @@
 					   	<option value="{{$cat->id}}">{{$cat->id}}."-".{{$cat->nome}}</option>
 							
 					@endforeach
-				</select>					
+				</select>		
+
 				</div>				
 
 			</div>	
