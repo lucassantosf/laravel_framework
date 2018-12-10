@@ -13,15 +13,16 @@
 				
 				<div class="input-group mb-3">  	
 					
-					<select class="form-control" name="categoria" value="{‌{$prod->categoria_id}}">
+					<select class="form-control" name="categoria" value="{‌{ $prod->categoria_id }}">
 					  @foreach($cats as $cat)
 					      @if ($cat->id === $prod->categoria_id)
-					          <option selected value="{‌{$cat->id}}">{‌{$cat->id}}</option>
+					<option selected value="{‌{ $cat->id }}">{‌{ $cat->nome  }}</option>
 					      @else
-					          <option value="{‌{$cat->id}}">{‌{$cat->nome}}</option>
+					<option value="{‌{ $cat->id }}">{‌{ $cat->nome  }}</option>
 					      @endif
 					  @endforeach
 					</select>		
+					
 				</div>		
 			</div>	
 			<button type="submit" class="btn btn-primary btn-sm">Salvar</button>

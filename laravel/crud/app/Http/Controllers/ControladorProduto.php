@@ -41,10 +41,7 @@ class ControladorProduto extends Controller
     {   
         $cats = Categoria::all();
         $prod = Produto::find($id);
-        if(isset($prod)){
-            return view('editarproduto',compact('prod','cats'));
-        }
-        return redirect('/produtos');
+         return view('editarproduto', compact('cats','prod'));
     }
 
     public function update(Request $request, $id)
