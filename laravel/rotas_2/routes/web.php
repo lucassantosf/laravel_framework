@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -70,6 +72,54 @@ Route::get('/hello/{nome}/{sobrenome}', function($nome,$sn){
 
 Route::redirect('/aqui','/app', 301);
 
+Route::get('/rest/hello', function(){
+
+	return "Hello (GET)";
+});
+
+Route::post('/rest/hello', function(){
+	return "Hello POST";
+});
+
+Route::delete('/rest/hello', function(){
+	return "Hello DELETE";
+});
+
+Route::put('/rest/hello', function(){
+	return "Hello DELETE";
+});
+
+Route::post('/rest/imprimir', function(Request $req){
+	$nome = $req->input('name');
+	return "Hello $nome";
+});
+
+Route::match(['get','post'],'/rest/hello2', function(){
+	return 'Hello Word 2';
+});
+
+Route::any('/rest/hello3',function(){
+	return "Hello3";
+});
+
+Route::get('/produtos', function(){
+	echo "<h1>Produtos</h1>";
+	echo "<ol>Produtos</h1>";
+		echo "<li>Notebook</li>";
+		echo "<li>Impressoras</li>";
+		echo "<li>Mouse</li>";
+	echo "</ol";	
+})->name('meuprodutos');
+
+Route::get('linkprodutos', function(){
+	$url = route('meuprodutos');
+	echo "<a href=\"".$url."\">Meus produtos</a>";
+});
+
+Route::get("/redirecionar",function(){
+	return redirect()->route('meuprodutos');
+});
+
 function imprimir($vr){
 	echo "$vr";
-}
+};
