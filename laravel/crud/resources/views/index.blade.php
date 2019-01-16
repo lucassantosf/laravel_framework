@@ -12,7 +12,7 @@
 						</p>						
 					</div>
 					<div class="card-footer">
-						<a href="/produtos" class="btn btn-primary">Cadastrar</a>
+						<a href="/produtos/novo" class="btn btn-primary">Cadastrar</a>
 					</div>
 				</div>
 
@@ -24,7 +24,7 @@
 						</p>
 					</div>
 					<div class="card-footer">
-						<a href="/compras" class="btn btn-primary">Comprar</a>
+						<a href="/compras/novo" class="btn btn-primary">Comprar</a>
 					</div>
 				</div>
 

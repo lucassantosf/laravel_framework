@@ -1,5 +1,5 @@
 @extends('layout.app',["current"=>"relatorios"])
 
 @section('body')
-	Relatórios
+	<a href="/relatorios/totalizador">Totalizador</a>
 @endsection
