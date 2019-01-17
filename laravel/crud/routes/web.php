@@ -1,5 +1,8 @@
 <?php
 
+use App\Compra;
+use App\Produto;
+
 Route::get('/', function () {
     return view('index');
 });
@@ -22,5 +25,9 @@ Route::get('/vendas','ControladorVenda@index');
 
 //Rotas para RELATÒRIOS
 Route::get('/relatorios','ControladorEstoque@index');
-
 Route::get('/relatorios/totalizador','ControladorEstoque@tot');
+
+Route::get('/categoriasprodutos/json',function(){
+	$buys = Produto::with('compras')->get();
+	return $buys->toJson();
+});

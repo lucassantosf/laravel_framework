@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Produto;
 
 class ControladorEstoque extends Controller
 {
@@ -14,7 +15,14 @@ class ControladorEstoque extends Controller
 
     public function tot()
     {   
-        return view('relatorios.totalizador');        
+        $compras = Produto::with('compras')->get();
+        
+        foreach ($compras->toJson() as $key => $value) {
+            var_dump($compras);
+            exit();
+        }
+        
+        return view('relatorios.totalizador',compact('compras'));        
     }
 
     public function create()
