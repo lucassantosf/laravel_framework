@@ -10,7 +10,7 @@
       </li>
 
       <li @if($current=="cadastrar") class="nav-item active" @else class="nav-item" @endif>
-        <a class="nav-link" href="/contato">Editar</span></a>
+        <a class="nav-link" href="/contato">Cadastros</span></a>
       </li>
 
       <li @if($current=="relatorios") class="nav-item active" @else class="nav-item" @endif>

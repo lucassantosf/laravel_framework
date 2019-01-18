@@ -46,7 +46,7 @@
 					<label class="control-label">Nome:<span id="nomeContato"></span></label><br>
 					<label class="control-label">Telefone:<span id="telefoneContato"></span></label><br>
 					<label class="control-label">Email:<span id="emailContato"></span></label><br>
-					<label class="control-label">Idade:<span id="ageContato"></span></label><br>
+					<label class="control-label">Idade:<span id="ageContato"></span>anos</label><br>
 				</div>
 			</div>
 		</div>

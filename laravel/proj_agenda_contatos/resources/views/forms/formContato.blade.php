@@ -6,7 +6,7 @@
 			<div class="card border">
 				<div class="card-body">
 					<h5>Cadastro de Contato</h5>
-					<form method="POST" action="/contato">
+					<form method="POST" action="/contato" id="formContato">
 						@csrf
 						<label for="">Nome</label>
 						<input class="form-control" type="text" id="nome" name="nome" placeholder="Nome do contato">
@@ -45,10 +45,18 @@
 @section('jquery')
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
 	<script type="text/javascript">
+			
+		$(document).ready(function() {    
 
-		$(document).ready(function() {
-		    
-		    $("#telefone").mask('(00)0 0000-0000', {reverse: true});
+			$("#formContato").submit(function() {
+				let idade = $("#idade").val();
+				if(idade>120){
+					alert('Idade não permitida - deve ser menor ou igual que 120 anos');
+					return false;
+				}				
+			});
+
+		    $("#telefone").mask('(00)00000-0000', {reverse: true});
 			$("#idade").mask('00#', {reverse: true});
 
     	});

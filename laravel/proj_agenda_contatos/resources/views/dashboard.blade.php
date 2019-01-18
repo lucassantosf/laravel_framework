@@ -12,12 +12,12 @@
 					</tr>
 
 					<tr>
-						<td>Primeiro contato cadastrado</td>	
+						<td>Contato mais antigo cadastrado</td>	
 						<td>{{$first->nome}}</td>							
 					</tr>
 
 					<tr>
-						<td>Ultimo contato cadastrado</td>	
+						<td>Ultimo contato cadastrado na agenda</td>	
 						<td>{{$last->nome}}</td>							
 					</tr>					
 				</tbody>
@@ -29,12 +29,10 @@
 @endsection
 	
 @section('jquery')
-	<script type="text/javascript">
-		
+	<script type="text/javascript">		
 		
 		$(function(){
-			//sempre executar	
-						
+									
 		})
 	</script>
 @endsection

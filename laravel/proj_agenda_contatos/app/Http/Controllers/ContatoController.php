@@ -31,10 +31,10 @@ class ContatoController extends Controller
     {   
         //validacao de campos com 'msgs' personalizadas
         $regras = [
-            'nome'=>'required|min:5|max:50|unique:contatos',
+            'nome'=>'required|min:5|max:50',
             'email'=>'required|email',
             'idade'=>'required|max:3',        
-            'telefone'=>'required|min:11',
+            'telefone'=>'required|min:14',
         ];
         $mensagens = [
             'required'=>'O campo :attribute não pode ser vazio',            
@@ -74,7 +74,24 @@ class ContatoController extends Controller
 
     public function update(Request $request, $id)
     {
+        //validacao de campos com 'msgs' personalizadas
+        $regras = [
+            'nome'=>'required|min:5|max:50',
+            'email'=>'required|email',
+            'idade'=>'required|max:3',        
+            'telefone'=>'required|min:14',
+        ];
+        $mensagens = [
+            'required'=>'O campo :attribute não pode ser vazio',            
+            'nome.min'=>'É necessário no minimo 5 caracteres no campo nome',
+            'telefone.min'=>'Campo de telefone incompátivel',
+            'idade.max'=>'Idade não pode ter mais que 3 caracteres',
+            'email.email'=>'Formato do email não é válido'
+        ];
+        $request->validate($regras,$mensagens);        
+        
         $cont = Contato::find($id);
+
         if(isset($cont)){
             $cont->nome = $request->input('nome');
             $cont->email = $request->input('email');
@@ -91,6 +108,6 @@ class ContatoController extends Controller
         if(isset($cont)){
             $cont->delete();
         }
-        return redirect('/cadastrar');
+        return redirect('/contato');
     }
 }
