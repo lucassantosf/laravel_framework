@@ -13,3 +13,5 @@ Route::get('/contato/editar/{id}','ContatoController@edit');
 Route::post('/contato/editar/{id}','ContatoController@update');
 
 Route::get('/contato/remover/{id}','ContatoController@destroy');
+
+Route::get('/dashboard', 'DashboardControlador@index');

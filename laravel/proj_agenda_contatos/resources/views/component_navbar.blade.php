@@ -10,16 +10,14 @@
       </li>
 
       <li @if($current=="cadastrar") class="nav-item active" @else class="nav-item" @endif>
-        <a class="nav-link" href="/contato">Cadastrar</span></a>
+        <a class="nav-link" href="/contato">Editar</span></a>
       </li>
 
-      <li @if($current=="produtos") class="nav-item active" @else class="nav-item" @endif>
-        <a class="nav-link" href="/contatos">Login</span></a>
+      <li @if($current=="relatorios") class="nav-item active" @else class="nav-item" @endif>
+        <a class="nav-link" href="/dashboard">Relatórios</span></a>
       </li>
-    
+
     </ul>
-    
-
 
   </div>
 </nav>

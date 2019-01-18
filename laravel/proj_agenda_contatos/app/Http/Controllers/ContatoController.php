@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Contato;
 
 class ContatoController extends Controller
 {
     public function index(){
-        $conts = Contato::all();
+        $conts = DB::table('contatos')->orderBy('nome')->get();
         return view('index',compact('conts'));
     }
 
@@ -36,11 +37,11 @@ class ContatoController extends Controller
             'telefone'=>'required|min:11',
         ];
         $mensagens = [
-            'required'=>'O campo de :attribute não pode ser vazio',            
+            'required'=>'O campo :attribute não pode ser vazio',            
             'nome.min'=>'É necessário no minimo 5 caracteres no campo nome',
             'telefone.min'=>'Campo de telefone incompátivel',
             'idade.max'=>'Idade não pode ter mais que 3 caracteres',
-            'email.email'=>'Formato do email não é válido',
+            'email.email'=>'Formato do email não é válido'
         ];
         $request->validate($regras,$mensagens);
             

@@ -49,7 +49,7 @@
 		$(document).ready(function() {
 		    
 		    $("#telefone").mask('(00)0 0000-0000', {reverse: true});
-			$("#idade").mask('000', {reverse: true});
+			$("#idade").mask('00#', {reverse: true});
 
     	});
 
