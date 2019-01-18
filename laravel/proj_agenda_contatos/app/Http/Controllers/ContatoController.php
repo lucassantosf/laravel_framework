@@ -8,11 +8,17 @@ use App\Contato;
 class ContatoController extends Controller
 {
     public function index(){
+        $conts = Contato::all();
+        return view('index',compact('conts'));
     }
 
-    public function indexJson(){
-        $prods = Contato::all();
-        return $prods->toJson();
+    public function contatoJson($id){
+        $cont = Contato::find($id);
+        if(isset($id)){
+            return $cont->toJson();
+        }else{
+            return redirect('/');
+        }
     }
 
     public function create()
@@ -22,7 +28,7 @@ class ContatoController extends Controller
 
     public function store(Request $request)
     {   
-        //validacao com 'msgs'
+        //validacao de campos com 'msgs' personalizadas
         $regras = [
             'nome'=>'required|min:5|max:50|unique:contatos',
             'email'=>'required|email',

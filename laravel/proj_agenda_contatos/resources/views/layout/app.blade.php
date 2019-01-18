@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('css/app.css')}}">
 	<meta name="csrf-token" content="{{csrf_token()}}" charset="utf-8">
 
-
+	
 </head>
 <body>
 
@@ -23,5 +23,9 @@
 	</div>
 
 	<script type="text/javascript" src="{{asset('js/app.js')}}"></script>
+
+	@hasSection('jquery')
+		@yield('jquery')
+	@endif
 </body>
 </html>

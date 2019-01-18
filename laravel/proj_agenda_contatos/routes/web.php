@@ -1,8 +1,6 @@
 <?php
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', 'ContatoController@index');
 
 Route::get('/cadastrar','ContatoController@create');
 

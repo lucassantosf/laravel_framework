@@ -1,6 +1,7 @@
 @extends('./layout.app',["current"=>"cadastrar"])
 
 @section('body')
+
 		<div class="col-ms-6">
 			<div class="card border">
 				<div class="card-body">
@@ -17,7 +18,8 @@
 						<input class="form-control" type="number" id="idade" name="idade" placeholder="Idade">
 
 						<label for="telContato">Telefone</label>
-						<input class="form-control" type="text" id="telefone" name="telefone" placeholder="(DDD)1 1111-1111">
+						<input class="form-control" type="text" id="telefone" name="telefone" placeholder="(00)0 0000-0000">
+ 
 				</div>
 
 				@if($errors->any())
@@ -38,4 +40,18 @@
 			</div>
 
 		</div>	
+@endsection
+
+@section('jquery')
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+		    
+		    $("#telefone").mask('(00)0 0000-0000', {reverse: true});
+			$("#idade").mask('000', {reverse: true});
+
+    	});
+
+	</script>		
 @endsection
