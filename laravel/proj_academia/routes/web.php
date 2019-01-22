@@ -1,19 +1,9 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::get('/', 'LoginController@index');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Direcionamento do Logout
+Route::get('logout', 'LoginController@logout');
 
 Auth::routes();
 
@@ -26,3 +16,21 @@ Route::get('/admin/login', 'Auth\AdminLoginController@index')->name('admin.login
 Route::post('/admin/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
 
 Route::get('/teste','LoginController@index');
+
+// Cadastros
+
+Route::get('/cadastros/user','CadastrosController@indexUser');
+
+Route::get('/cadastros/plans','CadastrosController@indexPlans');
+
+Route::get('/cadastros/products','CadastrosController@indexProducts');
+
+Route::get('/cadastros/modals','CadastrosController@indexModals');
+
+
+// Relatórios
+
+// Clientes e Incluir Clientes
+Route::get('/clients','CadastrosController@indexClients');
+
+Route::get('/incluir/clients','CadastrosController@indexClientsAdd');

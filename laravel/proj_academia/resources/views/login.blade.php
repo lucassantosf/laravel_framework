@@ -5,7 +5,7 @@
 	<div class="row" id="rowLogin">
 		<div class="col-md-10">
 
-			<h2>Academia System - Área de Autenticação</h2>
+			<h2>Academia System</h2>
 
 		</div>
 		<div class="col-md-2">
@@ -25,17 +25,21 @@
 		          <span aria-hidden="true">&times;</span>
 		        </button>
 		      </div>
+
 		      <div class="modal-body">
-		        <div class="input-group input-group-sm mb-2">				  
-				  <input type="text" class="form-control" placeholder="Email" name="email">
-				  <input type="password" class="form-control" placeholder="Password" name="password">
-				</div>
-		        
+		      	<form method="POST" action="{{ route('login') }}">
+	                    @csrf
+			        <div class="input-group input-group-sl mb-3">	
+			        				  
+						<input type="text" class="form-control" placeholder="Email" name="email">
+						<input type="password" class="form-control" placeholder="Password" name="password"><br>
+			            <button type="submit" class="btn btn-primary">Logar</button>
+
+					</div>
+				</form>
+
 		      </div>
 
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-primary">Logar</button>
-		      </div>
 
 		    </div>
 		  </div>		

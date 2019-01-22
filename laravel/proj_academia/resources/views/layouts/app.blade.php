@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Academia System</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -22,10 +22,56 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+            <div class="container border">
+                <a class="navbar-brand" href="{{ url('/home') }}">
+                    Home
                 </a>
+                <div class="btn-group">
+                    <button class="btn btn-lg " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Cadastros
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="navbar-brand" href="{{ url('/cadastros/user') }}">
+                            Usuários
+                        </a>
+                        <a class="navbar-brand" href="{{ url('/cadastros/plans') }}">
+                            Planos
+                        </a>
+                        <a class="navbar-brand" href="{{ url('/cadastros/products') }}">
+                            Produtos
+                        </a>
+                        <a class="navbar-brand" href="{{ url('/cadastros/modals') }}">
+                            Modalidades
+                        </a>
+                    </div>
+                </div>
+                <div class="btn-group ">
+                    <button class="btn btn-lg" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Relatórios
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="navbar-brand" href="{{ url('/home') }}">
+                            Faturamento
+                        </a><br>
+                        <a class="navbar-brand" href="{{ url('/home') }}">
+                            Planos
+                        </a><br>
+                        <a class="navbar-brand" href="{{ url('/home') }}">
+                            Produtos
+                        </a>
+                        <a class="navbar-brand" href="{{ url('/home') }}">
+                            Formas de Pagamento
+                        </a>
+                    </div>
+                </div>             
+                
+                <a class="navbar-brand" href="{{ url('/clients') }}">
+                    Clientes
+                </a>
+                <a class="navbar-brand" href="{{ url('/incluir/clients') }}">
+                    Incluir Clientes
+                </a>
+                
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
