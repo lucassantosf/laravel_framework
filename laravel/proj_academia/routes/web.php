@@ -18,8 +18,12 @@ Route::post('/admin/login', 'Auth\AdminLoginController@login')->name('admin.logi
 Route::get('/teste','LoginController@index');
 
 // Cadastros
-
 Route::get('/cadastros/user','CadastrosController@indexUser');
+Route::get('/cadastros/user/{id}/edit','CadastrosController@formUserEdit');
+Route::post('/cadastros/user/{id}/edit','CadastrosController@postFormUserEdit');
+Route::get('/cadastros/user/{id}/delete','CadastrosController@destroyUser');
+Route::get('/cadastros/formUser','CadastrosController@formUser');
+Route::post('/cadastros/formUser','CadastrosController@postFormUser');
 
 Route::get('/cadastros/plans','CadastrosController@indexPlans');
 
@@ -29,6 +33,7 @@ Route::get('/cadastros/modals','CadastrosController@indexModals');
 
 
 // Relatórios
+
 
 // Clientes e Incluir Clientes
 Route::get('/clients','CadastrosController@indexClients');

@@ -7,10 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Academia System</title>
-
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <title>Academia System</title>    
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -27,7 +24,7 @@
                     Home
                 </a>
                 <div class="btn-group">
-                    <button class="btn btn-lg " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-lg " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         Cadastros
                     </button>
                     <div class="dropdown-menu">
@@ -45,6 +42,7 @@
                         </a>
                     </div>
                 </div>
+
                 <div class="btn-group ">
                     <button class="btn btn-lg" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Relatórios
@@ -122,5 +120,12 @@
             @yield('content')
         </main>
     </div>
+
+    <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
+    @hasSection('javascript')
+        @yield('javascript')
+    @endif
+
+    
 </body>
 </html>
