@@ -8,16 +8,16 @@
                 <div class="card-header">Cadastrar Usuários</div>
                 <div class="card-body">
                 @if(isset($user))
-                    <form action="/cadastros/formUser" method="POST" id="formUser">
+                    <form action="/cadastros/user/{{$user->id}}/edit" method="POST" id="formUser">
                         @csrf
                        <label>Nome:</label>                        
                             <input type="text" class="form-control" placeholder="Nome" name="name" id="name" value="{{$user->name}}">
                             <label>Email:</label>                
                             <input type="email" class="form-control" placeholder="Email" name="email" id="email" value="{{$user->email}}">
                             <label>Senha:</label>                      
-                            <input type="password" class="form-control" placeholder="Password" name="password_new" id="password_new" value="{{$user->email}}" >
+                            <input type="password" class="form-control" placeholder="Password" name="password_new" id="password_new" value="e99a18c428cb38d5f260853678922e03" >
                             <label>Confirmar Senha:</label>                        
-                            <input type="password" class="form-control" placeholder="Password Confirm" name="password_confirm_new"  value="{{$user->email}}" id="password_confirm_new"><br>
+                            <input type="password" class="form-control" placeholder="Password Confirm" name="password_confirm_new"  value="e99a18c428cb38d5f260853678922e03" id="password_confirm_new"><br>
                 @else                
                     <form action="/cadastros/formUser" method="POST" id="formUser">
                         @csrf

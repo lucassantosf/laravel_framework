@@ -42,7 +42,7 @@ class CadastrosController extends Controller
             
         }
 
-        return redirect('/cadastros/user');
+        return redirect('/cadastros/users');
     }
 
     public function formUserEdit($id){
@@ -50,43 +50,42 @@ class CadastrosController extends Controller
         if(isset($user)){
             return view('cadastros.formUser',compact('user'));        
         }else{
-            return redirect('/cadastros/user');
+            return redirect('/cadastros/users');
         }
     }
+
     public function postFormUserEdit(Request $request, $id){
+        
         $user = User::find($id);
+        
         if(isset($user)){
             //validacao de campos com 'msgs' personalizadas
             $regras = [
                 'name'=>'required|min:5',
                 'email'=>'required|email',
-                'password'=>'required',
+                'password_new'=>'required',
             ];
             $mensagens = [
                 'required'=>'O campo :attribute não pode ser vazio',            
                 'name.min'=>'É necessário no minimo 5 caracteres no campo nome',
                 'email.email'=>'Formato do email não é válido'
             ];            
+
             $request->validate($regras,$mensagens); 
 
-            if($user->password == Hash::make($request->input('password_new')))
-
-            //// Terminar Edição de form       
-        }else{
-            return redirect('/cadastros/user');
-        }        
+            if($request->input('password_new') == 'e99a18c428cb38d5f260853678922e03'){
+                $user->name = $request->input('name');
+                $user->email = $request->input('email');
+                $user->save();
+            }else{
+                $user->name = $request->input('name');
+                $user->email = $request->input('email');
+                $user->password = Hash::make($request->input('password_new'));
+                $user->save();
+            }                   
+        }            
         
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = Hash::make($request->input('password'));
-        try {
-            $user->save();
-        } catch (Exception $e) {
-            
-        }
-
-        return redirect('/cadastros/user');
+        return redirect('/cadastros/users');
     }
 
     public function destroyUser($id){
@@ -94,20 +93,12 @@ class CadastrosController extends Controller
         if(isset($user)){
             $user->delete();
         }
-        return redirect('/cadastros/user');
+        return redirect('/cadastros/users');
     }
 
     public function indexPlans(){
     	return view('cadastros.plan');
-    }
-
-    public function indexProducts(){
-    	return view('cadastros.product');
-    }
-
-    public function indexModals(){
-    	return view('cadastros.modal');
-    }
+    }   
 
     public function indexClients(){
     	return view('cadastros.client');

@@ -18,7 +18,7 @@ Route::post('/admin/login', 'Auth\AdminLoginController@login')->name('admin.logi
 Route::get('/teste','LoginController@index');
 
 // Cadastros
-Route::get('/cadastros/user','CadastrosController@indexUser');
+Route::get('/cadastros/users','CadastrosController@indexUser');
 Route::get('/cadastros/user/{id}/edit','CadastrosController@formUserEdit');
 Route::post('/cadastros/user/{id}/edit','CadastrosController@postFormUserEdit');
 Route::get('/cadastros/user/{id}/delete','CadastrosController@destroyUser');
@@ -29,8 +29,19 @@ Route::get('/cadastros/plans','CadastrosController@indexPlans');
 
 Route::get('/cadastros/products','CadastrosController@indexProducts');
 
-Route::get('/cadastros/modals','CadastrosController@indexModals');
+Route::get('/cadastros/modals','ModalidadeController@indexModals');
+Route::get('/cadastros/formModal','ModalidadeController@formModal');
+Route::post('/cadastros/formModal','ModalidadeController@postFormModal');
+Route::get('/cadastros/modal/{id}/edit','ModalidadeController@formModalEdit');
+Route::post('/cadastros/modal/{id}/edit','ModalidadeController@postformModalEdit');
+Route::get('/cadastros/modal/{id}/delete','ModalidadeController@destroyModal');
 
+Route::get('/cadastros/products','ProdutoController@indexProds');
+Route::get('/cadastros/formProd','ProdutoController@formProd');
+Route::post('/cadastros/formProd','ProdutoController@postformProd');
+Route::get('/cadastros/prod/{id}/edit','ProdutoController@formProdEdit');
+Route::post('/cadastros/prod/{id}/edit','ProdutoController@postformProdEdit');
+Route::get('/cadastros/prod/{id}/delete','ProdutoController@destroyProd');
 
 // Relatórios
 

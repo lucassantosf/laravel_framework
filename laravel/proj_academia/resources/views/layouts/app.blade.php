@@ -28,7 +28,7 @@
                         Cadastros
                     </button>
                     <div class="dropdown-menu">
-                        <a class="navbar-brand" href="{{ url('/cadastros/user') }}">
+                        <a class="navbar-brand" href="{{ url('/cadastros/users') }}">
                             Usuários
                         </a>
                         <a class="navbar-brand" href="{{ url('/cadastros/plans') }}">
