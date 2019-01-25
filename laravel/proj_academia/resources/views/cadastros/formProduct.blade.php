@@ -50,7 +50,7 @@
                 
                 @if(!isset($prod))                    
 
-                    <form action="/cadastros/prod/{{$prod->id}}/edit" method="POST">
+                    <form action="/cadastros/formProd" method="POST">
                         @csrf
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Nome</label>
