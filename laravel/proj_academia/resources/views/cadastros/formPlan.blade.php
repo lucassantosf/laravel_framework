@@ -11,38 +11,44 @@
                     
                     <form action="/cadastros/formPlan" method="POST">
                         @csrf
-                        <div class="form-group row">
+                        <div class="form-row">
                             <label class="col-sm-3">Descrição</label>
-                            <div class="col-md-9">
+                            <div class="col-sm-9">
                                 <input type="text" name="name" class="form-control" placeholder="Descrição">
                             </div>
                         </div>
+                        <br>
+                        <div class="form-row" id="duracoes">      
 
-                        <div class="form-group row">
-                            <label class="col-sm-3">Durações</label>
-                            <div class="col-sm-9" id="listas">                
-                                <input type="text" name="0" id="0" placeholder="Meses">
-                                <input type="button" id="add_field" value="+">                        
+                            <label class="col-sm-3">Durações</label>                              
+                            <div class="col-sm-1">  
+                                <input type="button" class="form-control btn btn-primary btn-sm" id="add_field" value="+">
                             </div>
+                            <div class="col-sm-1">              
+                                <input type="text" class="form-control" name="duracao[]" >
+                            </div>                         
+                            
                         </div>
+                        <br>
 
-                        <div class="form-group row">                            
+                        <div class="form-row">                            
                             <div class="col-sm-3">Modalidades</div>
                             <div class="col-sm-9">
                                 <div class="form-check form-check-inline">
-                                    <select multiple name="lista1" id="lista1">
+                                    <select multiple class="custom-select" name="lista1" id="lista1">
                                         @foreach($modals as $m)
                                             <option value="{{$m->id}}">{{$m->name}}</option>
                                         @endforeach
                                       
                                     </select>
-                                    <input type="button" id="add_modal" value="+" onclick="getModalsId()">
-                                    <div id="lista2">
+                                    <input type="button" id="add_modal" class="btn btn-primary btn-sm" value="+">
+                                    <div id="lista2" class="col-sm-3">
                                         
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <br>
 
                         <div class="form-group row">                            
                             <div class="col-sm-3">Ativo</div>
@@ -52,9 +58,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        
-                    
                                     
                 </div>
                 <div class="card-footer">      
@@ -76,21 +79,18 @@
         duracoes = [];
         d = 0;
         $(document).ready(function() {  
-            
+                                                      
             //Campos de durações
             $('#add_field').click (function(e) {                
-                e.preventDefault();     //prevenir novos clicks
-                dur = $('#'+d).val();
-                duracoes.push(dur);
-                d++;
-                $('#listas').append('<div>\
-                    <input type="text" id='+d+' name='+d+'>\
-                    <a href="#" class="remover_campo">-</a>\
+                e.preventDefault();     //prevenir novos clicks                                
+                $('#duracoes').append('<div class="col-sm-1">\
+                        <input type="text"  class="form-control" name="duracao[]">\
+                        <button href="#" class="btn btn-danger btn-sm remover_campo">-</button>\
                     </div>');       
             });
 
             // Remover o div de durações
-            $('#listas').on("click",".remover_campo",function(e) {
+            $('#duracoes').on("click",".remover_campo",function(e) {
                 e.preventDefault();
                 $(this).parent('div').remove();          
             });
@@ -100,19 +100,13 @@
                 e.preventDefault();//prevenir novos clicks
                 var texto = $("#lista1 option:selected").text();
                 var itemSelecionado = $("#lista1 option:selected").val();
-                $('#lista2').append('<option name="'+itemSelecionado+'">'+texto+'</option>');
-                modals.push(itemSelecionado);    
+                $('#lista2').append('<input type="hidden" name="modals[]" value="'+itemSelecionado+'">'+texto+'<br>');             
+
             });
 
         });
 
-        function getModalsId(){
-            return this.modals;
-        }
-
-        function getDur(){
-            return this.duracoes;
-        }
+        
 
     </script>
 @endsection
