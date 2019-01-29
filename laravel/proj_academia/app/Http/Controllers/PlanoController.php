@@ -10,12 +10,24 @@ use App\Plano;
 class PlanoController extends Controller
 {
     public function indexPlans(){
-    	$modals = Modalidade::all();
-    	return view('cadastros.formPlan',compact('modals'));
+        $plans = Plano::all();
+        $duracoes = DB::table('duracoes_planos')->get();
+        
+        $modals = Modalidade::all();
+        $mp_id = DB::table('modalidades_planos')->get();
+        
+        $i = 0;
+        return view('cadastros.formPlan',compact('plans','i','duracoes','modals','mp_id'));
+    }
+
+    public function formPlan(){
+        $modals = Modalidade::all();
+        $i = 1;
+        return view('cadastros.formPlan',compact('modals','i'));
     }  
 
     public function postFormPlan(Request $request){
-    	//Criar o plano e retornar o ID
+    	// Criar o plano e retornar o ID
         $id_plan = DB::table('planos')->insertGetId([
             'name'=>$request->input('name'),
             'status'=>$request->input('status') == 'A' ? true : false,
@@ -26,8 +38,7 @@ class PlanoController extends Controller
     		DB::table('duracoes_planos')->insert([
                 'plano_id'=>$id_plan,
                 'duracao'=>$d[$i],
-            ]);
-            
+            ]);            
 		} 
         // Vinculo modalidades_planos 
         $m = $request->input('modals');
@@ -38,6 +49,27 @@ class PlanoController extends Controller
             ]);    		
 		}  
         return redirect('/cadastros/plans'); 	    	
+    }
+
+    public function formPlanEdit($id){
+        $plan = Plano::find($id);
+        $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
+        $mt = Modalidade::all();
+        $modals = DB::table('modalidades_planos')->where('plano_id',$plan->id);
+        //var_dump($modals->toJson());
+        //echo $plan->id;
+        //exit();
+
+        $i=2;
+        return view('cadastros.formPlan',compact('plan','i','duracoes'));
+    }
+
+    public function destroyPlan($id){
+        $plan = Plano::find($id);
+        if($plan){
+            $plan->delete();
+        }
+        return redirect('/cadastros/plans');
     }
 
 
