@@ -54,14 +54,18 @@ class PlanoController extends Controller
     public function formPlanEdit($id){
         $plan = Plano::find($id);
         $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
-        $mt = Modalidade::all();
-        $modals = DB::table('modalidades_planos')->where('plano_id',$plan->id);
-        //var_dump($modals->toJson());
-        //echo $plan->id;
-        //exit();
+        $modals = Modalidade::all();
+        $mt = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();       
 
         $i=2;
-        return view('cadastros.formPlan',compact('plan','i','duracoes'));
+        return view('cadastros.formPlan',compact('plan','i','duracoes','modals','mt'));
+    }
+
+    public function postformPlanEdit(Request $request, $id){
+        //$d = $request->input('duracao');
+        $d = $request->input('lista2');
+        var_dump($d);
+        exit();
     }
 
     public function destroyPlan($id){
