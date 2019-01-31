@@ -42,7 +42,7 @@ class PlanoController extends Controller
 		} 
         // Vinculo modalidades_planos 
         $m = $request->input('modals');
-		for($i = 0; $i < count($m); $i++) {
+        for($i = 0; $i < count($m); $i++) {
             DB::table('modalidades_planos')->insert([
                 'plano_id'=>$id_plan,
                 'modal_id'=>$m[$i],
@@ -58,6 +58,8 @@ class PlanoController extends Controller
         $mt = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();       
 
         $i=2;
+
+        
         return view('cadastros.formPlan',compact('plan','i','duracoes','modals','mt'));
     }
 

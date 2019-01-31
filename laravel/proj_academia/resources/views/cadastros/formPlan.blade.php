@@ -74,27 +74,7 @@
                             </div>                         
                             
                         </div>
-                        <br>
-
-                        <div class="form-row">                            
-                            <div class="col-sm-3">Modalidades</div>
-                            <div class="col-sm-9">
-                                <div class="form-check form-check-inline">
-                                    <select multiple class="custom-select" name="lista1" id="lista1">
-                                        @foreach($modals as $m)
-                                            <option value="{{$m->id}}">{{$m->name}}</option>
-                                        @endforeach
-                                      
-                                    </select>
-                                    <input type="button" id="add_modal" class="btn btn-primary btn-sm" value="+">
-                                    <input type="button" id="remover_modal" class="btn btn-danger btn-sm remover_modal" value="-">
-
-                                    <select multiple class="custom-select" i@d="lista2" name="modals[]">      
-                                                                            
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                                                
                         <br>
                         <div class="form-row input-group mb-3">       
                             <div class="col-sm-3">Modalidades</div>
@@ -106,7 +86,7 @@
                                             <option value="{{$m->id}}">{{$m->name}}</option>
                                         @endforeach                                      
                                     </select>                                
-                                    <input type="button" id="add_modal2" class="btn btn-primary btn-sm" value="+">
+                                    <input type="button" id="add_modal" class="btn btn-primary btn-sm" value="+">
                                 </div>                                
                             </div>    
                             
@@ -115,12 +95,9 @@
                         <div class="form-row input-group mb-3"> 
                             <div class="col-sm-3"></div>
                             <div class="col-sm-9">
-                                <table class="table">
+                                <table class="table" id="modalidades">
                                     <tbody>
-                                        <tr>
-                                          <td>Modalidade Nome</td>
-                                          <td><button class="btn-danger rounded">-</button></td>                   
-                                        </tr>
+                                        <!-- Modalidades adicionadas dinamicamente -->
                                     </tbody>
                                 </table>                             
                             </div>
@@ -179,33 +156,44 @@
                             @endif                                                   
                             
                         </div>
+                        
                         <br>
-                        <div class="form-row" id="modalidades">                            
+                        <div class="form-row input-group mb-3">       
                             <div class="col-sm-3">Modalidades</div>
-                            <div class="col-sm-9">
-                                <div class="form-check form-check-inline">
-                                    <select multiple class="custom-select" name="lista1" id="lista1">
+                            <div class="col-sm-9">                                
+                                <div class="input-group-prepend">
+                                    <select class="custom-select" name="lista" id="lista">
+                                        <option selected></option>
                                         @foreach($modals as $m)
                                             <option value="{{$m->id}}">{{$m->name}}</option>
-                                        @endforeach                           
-                                    </select>
+                                        @endforeach                                      
+                                    </select>                                
                                     <input type="button" id="add_modal" class="btn btn-primary btn-sm" value="+">
-                                    <input type="button" id="remover_modal" class="btn btn-danger btn-sm remover_modal" value="-">
-                                    <select multiple class="custom-select" id="lista2" name="lista2[]">      
-                                        @foreach($mt as $m)
-                                            @foreach($modals as $mod)
-
-                                            @if($mod->id == $m->modal_id)
-                                            <option value="{{$m->modal_id}}" selected>{{$mod->name}}</option>
-                                            @endif
-                                            @endforeach                         
-
-                                        @endforeach                    
-                                    </select>
-                                </div>
+                                </div>                                
+                            </div>    
+                        </div>
+                        <div class="form-row input-group mb-3"> 
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9">
+                                <table class="table" id="modalidades">
+                                    <tbody>  
+                                        @foreach($modals as $m)
+                                            @if(isset($mt))                                                
+                                                @foreach($mt as $ma)
+                                                    
+                                                    @if($ma->modal_id == $m->id)
+                                                    <tr>
+                                                        <td>{{$m->name}}</td>
+                                                        <td><input type="button" class="btn-danger excluir" id="excluir" value="-" onclick="remover(this)"></td>
+                                                    </tr> 
+                                                    @endif
+                                                @endforeach
+                                            @endif  
+                                        @endforeach
+                                    </tbody>
+                                </table>                             
                             </div>
                         </div>
-                        <br>
 
                         <div class="form-group row">                            
                             <div class="col-sm-3">Ativo</div>
@@ -230,7 +218,6 @@
 @endsection
 
 @section('javascript')   
-
     <script type="text/javascript">
         $(document).ready(function() {  
                                                       
@@ -244,35 +231,27 @@
             });
 
             // Remover o div de durações
-            $('#duracoes').on("click",".remover_campo",function(e) {
+            $('#duracoes').on("click",".remover_campo2",function(e) {
                 e.preventDefault();
                 $(this).parent('div').remove();          
             });
             
-            $('#add_modal2').on("click",function(e) {                
+            $('#add_modal').on("click",function(e) {
+                var texto = $("#lista option:selected").text(); 
                 var itemSelecionado = $("#lista option:selected").val();
-                alert(itemSelecionado);
-
+                $('#modalidades').append('<tr>'+
+                                          '<td><input type="hidden" name="modals[]" value="'+itemSelecionado+'">'+texto+'</td>'+
+                                          '<td><input type="button" class="btn-danger excluir" id="excluir" value="-" onclick="remover(this)"></td>'+             
+                '</tr>');
             });
-
-            //Adicionar modalidades entre os selects
-            $('#add_modal').on("click",function(e) {                
-                e.preventDefault();//prevenir novos clicks
-                var texto = $("#lista1 option:selected").text();
-                var itemSelecionado = $("#lista1 option:selected").val();
-                //$('#lista2').append('<input type="hidden" name="modals[]" value="'+itemSelecionado+'">'+texto+'<br>');          
-                $('#lista2').append('<option selected name="modals[]" value="'+itemSelecionado+'">'+texto+'</option>'); 
-            });
-
-            //Remover Modalidades entre os selects
-            $('#remover_modal').click(function(e){                
-                $("#lista2 option:selected").remove();
-            });
-
+                      
 
         });
 
+        //Remover linhas da tabela de modalidades
+        function remover(data){
+            $(data).parents('tr').remove();
+        }
         
-
     </script>
 @endsection
