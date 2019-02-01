@@ -183,7 +183,7 @@
                                                     
                                                     @if($ma->modal_id == $m->id)
                                                     <tr>
-                                                        <td>{{$m->name}}</td>
+                                                        <td><input type="hidden" name="modals[]" value="{{$m->id}}">{{$m->name}}</td>
                                                         <td><input type="button" class="btn-danger excluir" id="excluir" value="-" onclick="remover(this)"></td>
                                                     </tr> 
                                                     @endif

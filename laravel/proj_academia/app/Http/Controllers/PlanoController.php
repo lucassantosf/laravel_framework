@@ -56,18 +56,67 @@ class PlanoController extends Controller
         $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
         $modals = Modalidade::all();
         $mt = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();       
-
-        $i=2;
-
-        
+        $i=2;        
         return view('cadastros.formPlan',compact('plan','i','duracoes','modals','mt'));
     }
 
     public function postformPlanEdit(Request $request, $id){
-        //$d = $request->input('duracao');
-        $d = $request->input('lista2');
+        $plan = Plano::find($id); 
+        // Cast to an array(array) 
+        $duracoes_bd = (array)DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
+        $this->duracoes_post = $request->input('duracao');
+
+        //foreach para inserir novas duracoes vindas do post
+        foreach ($duracoes_post as $dp) {
+            $this->hasDurationInDatabase($plan->id,$dp);
+        }
+
+        //foreach para remover duracoes que não vieram no post
+        foreach ($duracoes_bd as $db) {
+            $this->hasDurationInPost($db);
+        }
+
+        exit();  
+        
+        $d = $request->input('modals');
         var_dump($d);
         exit();
+    }
+
+    /* Vários Where
+    $query->where([
+        ['column_1', '=', 'value_1'],
+        ['column_2', '<>', 'value_2'],
+        [COLUMN, OPERATOR, VALUE],
+    ])
+    */
+
+    public function hasDurationInPost($post, $duracao){
+        var_dump($this->duracoes_post);
+        echo '<br>';
+
+        var_dump($duracao);
+        echo '<br>';
+        //foreach ($post as $p) {
+         //   if($duracao->duracao != $p){
+         //       echo $duracao.' = '.$p.'<br>';
+         //   }
+       // }
+    }
+
+    public function hasDurationInDatabase($plano_id,$duracao){
+
+        $hasDurationPlan = DB::table('duracoes_planos')->where([
+            ['plano_id','=',$plano_id],
+            ['duracao','=',$duracao],                
+            ])->get();     
+
+        if(count($hasDurationPlan)>0){
+            echo 'Tem duracao '.$duracao.'<br>'; //Caiu aqui - duracao tem no banco, não precisa fazer nada
+        }else{
+            echo "Não tem a duracao".$duracao.'<br>';//Mandar salvar a nova duracao que não tem no banco
+        }
+
     }
 
     public function destroyPlan($id){

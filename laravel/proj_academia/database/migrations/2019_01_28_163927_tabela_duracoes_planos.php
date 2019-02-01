@@ -17,6 +17,7 @@ class TabelaDuracoesPlanos extends Migration
             $table->integer('plano_id')->unsigned();
             $table->foreign('plano_id')->references('id')->on('planos');
             $table->integer('duracao');
+            //$table->boolean('status')->nullable();
             $table->timestamps();
         });
     }
