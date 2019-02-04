@@ -62,20 +62,22 @@ class PlanoController extends Controller
 
     public function postformPlanEdit(Request $request, $id){
         $plan = Plano::find($id); 
-        // Cast to an array(array) 
-        $duracoes_bd = (array)DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
-        $this->duracoes_post = $request->input('duracao');
+        
+        if(isset($plan)){
+            $plan->name = $request->input('name');
+            $plan->status = $request->input('status') == 'A' ? true : false;
+            $plan->save();
+            $duracoes_post = $request->input('duracao');
 
-        //foreach para inserir novas duracoes vindas do post
-        foreach ($duracoes_post as $dp) {
-            $this->hasDurationInDatabase($plan->id,$dp);
+            //foreach para inserir novas duracoes vindas do post
+            foreach ($duracoes_post as $dp) {
+                $this->hasDurationInDatabase($plan->id,$dp);
+            }
+            //foreach para remover duracoes que não vieram no post
+            $this->hasDurationInPost($duracoes_post, $plan);
+
         }
-
-        //foreach para remover duracoes que não vieram no post
-        foreach ($duracoes_bd as $db) {
-            $this->hasDurationInPost($db);
-        }
-
+        return redirect('/cadastros/plans');
         exit();  
         
         $d = $request->input('modals');
@@ -83,25 +85,22 @@ class PlanoController extends Controller
         exit();
     }
 
-    /* Vários Where
-    $query->where([
-        ['column_1', '=', 'value_1'],
-        ['column_2', '<>', 'value_2'],
-        [COLUMN, OPERATOR, VALUE],
-    ])
-    */
+    public function hasDurationInPost($post, $plan){
+        
+        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
 
-    public function hasDurationInPost($post, $duracao){
-        var_dump($this->duracoes_post);
-        echo '<br>';
-
-        var_dump($duracao);
-        echo '<br>';
-        //foreach ($post as $p) {
-         //   if($duracao->duracao != $p){
-         //       echo $duracao.' = '.$p.'<br>';
-         //   }
-       // }
+        foreach ($duracoes_bd as $d) {
+            if (in_array($d->duracao, $post)){
+                // Não precisa fazer nada
+            }else{
+                // Deletar esta duracao no post
+                DB::table('duracoes_planos')->where([
+                ['plano_id','=',$plan->id],
+                ['duracao','=',$d->duracao],                
+                ])->delete();
+            }            
+        }
+        
     }
 
     public function hasDurationInDatabase($plano_id,$duracao){
@@ -112,11 +111,14 @@ class PlanoController extends Controller
             ])->get();     
 
         if(count($hasDurationPlan)>0){
-            echo 'Tem duracao '.$duracao.'<br>'; //Caiu aqui - duracao tem no banco, não precisa fazer nada
+            //Caiu aqui - duracao tem no banco, não precisa fazer nada
         }else{
-            echo "Não tem a duracao".$duracao.'<br>';//Mandar salvar a nova duracao que não tem no banco
+            //Mandar salvar a nova duracao que não tem no banco
+            DB::table('duracoes_planos')->insert([
+                'plano_id'=>$plano_id,
+                'duracao'=>$duracao,
+            ]);
         }
-
     }
 
     public function destroyPlan($id){

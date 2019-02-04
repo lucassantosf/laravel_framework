@@ -9,7 +9,8 @@
           <thead>
             <tr>
               <th scope="col-sm-1">#</th>
-              <th scope="col-sm-1">Duracoes</th>
+              <th scope="col-sm-1">Descrição</th>
+              <th scope="col-sm-1">Duraçoes</th>
               <th scope="col">Modalidades</th>
               <th scope="col">Status</th>
               <th scope="col">Ações</th>
@@ -153,10 +154,8 @@
                                     <button href="#" class="btn btn-danger btn-sm remover_campo">-</button>
                                 </div>                                                        
                                 @endforeach  
-                            @endif                                                   
-                            
-                        </div>
-                        
+                            @endif  
+                        </div>                        
                         <br>
                         <div class="form-row input-group mb-3">       
                             <div class="col-sm-3">Modalidades</div>
@@ -231,7 +230,7 @@
             });
 
             // Remover o div de durações
-            $('#duracoes').on("click",".remover_campo2",function(e) {
+            $('#duracoes').on("click",".remover_campo",function(e) {
                 e.preventDefault();
                 $(this).parent('div').remove();          
             });
