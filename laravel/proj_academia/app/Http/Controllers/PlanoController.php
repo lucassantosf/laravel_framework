@@ -10,8 +10,8 @@ use App\Plano;
 class PlanoController extends Controller
 {
     public function indexPlans(){
-        $plans = Plano::all();
-        $duracoes = DB::table('duracoes_planos')->get();
+        $plans = Plano::paginate(10);
+        $duracoes = DB::table('duracoes_planos')->orderBy('duracao')->get();
         
         $modals = Modalidade::all();
         $mp_id = DB::table('modalidades_planos')->get();
@@ -53,7 +53,7 @@ class PlanoController extends Controller
 
     public function formPlanEdit($id){
         $plan = Plano::find($id);
-        $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
+        $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get();
         $modals = Modalidade::all();
         $mt = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();       
         $i=2;        
@@ -64,9 +64,8 @@ class PlanoController extends Controller
         $plan = Plano::find($id); 
         
         if(isset($plan)){
-            $plan->name = $request->input('name');
-            $plan->status = $request->input('status') == 'A' ? true : false;
-            $plan->save();
+            $modals = $request->input('modals');
+            
             $duracoes_post = $request->input('duracao');
 
             //foreach para inserir novas duracoes vindas do post
@@ -76,13 +75,51 @@ class PlanoController extends Controller
             //foreach para remover duracoes que não vieram no post
             $this->hasDurationInPost($duracoes_post, $plan);
 
+            //foreach para inserir novas modals do post
+            foreach ($modals as $m) {
+                $this->hasModalInDatabase($m, $plan->id);
+            }
+            $this->hasModalInPost($request->input('modals'),$plan);
+
+            $plan->name = $request->input('name');
+            $plan->status = $request->input('status') == 'A' ? true : false;
+            $plan->save();
+
         }
-        return redirect('/cadastros/plans');
-        exit();  
-        
-        $d = $request->input('modals');
-        var_dump($d);
-        exit();
+        return redirect('/cadastros/plans');        
+    }
+
+    public function hasModalInPost($post, $plan){
+        $modals_bd = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();
+        if (isset($modals_bd)) {
+            foreach ($modals_bd as $db) {
+                if (in_array($db->modal_id, $post)){
+                    //echo 'Tem no post modal'.$db->modal_id.'</br>';
+                }else{                    
+                    DB::table('modalidades_planos')->where([
+                        ['plano_id','=',$plan->id],
+                        ['modal_id','=',$db->modal_id],                
+                    ])->delete();
+                }                
+            }            
+        }
+
+    }
+
+    public function hasModalInDatabase($data, $plano_id){
+        $hasModalPlan = DB::table('modalidades_planos')->where([
+            ['plano_id','=',$plano_id],
+            ['modal_id','=',$data],                
+            ])->get();
+        if(count($hasModalPlan) > 0){
+            //Caiu aqui - modal tem no banco, não precisa fazer nada
+        }else{
+            //Mandar salvar a nova modal que não tem no banco
+            DB::table('modalidades_planos')->insert([
+                'plano_id'=>$plano_id,
+                'modal_id'=>$data,
+            ]);
+        }        
     }
 
     public function hasDurationInPost($post, $plan){
@@ -100,7 +137,6 @@ class PlanoController extends Controller
                 ])->delete();
             }            
         }
-        
     }
 
     public function hasDurationInDatabase($plano_id,$duracao){

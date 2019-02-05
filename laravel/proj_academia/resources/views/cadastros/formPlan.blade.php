@@ -13,18 +13,20 @@
               <th scope="col-sm-1">Duraçoes</th>
               <th scope="col">Modalidades</th>
               <th scope="col">Status</th>
-              <th scope="col">Ações</th>
+              <th scope="col">Ações
+                    <button type="button" class="btn btn-outline-info">Cadastre</button>
+              </th>
             </tr>
           </thead>
           <tbody>
             @foreach($plans as $p)
                 <tr>
-                    <td>{{$p->id}}</td>
-                    <td>{{$p->name}}</td>
+                    <td><span class="badge badge-light">{{$p->id}}</span></td>
+                    <td><span class="badge badge-primary">{{$p->name}}</span></td>
                     <td>
                     @foreach($duracoes as $d)                        
                         @if($d->plano_id == $p->id)
-                            {{$d->duracao}}                         
+                            <span class="badge badge-warning">{{$d->duracao}}</span>
                         @endif                        
                     @endforeach
                     </td>
@@ -32,12 +34,17 @@
                 @foreach($mp_id as $mp)
                     @foreach($modals as $m)
                         @if($mp->plano_id == $p->id && $mp->modal_id == $m->id)
-                            {{$m->name}}
+                            <span class="badge badge-dark">{{$m->name}}</span>
                         @endif
                     @endforeach
                 @endforeach
                 </td>
-                    <td>@if($p->status == 1) Ativo @else Inativo @endif</td>
+                    <td>@if($p->status == 1) 
+                            <span class="badge badge-success">Ativo</span>
+                        @else 
+                            <span class="badge badge-secondary">Inativo</span> 
+                        @endif
+                    </td>
                     <td>
                         <a href="/cadastros/plan/{{$p->id}}/edit" class="btn btn-sm btn-warning">Editar</a>
                         <a href="/cadastros/plan/{{$p->id}}/delete" class="btn btn-sm  btn-danger">Apagar</a>
