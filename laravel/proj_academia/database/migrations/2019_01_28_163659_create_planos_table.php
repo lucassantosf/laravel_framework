@@ -17,6 +17,7 @@ class CreatePlanosTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->boolean('status');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

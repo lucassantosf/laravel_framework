@@ -14,7 +14,7 @@
               <th scope="col">Modalidades</th>
               <th scope="col">Status</th>
               <th scope="col">Ações
-                    <button type="button" class="btn btn-outline-info">Cadastre</button>
+                    <a href="/cadastros/formPlan" class="btn btn-outline-info">Cadastre</a>
               </th>
             </tr>
           </thead>

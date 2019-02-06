@@ -101,6 +101,6 @@ class CadastrosController extends Controller
     }
 
     public function indexClientsAdd(){
-    	return view('cadastros.clientadd');
+    	return view('cadastros.formClientAdd');
     }
 }

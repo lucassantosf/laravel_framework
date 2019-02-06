@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Categoria extends Model
 {
     use SoftDeletes;
-    protected $dates = ['deleted_at'];
+    protected $date = ['deleted_at'];
 }

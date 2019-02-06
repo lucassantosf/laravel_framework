@@ -10,7 +10,8 @@ use App\Plano;
 class PlanoController extends Controller
 {
     public function indexPlans(){
-        $plans = Plano::paginate(10);
+        //$plans = Plano::withTrashed()->get(); //Traz todos os registros mesmo apagados
+        $plans = Plano::all(); //Apagados não trazem
         $duracoes = DB::table('duracoes_planos')->orderBy('duracao')->get();
         
         $modals = Modalidade::all();
@@ -63,23 +64,29 @@ class PlanoController extends Controller
     public function postformPlanEdit(Request $request, $id){
         $plan = Plano::find($id); 
         
-        if(isset($plan)){
-            $modals = $request->input('modals');
-            
+        if(isset($plan)){           
             $duracoes_post = $request->input('duracao');
-
-            //foreach para inserir novas duracoes vindas do post
-            foreach ($duracoes_post as $dp) {
-                $this->hasDurationInDatabase($plan->id,$dp);
+            if(isset($duracoes_post)){
+                //foreach para inserir novas duracoes vindas do post
+                foreach ($duracoes_post as $dp) {
+                    $this->hasDurationInDatabase($plan->id,$dp);
+                }
+                //foreach para remover duracoes que não vieram no post
+                $this->hasDurationInPost($duracoes_post, $plan);
+            }else{
+                $this->deleteAllDurations($plan);
             }
-            //foreach para remover duracoes que não vieram no post
-            $this->hasDurationInPost($duracoes_post, $plan);
 
-            //foreach para inserir novas modals do post
-            foreach ($modals as $m) {
-                $this->hasModalInDatabase($m, $plan->id);
+            $modals_post = $request->input('modals');
+            if(isset($modals_post)){
+                //foreach para inserir novas modals do post
+                foreach ($modals_post as $m) {
+                    $this->hasModalInDatabase($m, $plan->id);
+                }
+                $this->hasModalInPost($request->input('modals'),$plan);
+            }else{
+                $this->deleteAllModals($plan);
             }
-            $this->hasModalInPost($request->input('modals'),$plan);
 
             $plan->name = $request->input('name');
             $plan->status = $request->input('status') == 'A' ? true : false;
@@ -103,7 +110,6 @@ class PlanoController extends Controller
                 }                
             }            
         }
-
     }
 
     public function hasModalInDatabase($data, $plano_id){
@@ -120,6 +126,13 @@ class PlanoController extends Controller
                 'modal_id'=>$data,
             ]);
         }        
+    }
+
+    public function deleteAllModals($plan){
+        // Deletar todas duracoes do post
+        DB::table('modalidades_planos')->where([
+            ['plano_id','=',$plan->id],                
+        ])->delete();
     }
 
     public function hasDurationInPost($post, $plan){
@@ -157,10 +170,21 @@ class PlanoController extends Controller
         }
     }
 
+    public function deleteAllDurations($plan){
+        // Deletar todas duracoes do post
+        DB::table('duracoes_planos')->where([
+            ['plano_id','=',$plan->id],                
+        ])->delete();
+    }
+
     public function destroyPlan($id){
         $plan = Plano::find($id);
         if($plan){
-            $plan->delete();
+            try{
+                $plan->delete();
+            }catch(Exception $e){
+                return redirect('/cadastros/plans');
+            }
         }
         return redirect('/cadastros/plans');
     }
