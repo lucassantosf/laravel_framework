@@ -54,6 +54,6 @@ Route::get('/cadastros/plan/{id}/delete','PlanoController@destroyPlan');
 
 
 // Clientes e Incluir Clientes
-Route::get('/clients','CadastrosController@indexClients');
-
-Route::get('/incluir/clients','CadastrosController@indexClientsAdd');
+Route::get('/clients','ClienteController@indexClients');
+Route::get('/incluir/clients','ClienteController@indexClientsAdd');
+Route::post('/incluir/clients','ClienteController@postClientsAdd');

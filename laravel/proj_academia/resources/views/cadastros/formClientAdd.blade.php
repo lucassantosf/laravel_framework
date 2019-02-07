@@ -8,17 +8,17 @@
                 <div class="card-header">Incluir clientes</div>
 
                 <div class="card-body">
-                    <form>
+                    <form action="/incluir/clients" method="POST" id="formClient">
                         @csrf
                         <fieldset disabled>
                             <div class="form-row">
                             <input placeholder="Dados Pessoais" class="form-control center" style="text-align:center; margin: 0 auto;">
                             </div>
                         </fieldset><br>
-
+                        
                         <div class="form-row">
                             <div class="form-group col-md-8">
-                                <label for="name">Nome</label>
+                                <label for="name">Nome*</label>
                                 <input type="text" id="name" name="name" class="form-control" > 
                             </div>
                         </div>
@@ -71,7 +71,7 @@
 
                         <div class="form-row">
                             <div class="form-group col-md-4">
-                                <label for="cpf">CPF</label>
+                                <label for="cpf">CPF*</label>
                                 <input type="text" id="cpf" name="cpf" class="form-control" placeholder="000.000.000-00"> 
                             </div>
                         </div>
@@ -98,14 +98,14 @@
                         
                         <div class="form-row">
                             <div class="form-group col-md-4">
-                                <label for="phone">Tel.</label>
+                                <label for="phone">Tel.*</label>
                                 <input type="text" id="phone" name="phone" class="form-control" placeholder="(00)0 0000-0000"> 
                             </div>
                         </div> 
 
                         <div class="form-row">
                             <div class="form-group col-md-4">
-                                <label for="email">Email</label>
+                                <label for="email">Email*</label>
                                 <input type="email" id="email" name="email" class="form-control"> 
                             </div>
                         </div> 
@@ -119,17 +119,17 @@
                         <div class="form-group row col-md-4">
                             <label for="cep">CEP</label>
                             <div class="form-group row">
-                                <div class="col-md-9">
+                                <div class="col-md-10">
                                     <input type="text" id="cep" name="cep" class="form-control" placeholder="00000-000">
                                 </div>
-                                <div class="col-md-3">
-                                    <a href="#" class="list-inline-item">Consultar</a>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary list-inline-item" id="consultarCep" onclick="consultar()" type="button">Consultar</button>
                                 </div>
                             </div>   
                         </div> 
 
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="address">Endereço</label>
                                 <input type="text" id="address" name="address" class="form-control"> 
                             </div>
@@ -143,21 +143,21 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="compl">Complemento</label>
                                 <input type="text" id="compl" name="compl" class="form-control"> 
                             </div>
                         </div> 
                         
                         <div class="form-row">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-5">
                                 <label for="neigh">Bairro</label>
                                 <input type="text" id="neigh" name="neigh" class="form-control"> 
                             </div>
                         </div>
                         
                         <div class="form-row">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="country">Pais</label>
                                 <input type="text" id="country" name="country" class="form-control"> 
                             </div>
@@ -171,15 +171,45 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="city">Cidade</label>
                                 <input type="text" id="city" name="city" class="form-control"> 
                             </div>
                         </div>
-   
-                    </form>
                 </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" type="submit">Salvar</button>
+                    </form>
 
+                    <div class="modal" tabindex="-1" role="dialog" id="myModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    @if($errors->any())
+                                        @foreach($errors->all() as $error)
+                                            <div class="alert alert-danger" role="alert">
+                                                <input type="hidden" name="errors[]">{{$error}}</p>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                    @if(isset($errors))
+                                        <p>Modal body text goes here.</p>
+
+                                    @endif
+                                    <p>Modal body text goes here.</p>
+                                </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -196,6 +226,39 @@
             $("#phone").mask('(00)0 0000-0000', {reverse: true});
             $("#cep").mask('00000-000', {reverse: true});
         });
+
+        $("#formClient").submit(function() {
+            $('#myModal').modal('show');
+        });
+
+        function consultar(){
+
+            cep = $('#cep').val();
+            cep = cep.replace('-','');
+            if(cep.length < 8) return false;
+            if (cep != "" || cep.length >= 8) {
+                $.getJSON("https://viacep.com.br/ws/"+cep+"/json/?callback=?", function(dados) {
+
+                if (!("erro" in dados)) {
+                    //Atualiza os campos com os valores da consulta.
+                    $("#address").val(dados.logradouro);
+                    $("#compl").val(dados.complemento);
+                    $("#neigh").val(dados.bairro);
+                    $("#city").val(dados.localidade);
+                    $("#country").val('Brasil');
+                    $("#state").val(dados.uf);
+                }//end if.
+                    else {
+                        //CEP pesquisado não foi encontrado.
+                        $("#cep").val('');
+                        alert("CEP não encontrado.");
+                    }
+                });
+
+            }else{
+                alert('Cep em branco!');
+            }
+        }
 
     </script>
 @endsection

@@ -96,11 +96,4 @@ class CadastrosController extends Controller
         return redirect('/cadastros/users');
     }
 
-    public function indexClients(){
-    	return view('cadastros.client');
-    }
-
-    public function indexClientsAdd(){
-    	return view('cadastros.formClientAdd');
-    }
 }
