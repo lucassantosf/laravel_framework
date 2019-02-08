@@ -6,7 +6,11 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Incluir clientes</div>
-
+<?php
+//$nomeCli = (!empty($_POST['name'])) ? $_POST['name'] : '';
+//$_SESSION['name'] = (!empty($_POST['name'])) ? $_POST['name'] : '';
+if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
+?>
                 <div class="card-body">
                     <form action="/incluir/clients" method="POST" id="formClient">
                         @csrf
@@ -19,28 +23,28 @@
                         <div class="form-row">
                             <div class="form-group col-md-8">
                                 <label for="name">Nome*</label>
-                                <input type="text" id="name" name="name" class="form-control" > 
+                                <input type="text" id="name" name="name" class="form-control" value=" " /> 
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="dtNasc">Data de nascimento</label>
-                                <input type="text" id="dtNasc" name="dtNasc" class="form-control" placeholder="00/00/0000"> 
+                                <label for="dt_born">Data de nascimento</label>
+                                <input type="text" id="dt_born" name="dt_born" class="form-control" placeholder="00/00/0000"> 
                             </div>
                         </div>
  
                         <div class="form-row">
                             <div class="form-group col-md-8">
-                                <label for="nomeMae">Nome da mãe ou responsável</label>
-                                <input type="text" id="nomeMae" name="nomeMae" class="form-control"> 
+                                <label for="name_mother">Nome da mãe ou responsável</label>
+                                <input type="text" id="name_mother" name="name_mother" class="form-control"> 
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-8">
-                                <label for="nomePai">Nome do pai ou responsável</label>
-                                <input type="text" id="nomePai" name="nomePai" class="form-control"> 
+                                <label for="name_father">Nome do pai ou responsável</label>
+                                <input type="text" id="name_father" name="name_father" class="form-control"> 
                             </div>
                         </div>
 
@@ -49,8 +53,8 @@
                                 <label for="sexo">Sexo</label>
                                 <select class="custom-select" id="sexo" name="sexo">
                                     <option selected></option>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Feminino</option>
+                                    <option value="1">Masculino</option>
+                                    <option value="2">Feminino</option>
                                 </select> 
                             </div>
                         </div>
@@ -58,33 +62,33 @@
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label for="estado_civil">Estado civil</label>
-                                <select class="custom-select" id="estado_civil" name="estado_civil">
+                                <select class="custom-select" id="est_civil" name="est_civil">
                                     <option selected></option>
-                                    <option value="M">Solteiro</option>
-                                    <option value="F">Casado</option>
-                                    <option value="F">Amasiado</option>
-                                    <option value="F">Viuvo</option>
-                                    <option value="F">Separado</option>
+                                    <option value="1">Solteiro</option>
+                                    <option value="2">Casado</option>
+                                    <option value="3">Amasiado</option>
+                                    <option value="4">Viuvo</option>
+                                    <option value="5">Separado</option>
                                 </select> 
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="cpf">CPF*</label>
                                 <input type="text" id="cpf" name="cpf" class="form-control" placeholder="000.000.000-00"> 
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="rg">RG</label>
                                 <input type="text" id="rg" name="rg" class="form-control" placeholder="00.000.000-0"> 
                             </div>
                         </div>                         
 
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="RNE">RNE</label>
                                 <input type="text" id="rne" name="rne" class="form-control"> 
                             </div>
@@ -97,7 +101,7 @@
                         </fieldset><br>
                         
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-5">
                                 <label for="phone">Tel.*</label>
                                 <input type="text" id="phone" name="phone" class="form-control" placeholder="(00)0 0000-0000"> 
                             </div>
@@ -145,7 +149,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label for="compl">Complemento</label>
-                                <input type="text" id="compl" name="compl" class="form-control"> 
+                                <input type="text" id="comple" name="comple" class="form-control"> 
                             </div>
                         </div> 
                         
@@ -165,8 +169,8 @@
                         
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="state">Estado</label>
-                                <input type="text" id="state" name="state" class="form-control"> 
+                                <label for="uf">Estado</label>
+                                <input type="text" id="uf" name="uf" class="form-control"> 
                             </div>
                         </div>
 
@@ -180,7 +184,19 @@
                 <div class="card-footer">
                     <button class="btn btn-primary" type="submit">Salvar</button>
                     </form>
+                </div>
 
+                @if($errors->any())
+                    <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
+                    <script type="text/javascript">
+                        let c = 0;
+                        function countErrors(i){
+                            c += i;
+                            if(c==1){
+                                $("#myModal").modal('show');
+                            }
+                        } 
+                    </script>
                     <div class="modal" tabindex="-1" role="dialog" id="myModal">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -189,27 +205,21 @@
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
                                 <div class="modal-body">
-                                    @if($errors->any())
                                         @foreach($errors->all() as $error)
+                                            <script type="text/javascript">
+                                                this.countErrors(1);
+                                            </script>
                                             <div class="alert alert-danger" role="alert">
                                                 <input type="hidden" name="errors[]">{{$error}}</p>
                                             </div>
                                         @endforeach
-                                    @endif
-                                    @if(isset($errors))
-                                        <p>Modal body text goes here.</p>
-
-                                    @endif
-                                    <p>Modal body text goes here.</p>
-                                </div>
-                              
+                                </div>                              
                             </div>
                         </div>
                     </div>
+                @endif
 
-                </div>
             </div>
         </div>
     </div>
@@ -220,15 +230,11 @@
     <script type="text/javascript">
         
         $(document).ready(function() {    
-            $("#dtNasc").mask('00/00/0000', {reverse: true});
+            $("#dt_born").mask('00/00/0000', {reverse: true});
             $("#cpf").mask('000.000.000-00', {reverse: true});
             $("#rg").mask('00.000.000-0', {reverse: true});
             $("#phone").mask('(00)0 0000-0000', {reverse: true});
             $("#cep").mask('00000-000', {reverse: true});
-        });
-
-        $("#formClient").submit(function() {
-            $('#myModal').modal('show');
         });
 
         function consultar(){
@@ -246,7 +252,7 @@
                     $("#neigh").val(dados.bairro);
                     $("#city").val(dados.localidade);
                     $("#country").val('Brasil');
-                    $("#state").val(dados.uf);
+                    $("#uf").val(dados.uf);
                 }//end if.
                     else {
                         //CEP pesquisado não foi encontrado.
@@ -259,6 +265,8 @@
                 alert('Cep em branco!');
             }
         }
+
+        
 
     </script>
 @endsection
