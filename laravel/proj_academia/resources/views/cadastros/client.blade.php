@@ -11,7 +11,7 @@
                     
                     @if(isset($clients))
                         @foreach($clients as $c)
-                            {{$c->name}}<br>
+                            <a href="/clients/{{$c->id}}/show" class="link">{{$c->name}}</a><br>
                         @endforeach
                     @endif
                 </div>

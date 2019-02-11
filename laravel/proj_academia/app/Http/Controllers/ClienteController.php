@@ -54,4 +54,11 @@ class ClienteController extends Controller
         return redirect('/clients');
     }
 
+    public function showClient($id){
+    	$client = Cliente::find($id);
+    	if(isset($client)){
+    		return view('profile',compact('client'));
+    	}
+    }
+
 }
