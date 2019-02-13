@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Cliente;
+use App\Plano;
 
 class ClienteController extends Controller
 {
@@ -59,6 +61,17 @@ class ClienteController extends Controller
     	if(isset($client)){
     		return view('profile',compact('client'));
     	}
+    }
+
+    public function newContract($id){
+    	$client = Cliente::find($id);
+        $plans = DB::table('planos')->where([
+        	['status',1],
+        	['deleted_at',NULL],
+        ])->get();
+        $duracoes = DB::table('duracoes_planos')->get();
+        $plan_id = 0;
+    	return view('novoContrato',compact('client','plans','duracoes','plan_id'));
     }
 
 }

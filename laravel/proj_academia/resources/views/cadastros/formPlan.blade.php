@@ -71,18 +71,15 @@
                             </div>
                         </div>
                         <br>
-                        <div class="form-row" id="duracoes">      
-
+                        <div class="form-row" id="duracoes">  
                             <label class="col-sm-3">Durações</label>                              
                             <div class="col-sm-1">  
                                 <input type="button" class="form-control btn btn-primary btn-sm" id="add_field" value="+">
                             </div>
                             <div class="col-sm-1">              
                                 <input type="text" class="form-control" name="duracao[]" >
-                            </div>                         
-                            
+                            </div>          
                         </div>
-                                                
                         <br>
                         <div class="form-row input-group mb-3">       
                             <div class="col-sm-3">Modalidades</div>

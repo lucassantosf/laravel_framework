@@ -75,6 +75,7 @@
                             <input placeholder="Planos" class="form-control center" style="text-align:center; margin: 0 auto;">
                             </div>
                         </fieldset><br>
+                        <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
                         <fieldset disabled>
                             <div class="form-row">
                             <input placeholder="Histórico de Vendas" class="form-control center" style="text-align:center; margin: 0 auto;">

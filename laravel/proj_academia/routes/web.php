@@ -57,3 +57,6 @@ Route::get('/clients','ClienteController@indexClients');
 Route::get('/incluir/clients','ClienteController@indexClientsAdd');
 Route::post('/incluir/clients','ClienteController@postClientsAdd');
 Route::get('/clients/{id}/show','ClienteController@showClient');
+Route::get('/clients/novoContrato/{id}','ClienteController@newContract');
+
+
