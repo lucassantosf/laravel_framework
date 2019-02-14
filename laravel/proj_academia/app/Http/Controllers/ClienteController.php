@@ -31,7 +31,6 @@ class ClienteController extends Controller
             'required'=>'O campo :attribute não pode ser vazio'
         ];
         $request->validate($regras,$mensagens);
-
         $cli = new Cliente();
 		$cli->name = $request->input('name');
         $cli->dt_born = date('Y/m/d',strtotime($request->input('dt_born')));

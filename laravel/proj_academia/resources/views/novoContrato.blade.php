@@ -19,7 +19,7 @@
                     </fieldset>
                     <div class="form-row">     
                         <select class="custom-select" name="lista" id="lista">
-                            <option selected>Selecionar...</option>
+                            <option selected value="0">Selecionar...</option>
                             @foreach($plans as $p)
                                 <option value="{{$p->id}}">{{$p->name}}</option>
                 
@@ -30,32 +30,10 @@
                         <div class="form-row"> 
                         <input placeholder="Duração" class="form-control center" style="text-align:center; margin: 0 auto;"></div>
                     </fieldset>
-                    <div class="form-row" id="durdaPlan">
-                    @if(isset($duracoes))
-                        @foreach($duracoes as $d)
-                            @if($d->plano_id == $plan_id)
-                                {{$d->plano_id}}
-                            @endif
-                        @endforeach
-                    @endif
-                    </div>
                     <div class="form-row" id="durPlan">
-
-                    @if(isset($duracoes))
-                        @foreach($duracoes as $d)
-                            @foreach($plans as $p)
-
-                                @if($d->plano_id == $p->id)
-                                <div class="class-{{$p->id}}" style="display: none;" id="class-{{$p->id}}">
-                                    <input type="radio" name="duracao" value="{{$d->duracao}}"/>{{$d->duracao}}<br/>
-                                </div>
-                                @endif
-
-                            @endforeach
-                        @endforeach
-                    @endif
+                    
                     </div>
-
+                     
                 </div>
             </div>
         </div>
@@ -64,28 +42,21 @@
 @endsection
 @section('javascript')
     <script type="text/javascript">
-        let alreadyDuration = false;
-
         $(document).ready(function() {    
-            $("#durPlan").append('');
-            
             $("#lista").change(function(){
                 montarLinhaDuracao(this.value);
             });
-        });
-
+         });
         function montarLinhaDuracao(plan_id){
-            if(this.alreadyDuration){
-                $("#durPlan").remove();
-                $(".class-"+plan_id).show();
-
-                this.alreadyDuration = false;
-            }else{
-                $(".class-"+plan_id).show();
-                this.alreadyDuration = true;
+            if (plan_id==0) {
+                $("#durPlan").html('');   
+                return false;  
             }
-        }
-
-         
+            //Requisição AJAX retornando dados do plano seleciondo
+            $.get("/cadastros/plans/"+plan_id+"/details", function(resultado){
+                $("#durPlan").html('');                
+                $("#durPlan").append(resultado);
+            }); 
+        }         
     </script>
 @endsection

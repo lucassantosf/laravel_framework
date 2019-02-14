@@ -49,6 +49,7 @@ Route::post('/cadastros/formPlan','PlanoController@postFormPlan');
 Route::get('/cadastros/plan/{id}/edit','PlanoController@formPlanEdit');
 Route::post('/cadastros/plan/{id}/edit','PlanoController@postformPlanEdit');
 Route::get('/cadastros/plan/{id}/delete','PlanoController@destroyPlan');
+Route::get('/cadastros/plans/{id}/details','PlanoController@detailsPlans');
 
 // Relatórios
 

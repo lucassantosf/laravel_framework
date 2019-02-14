@@ -189,5 +189,25 @@ class PlanoController extends Controller
         return redirect('/cadastros/plans');
     }
 
+    public function detailsPlans($id){
+        $plan = Plano::find($id);
+        $duracoes = [];
+        $modals = [];
+        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
+        foreach ($duracoes_bd as $d) {            
+            array_push($duracoes, $d->duracao);
+        }
+        $modals_bd = DB::table('modalidades_planos')->where([
+            ['plano_id','=',$plan->id],           
+        ])->get();
+        //var_dump($modals_bd);
+        //exit();
+        foreach ($modals_bd as $m) {            
+            array_push($modals, $m->modal_id);
+        }
+        $dados = array('plano_nome'=>$plan->name,'duracoes'=>$duracoes,'modals'=>$modals);
+        return json_encode($dados);
+    }
+
 
 }
