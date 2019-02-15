@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Cliente;
 use App\Plano;
-
+use App\Modalidade;
 class ClienteController extends Controller
 {
     public function indexClients(){
@@ -70,7 +70,8 @@ class ClienteController extends Controller
         ])->get();
         $duracoes = DB::table('duracoes_planos')->get();
         $plan_id = 0;
-    	return view('novoContrato',compact('client','plans','duracoes','plan_id'));
+        $modals = Modalidade::all();
+    	return view('novoContrato',compact('client','plans','duracoes','plan_id','modals'));
     }
 
 }

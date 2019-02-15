@@ -193,21 +193,33 @@ class PlanoController extends Controller
         $plan = Plano::find($id);
         $duracoes = [];
         $modals = [];
-        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
+        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get();
+
         foreach ($duracoes_bd as $d) {            
             array_push($duracoes, $d->duracao);
         }
+        
         $modals_bd = DB::table('modalidades_planos')->where([
             ['plano_id','=',$plan->id],           
         ])->get();
-        //var_dump($modals_bd);
-        //exit();
-        foreach ($modals_bd as $m) {            
-            array_push($modals, $m->modal_id);
+
+        foreach ($modals_bd as $m) {  
+            $modal = Modalidade::find($m->modal_id);
+            array_push($modals, [$modal->name=>$modal->value,'modal_id'=>$m->modal_id]);            
         }
+
         $dados = array('plano_nome'=>$plan->name,'duracoes'=>$duracoes,'modals'=>$modals);
         return json_encode($dados);
     }
 
+    public function postConferirNeg(Request $request){
+        echo 'cliente id :'.$request->input('id_cliente').'<br>';
+        echo 'Plano Id :'.$request->input('selectPlan').'<br>';
+        echo 'Duracao :'.$request->input('duracao').'<br>';
+        foreach ($request->input('modals') as $m_id) {
+            echo 'Modalidades :'.$m_id.'<br>';
+        }
+        exit();
+    }
 
 }

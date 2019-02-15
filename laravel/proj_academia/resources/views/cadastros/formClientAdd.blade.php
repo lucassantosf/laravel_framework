@@ -7,8 +7,6 @@
             <div class="card">
                 <div class="card-header">Incluir clientes</div>
 <?php
-//$nomeCli = (!empty($_POST['name'])) ? $_POST['name'] : '';
-//$_SESSION['name'] = (!empty($_POST['name'])) ? $_POST['name'] : '';
 if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
 ?>
                 <div class="card-body">

@@ -50,6 +50,7 @@ Route::get('/cadastros/plan/{id}/edit','PlanoController@formPlanEdit');
 Route::post('/cadastros/plan/{id}/edit','PlanoController@postformPlanEdit');
 Route::get('/cadastros/plan/{id}/delete','PlanoController@destroyPlan');
 Route::get('/cadastros/plans/{id}/details','PlanoController@detailsPlans');
+Route::post('/cadastros/plans/postConferirNeg','PlanoController@postConferirNeg');
 
 // Relatórios
 
