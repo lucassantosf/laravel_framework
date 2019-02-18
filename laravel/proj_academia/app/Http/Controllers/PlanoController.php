@@ -213,13 +213,21 @@ class PlanoController extends Controller
     }
 
     public function postConferirNeg(Request $request){
-        echo 'cliente id :'.$request->input('id_cliente').'<br>';
-        echo 'Plano Id :'.$request->input('selectPlan').'<br>';
-        echo 'Duracao :'.$request->input('duracao').'<br>';
+        //'cliente id :'.$request->input('id_cliente').'<br>';
+        $plano = Plano::find($request->input('selectPlan'));
+        $plano_descricao = $plano->name;
+        //echo 'Plano Id :'.$request->input('selectPlan').'<br>';
+        $duracao = $request->input('duracao');
+        $value_total = 0;
+        //echo 'Duracao :'.$request->input('duracao').'<br>';
         foreach ($request->input('modals') as $m_id) {
-            echo 'Modalidades :'.$m_id.'<br>';
+            $modal = Modalidade::find($m_id);
+            //echo 'Modalidades :'.$modal->name;
+            //echo ' - Valor :'.$modal->value.'<br>';
+            $value_total += $modal->value;
         }
-        exit();
+        $valor_contrato = $duracao*$value_total;
+        return view('conferirContrato',compact('valor_contrato','plano_descricao','duracao'));
     }
 
 }
