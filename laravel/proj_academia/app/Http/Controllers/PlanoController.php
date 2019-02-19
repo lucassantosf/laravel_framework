@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Modalidade;
 use App\Plano;
+use DateTime;
 
 class PlanoController extends Controller
 {
+    public $duracao;
+
     public function indexPlans(){
         //$plans = Plano::withTrashed()->get(); //Traz todos os registros mesmo apagados
         $plans = Plano::all(); //Apagados não trazem
@@ -213,21 +216,25 @@ class PlanoController extends Controller
     }
 
     public function postConferirNeg(Request $request){
-        //'cliente id :'.$request->input('id_cliente').'<br>';
         $plano = Plano::find($request->input('selectPlan'));
         $plano_descricao = $plano->name;
-        //echo 'Plano Id :'.$request->input('selectPlan').'<br>';
         $duracao = $request->input('duracao');
         $value_total = 0;
-        //echo 'Duracao :'.$request->input('duracao').'<br>';
         foreach ($request->input('modals') as $m_id) {
             $modal = Modalidade::find($m_id);
-            //echo 'Modalidades :'.$modal->name;
-            //echo ' - Valor :'.$modal->value.'<br>';
             $value_total += $modal->value;
         }
         $valor_contrato = $duracao*$value_total;
         return view('conferirContrato',compact('valor_contrato','plano_descricao','duracao'));
+    }
+
+    public function postVenda(Request $request){
+        $valor_final =  $request->input('valor_final'); //valor final com o desconto
+        $duracao =  $request->input('duracao'); //duracao
+        $desconto = $request->input('desconto'); //desconto
+        $data_inicio = date('d/m/Y');//data atual
+        $data_fim = date('d/m/Y', strtotime("+".$duracao." months") );//somar a duracao a data atual
+        exit(); 
     }
 
 }
