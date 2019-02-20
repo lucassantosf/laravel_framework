@@ -34,6 +34,7 @@ class CreateClientesTable extends Migration
             $table->string('country')->nullable();
             $table->string('uf')->nullable();
             $table->string('city')->nullable();
+            $table->string('situaçao')->default('Visitante');
             $table->timestamps();
         });
     }

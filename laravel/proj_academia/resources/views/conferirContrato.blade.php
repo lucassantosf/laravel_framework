@@ -3,6 +3,9 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+        @if(isset($msg))
+            {{$msg}}
+        @else
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Conferir Negociação do contrato</div>
@@ -20,7 +23,10 @@
                         </tr>
                         <tr>
                           <td>Duracao</td>
-                          <td id="valor_duracao"><input type="hidden" name="duracao" value="{{$duracao}}">{{$duracao}}</td> 
+                          <td id="valor_duracao">
+                            <input type="hidden" name="plano_id" value="{{$plano_id}}">
+                            <input type="hidden" name="cliente_id" value="{{$cliente_id}}">
+                            <input type="hidden" name="duracao" value="{{$duracao}}">{{$duracao}}</td> 
                         </tr>
                         <tr>
                           <td>Valor do contrato</td>
@@ -68,6 +74,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </div>
 @endsection

@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Modalidade;
 use App\Plano;
+use App\Venda;
+use App\Cliente;
+use App\Parcela;
 use DateTime;
 
 class PlanoController extends Controller
@@ -216,7 +219,9 @@ class PlanoController extends Controller
     }
 
     public function postConferirNeg(Request $request){
-        $plano = Plano::find($request->input('selectPlan'));
+        $plano_id = $request->input('selectPlan');
+        $cliente_id = $request->input('id_cliente');
+        $plano = Plano::find($plano_id);
         $plano_descricao = $plano->name;
         $duracao = $request->input('duracao');
         $value_total = 0;
@@ -225,16 +230,40 @@ class PlanoController extends Controller
             $value_total += $modal->value;
         }
         $valor_contrato = $duracao*$value_total;
-        return view('conferirContrato',compact('valor_contrato','plano_descricao','duracao'));
+        return view('conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id'));
     }
 
     public function postVenda(Request $request){
-        $valor_final =  $request->input('valor_final'); //valor final com o desconto
+        $venda = new Venda();
+        $venda->cliente_id = $request->input('cliente_id');
+        $venda->plano_id = $request->input('plano_id');
+        $valor_mensal =  $request->input('valor_final'); 
+        $condicao =  $request->input('condicao'); //condicao da negociação
         $duracao =  $request->input('duracao'); //duracao
         $desconto = $request->input('desconto'); //desconto
-        $data_inicio = date('d/m/Y');//data atual
-        $data_fim = date('d/m/Y', strtotime("+".$duracao." months") );//somar a duracao a data atual
-        exit(); 
+        if(isset($desconto)){
+            $valor_total = ($valor_mensal*$condicao) - $desconto; 
+            $venda->value_total = $valor_total;                   
+        }else{
+            $valor_total = ($valor_mensal*$condicao); 
+            $venda->value_total = $valor_total;           
+        } 
+        $venda->dt_inicio = date('d/m/Y');//data atual
+        $venda->dt_fim = date('d/m/Y', strtotime("+".$duracao." months") );//somar a duracao a data atual
+        $venda->save();
+        //salvar cada parcela no banco
+        for($i=0 ; $i<$condicao; $i++){
+            $parcela = new Parcela();
+            $parcela->venda_id = $venda->id;
+            $parcela->value = $valor_mensal;
+            $parcela->save();
+        }
+        //Tornar aluno ativo
+        $cliente = Cliente::find($venda->cliente_id);
+        $cliente->situaçao = 'Ativo';
+        $cliente->save();
+        $msg = 'Venda realizada com sucesso';
+        return view('conferirContrato',compact('msg'));
     }
 
 }

@@ -58,7 +58,8 @@ class ClienteController extends Controller
     public function showClient($id){
     	$client = Cliente::find($id);
     	if(isset($client)){
-    		return view('profile',compact('client'));
+            $plano = DB::table('vendas')->where('cliente_id',$client->id)->orderBy('id')->get();
+    		return view('profile',compact('client','plano'));
     	}
     }
 

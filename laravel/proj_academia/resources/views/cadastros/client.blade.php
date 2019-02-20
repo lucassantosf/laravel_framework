@@ -7,10 +7,10 @@
             <div class="card">
                 <div class="card-header input-group input-group-md mb-3">
 
-                       <div class="input-group-prepend">
+                    <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-sm">Listagem de Clientes</span>
-                      </div>
-                      <input type="text" class="form-control" id="txtBusca" placeholder="Buscar..."/>
+                    </div>
+                    <input type="text" class="form-control" id="txtBusca" placeholder="Buscar..."/>
 
                 </div>
 
@@ -18,7 +18,7 @@
                     <ul class="list-group">
                     @if(isset($clients))
                         @foreach($clients as $c)
-                            <li class="list-group-item"><a href="/clients/{{$c->id}}/show" class="link">{{$c->name}}</a></li> 
+                            <li class="list-group-item"><a href="/clients/{{$c->id}}/show" class="link">{{$c->name}}</a> - {{$c->situaçao}}</li> 
                         @endforeach
                     @endif
                     </ul>
