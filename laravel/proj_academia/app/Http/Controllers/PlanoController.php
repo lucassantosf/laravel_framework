@@ -230,7 +230,7 @@ class PlanoController extends Controller
             $value_total += $modal->value;
         }
         $valor_contrato = $duracao*$value_total;
-        return view('conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id'));
+        return view('operacao.conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id'));
     }
 
     public function postVenda(Request $request){
@@ -263,7 +263,7 @@ class PlanoController extends Controller
         $cliente->situaçao = 'Ativo';
         $cliente->save();
         $msg = 'Venda realizada com sucesso';
-        return view('conferirContrato',compact('msg'));
+        return view('operacao.conferirContrato',compact('msg'));
     }
 
 }

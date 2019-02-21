@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Cliente;
 use App\Plano;
 use App\Modalidade;
+use App\Venda;
+
 class ClienteController extends Controller
 {
     public function indexClients(){
@@ -19,7 +21,6 @@ class ClienteController extends Controller
     }
 
     public function postClientsAdd(Request $request){
-
     	//validacao de campos com 'msgs' personalizadas
         $regras = [
             'name'=>'required|min:5|max:150',
@@ -58,8 +59,15 @@ class ClienteController extends Controller
     public function showClient($id){
     	$client = Cliente::find($id);
     	if(isset($client)){
-            $plano = DB::table('vendas')->where('cliente_id',$client->id)->orderBy('id')->get();
-    		return view('profile',compact('client','plano'));
+            $isAtivo = false;
+            $plano_details;
+            $planoC = DB::table('vendas')->where('cliente_id',$client->id)->first();
+            if ($planoC) {
+                $isAtivo = true;
+                $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
+                $parcelas = DB::table('parcelas')->where('venda_id',$id)->get();
+            }
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas'));
     	}
     }
 
@@ -72,7 +80,19 @@ class ClienteController extends Controller
         $duracoes = DB::table('duracoes_planos')->get();
         $plan_id = 0;
         $modals = Modalidade::all();
-    	return view('novoContrato',compact('client','plans','duracoes','plan_id','modals'));
+    	return view('operacao.novoContrato',compact('client','plans','duracoes','plan_id','modals'));
     }
 
+    public function estornarContract($venda_id,$cliente_id){
+        $venda = Venda::find($venda_id);
+        if($venda){
+            try{
+                $venda->delete();
+            }catch(Exception $e){
+                return redirect('/cadastros/plans');
+            }
+
+        }
+        return redirect('/clients');
+    }
 }

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+ 
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -9,8 +9,8 @@
 
                 <div class="card-body">
                     @if(isset($client))
-                        {{$client->name}}<br> 
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        {{$client->name}} 
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="">
                           Dados Pessoais
                         </button>
                         <!-- Modal de edição -->
@@ -75,14 +75,25 @@
                             <input placeholder="Planos" class="form-control center" style="text-align:center; margin: 0 auto;">
                             </div>
                         </fieldset><br>
-                        @if(!isset($plano))
-                            {{$plano}}
+                        @if($isAtivo)
+                            {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-danger">Estornar</a><br><hr>
+                            Duracao do contrato <br><hr>
+                            De: {{$planoC->dt_inicio}} -
+                            {{$planoC->dt_fim}} <br><hr>
+                            Valor Total plano: R$ {{$planoC->value_total}} <br><br>                            
                         @else
                             <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
                         @endif
                         <fieldset disabled>
                             <div class="form-row">
-                            <input placeholder="Histórico de Vendas" class="form-control center" style="text-align:center; margin: 0 auto;">
+                            <input placeholder="Histórico de Parcelas" class="form-control center" style="text-align:center; margin: 0 auto;">
+                                <div id="parcelas_historico">
+                                    @if(isset($parcelas))
+                                        @foreach($parcelas as $p)
+                                            Cod Parcela - {{$p->id}} - Cod Contrato {{$p->venda_id}} - R$ {{$p->value}} - {{$p->status}}<br>
+                                        @endforeach
+                                    @endif                  
+                                </div>
                             </div>
                         </fieldset>
                     @endif
@@ -92,3 +103,14 @@
     </div>
 </div>
 @endsection
+@section('javascript')
+    <script type="text/javascript">
+        
+        $(document).ready(function() {   
+            
+        });
+
+    </script>
+@endsection
+
+

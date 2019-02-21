@@ -19,6 +19,7 @@ class CreateParcelasTable extends Migration
             $table->foreign('venda_id')->references('id')->on('vendas');
             $table->float('value');
             $table->string('status')->default('Em aberto');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
