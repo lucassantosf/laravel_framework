@@ -59,6 +59,7 @@ Route::post('/cadastros/plans/postVenda','PlanoController@postVenda');
 Route::get('/clients','ClienteController@indexClients');
 Route::get('/incluir/clients','ClienteController@indexClientsAdd');
 Route::post('/incluir/clients','ClienteController@postClientsAdd');
+Route::post('/incluir/clientsEdit','ClienteController@postClientsEdit');
 Route::get('/clients/{id}/show','ClienteController@showClient');
 Route::get('/clients/novoContrato/{id}','ClienteController@newContract');
 Route::get('/clients/estornarContrato/{id_venda}/{id_pessoa}','ClienteController@estornarContract');
@@ -66,4 +67,4 @@ Route::get('/clients/estornarContrato/{id_venda}/{id_pessoa}','ClienteController
 Route::get('/clients/buscarParcelas/{id}','ParcelaController@showParcelasVenda');
 Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
 
-
+//Parcelas 

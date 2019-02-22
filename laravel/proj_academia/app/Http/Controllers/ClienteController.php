@@ -56,16 +56,45 @@ class ClienteController extends Controller
         return redirect('/clients');
     }
 
+    public function postClientsEdit(Request $request){
+        $cli = Cliente::find($request->input('id'));        
+        $cli->name = $request->input('name');
+        $cli->dt_born = date('Y/m/d',strtotime($request->input('dt_born')));
+        $cli->name_mother = $request->input('name_mother');
+        $cli->name_father = $request->input('name_father');
+        $cli->sexo = $request->input('sexo');
+        $cli->est_civil = $request->input('est_civil');
+        $cli->cpf = $request->input('cpf');
+        $cli->rg = $request->input('rg');
+        $cli->rne = $request->input('rne');
+        $cli->phone = $request->input('phone');
+        $cli->email = $request->input('email');
+        $cli->cep = $request->input('cep');
+        $cli->address = $request->input('address');
+        $cli->number = $request->input('number');
+        $cli->comple = $request->input('comple');
+        $cli->neigh = $request->input('neigh');
+        $cli->country = $request->input('country');
+        $cli->uf = $request->input('uf');
+        $cli->city = $request->input('city');
+        $cli->save();
+        return redirect('/clients/'.$cli->id.'/show');
+    }
+
     public function showClient($id){
     	$client = Cliente::find($id);
     	if(isset($client)){
             $isAtivo = false;
             $plano_details;
-            $planoC = DB::table('vendas')->where('cliente_id',$client->id)->first();
+            $planoC = DB::table('vendas')->where([
+                ['cliente_id',$client->id],
+                ['deleted_at',NULL]
+            ])->first();
+            
             if ($planoC) {
                 $isAtivo = true;
                 $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
-                $parcelas = DB::table('parcelas')->where('venda_id',$id)->get();
+                $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get();
             }
             return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas'));
     	}
@@ -87,7 +116,12 @@ class ClienteController extends Controller
         $venda = Venda::find($venda_id);
         if($venda){
             try{
+                //Tornar aluno visitante
+                $cliente = Cliente::find($cliente_id);
+                $cliente->situaçao = 'Visitante'; 
+                $cliente->save();
                 $venda->delete();
+                
             }catch(Exception $e){
                 return redirect('/cadastros/plans');
             }

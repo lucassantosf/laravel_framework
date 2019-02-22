@@ -237,7 +237,6 @@ if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
         });
 
         function consultar(){
-
             cep = $('#cep').val();
             cep = cep.replace('-','');
             if(cep.length < 8) return false;
@@ -259,13 +258,9 @@ if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
                         alert("CEP não encontrado.");
                     }
                 });
-
             }else{
                 alert('Cep em branco!');
             }
         }
-
-        
-
     </script>
 @endsection
