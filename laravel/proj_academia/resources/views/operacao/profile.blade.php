@@ -9,10 +9,14 @@
 
                 <div class="card-body">
                     @if(isset($client))
-                        {{$client->name}} 
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="">
+                        <div class="alert alert-primary" role="alert">
+                            {{$client->name}}
+                        </div> 
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" style="">
                           Dados Pessoais
-                        </button>
+                        </button><br><br>
+                        <a href="/clients/caixaAberto/{{$client->id}}" class="btn btn-primary btn-sm">Caixa em Aberto</a> 
+                        <br><br>
                         <!-- Modal de edição -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -71,14 +75,23 @@
                                                 <div class="form-group row">
                                                     <label for="name" class="col-sm-2">Sexo</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" class="form-control" name="sexo" id="sexo" value="{{$client->sexo}}">
+                                                        <select class="custom-select" id="sexo" name="sexo">
+                                                            <option @if($client->sexo == 1) selected @endif value="1">Masculino</option>
+                                                            <option @if($client->sexo == 2) selected @endif value="2">Feminino</option>
+                                                        </select>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label for="name" class="col-sm-2">Estado Civil</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" class="form-control" name="est_civil" id="est_civil" value="{{$client->est_civil}}">
+                                                        <select class="custom-select" id="est_civil" name="est_civil">
+                                                            <option value="1" @if($client->est_civil == 1) selected @endif>Solteiro</option>
+                                                            <option value="2" @if($client->est_civil == 2) selected @endif>Casado</option>
+                                                            <option value="3" @if($client->est_civil == 3) selected @endif>Amasiado</option>
+                                                            <option value="4" @if($client->est_civil == 4) selected @endif>Viuvo</option>
+                                                            <option value="5" @if($client->est_civil == 5) selected @endif>Separado</option>
+                                                        </select> 
                                                     </div>
                                                 </div>
 
@@ -196,17 +209,22 @@
                             </div>
                         </fieldset><br>
                         @if($isAtivo)
-                            {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-outline-danger bt-sm">Estornar</a><br><hr>
-                            Duracao do contrato <br><hr>
-                            <label id="dt_inicio">{{$planoC->dt_inicio}}</label>
-                            <label id="dt_fim">{{$planoC->dt_fim}}</label>
-                            <!--<input type="text" name="dt_inicio" id="" value="{{$planoC->dt_inicio}}" disabled>
-                            <input type="text" name="dt_fim" id="" value="{{$planoC->dt_fim}}" disabled>-->
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="alert alert-primary" role="alert">
+                                {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-outline-danger btn-sm">Estornar</a>
                             </div>
-                            <hr>
-                            Valor Total Plano: R$ {{$planoC->value_total}} <br><br>                            
+                            <div class="alert alert-primary" style="text-align:center; margin: 0 auto;" role="alert">
+                                Duração do contrato<br>
+                                <label id="dt_inicio">{{$planoC->dt_inicio}} - </label>
+                                <label id="dt_fim">{{$planoC->dt_fim}}</label>
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar"  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="progressDt"></div>
+                                </div>
+                            </div><br>                            
+                            <div class="alert alert-primary" role="alert">
+                                Valor Total Plano: R$ {{$planoC->value_total}} 
+                            </div>
+                            
+                            <br><br>                            
                         @else
                             <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
                         @endif
@@ -217,7 +235,13 @@
                                     @if(isset($parcelas))
                                         @foreach($parcelas as $p)
                                             Cod Parcela - {{$p->id}} - Cod Contrato {{$p->venda_id}} - R$ {{$p->value}} - 
-                                            <span class="border border-1 border-danger rounded">{{$p->status}}</span><br>
+                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>
+                                            
+                                            @if( ($p->status) != 'Em aberto' )
+                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
+                                            @endif
+
+                                            <br>
                                         @endforeach
                                     @endif                  
                                 </div>
@@ -235,39 +259,59 @@
     <script type="text/javascript">
         
         $(document).ready(function() {   
+             
+            mascaraCampos();
+            progressBarDuracao(); 
+ 
+        });
+
+        function pagarParcela(id){
+            $("#"+id).html('Pago');
+            $("#"+id).append('<a onclick="estornarParcela('+id+')">Estornar</a>');
+            $.get("/clients/pagarParcela/"+id, function(data){
+                console.log('Pagou parcela id '+id);
+            });
+        }
+
+        function estornarParcela(id){
+            $("#"+id).html('Em aberto');            
+            $("#parcelas_historico").append('<a href="#">Estornar</a>');
+            $.get("/clients/estornarParcela/"+id, function(data){
+                console.log('Estornar parcela id '+id);
+            });
+        }
+
+        function mascaraCampos(){
             $("#dt_born").mask('00/00/0000', {reverse: true});
             $("#cpf").mask('000.000.000-00', {reverse: true});
             $("#rg").mask('00.000.000-0', {reverse: true});
             $("#phone").mask('(00)0 0000-0000', {reverse: true});
             $("#cep").mask('00000-000', {reverse: true});
-            
-            //cod verificar diferenca de datas
-            //var date1 = new Date("7/11/2010");
-            //var date2 = new Date("12/12/2019");
-            //var timeDiff = Math.abs(date2.getTime() - date1.getTime());
-            //var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-            //alert(diffDays);
+        }
 
+        function progressBarDuracao(){
+            //Barra de progresso duração do plano
+            //recuperar valor das datas do plano
             dt_inicio = $("#dt_inicio").html();
             dt_fim = $("#dt_fim").html();
-            
+            //criar obj para datas inicio e fim
             from1 = dt_inicio; 
             numbers1 = from1.match(/\d+/g); 
             date1 = new Date(numbers1[2], numbers1[1]-1,numbers1[0]);
-            
             from2 = dt_fim; 
             numbers2 = from2.match(/\d+/g);
             date2 = new Date(numbers2[2], numbers2[1]-1, numbers2[0]);
-            
+            //calcular diferença de dias entre inicio fim
             timeDiff = Math.abs(date2.getTime() - date1.getTime());
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-            
-            alert(diffDays);
-
-            today = new Date();
-            alert(today);
-
-        });
+            //calcular diferença de dias entre inicio dt atual            
+            today = new Date();            
+            timeDiff2 = Math.abs(today.getTime() - date1.getTime());
+            diffDays2 = Math.ceil(timeDiff2 / (1000 * 3600 * 24)); 
+            //calcular o valor da progressBar
+            x = (100 * (diffDays2)) / diffDays;           
+            $("#progressDt").css('width',x+'%');
+        }
 
         function consultar(){
 

@@ -64,7 +64,9 @@ Route::get('/clients/{id}/show','ClienteController@showClient');
 Route::get('/clients/novoContrato/{id}','ClienteController@newContract');
 Route::get('/clients/estornarContrato/{id_venda}/{id_pessoa}','ClienteController@estornarContract');
 
+//Parcelas
 Route::get('/clients/buscarParcelas/{id}','ParcelaController@showParcelasVenda');
 Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
-
-//Parcelas 
+Route::get('/clients/pagarParcela/{id}','ParcelaController@payParcela');
+Route::get('/clients/estornarParcela/{id}','ParcelaController@estornarParcela');
+Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');

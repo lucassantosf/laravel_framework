@@ -83,28 +83,8 @@
                         console.log(name,value);
                         $("#modalsPlan").append('<input type="checkbox" value="'+obj["modals"][i]['modal_id']+'" name="modals[]">'+name+' - R$'+value+'<br>');
                         return false;
-                    });
-                    /*
-                    $.each(obj["modals"][i]['modal_id'], function(name,value){
-                        //incluir cada chave e valor no div modals
-                        $("#modalsPlan").append('<input type="checkbox" value="'+obj["modals"][i]['modal_id']+'" name="modals[]">'+name+' - R$'+value+'<br>');
-                          
-                    });*/ 
-                }
-/*
-                $.each(obj["modals"], function(i,modal){
-                    //incluir cada chave e valor no div modals
-                    $.each(modal,function(name,value){
-                        $("#modalsPlan").append('<input type="checkbox" value="'+value+'" name="modals[]">'+name+' - R$'+value+'<br>');
                     }); 
-                }); 
-                
-                $.each(obj["modals"], function(i,modal){
-                    //incluir cada chave e valor no div modals
-                    $.each(modal,function(name,value){
-                        $("#modalsPlan").append('<input type="checkbox" value="'+value+'" name="modals[]">'+name+' - R$'+value+'<br>');
-                    }); 
-                });*/       
+                } 
             }); 
         }         
     </script>

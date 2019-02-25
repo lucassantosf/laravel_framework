@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card">
                 
-                <div class="card-header">Caixa em Aberto</div>
+                <div class="card-header">Caixa em Aberto de {{$cliente->name}}</div>
                 
             </div>
         </div>
