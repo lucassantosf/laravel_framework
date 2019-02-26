@@ -26,7 +26,19 @@ class ParcelaController extends Controller
 
     public function parcelasEmAberto($id){
     	$cliente = Cliente::find($id);
-    	return view('operacao.emAberto',compact('cliente'));
+    	if (isset($cliente)) {
+
+        	$hasVenda = DB::table('vendas')->where('cliente_id',$cliente->id)->first();
+        	
+        	if (isset($hasVenda)) {
+        		
+        		$parcelas = DB::table('parcelas')->where([
+        			['status','Em aberto'],
+        			['venda_id',$hasVenda->id]
+        		])->get();  
+        	} 
+    	}
+    	return view('operacao.emAberto',compact('cliente','parcelas'));
 
     }
 
@@ -44,6 +56,15 @@ class ParcelaController extends Controller
     		$parcela->status = 'Em aberto';
     		$parcela->save();
     	}
+    }
+
+    public function pagarParcelas(Request $request){
+
+    	var_dump($request->input("client_id"));
+    	echo '<br>';
+    	var_dump($request->input("parcela"));
+    	exit();
+    	//return view('operacao.formaPagamentoCaixaAberto'); 
     }
 
 }

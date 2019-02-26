@@ -70,3 +70,4 @@ Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
 Route::get('/clients/pagarParcela/{id}','ParcelaController@payParcela');
 Route::get('/clients/estornarParcela/{id}','ParcelaController@estornarParcela');
 Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');
+Route::post('/clients/caixaAberto/pagarParcela','ParcelaController@pagarParcelas');
