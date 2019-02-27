@@ -16,7 +16,7 @@ class CreatePlanosTable extends Migration
         Schema::create('planos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });

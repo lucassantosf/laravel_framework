@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModalidadesTable extends Migration
+class CreateRecibosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateModalidadesTable extends Migration
      */
     public function up()
     {
-        Schema::create('modalidades', function (Blueprint $table) {
+        Schema::create('recibos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->float('value');
-            $table->integer('freq');
-            $table->boolean('status')->default(false);
+            $table->string('formaPagamento');
+            $table->float('valorRecibo');
+            $table->integer('cliente_id')->unsigned();
+            $table->foreign('cliente_id')->references('id')->on('clientes');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ class CreateModalidadesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modalidades');
+        Schema::dropIfExists('recibos');
     }
 }

@@ -17,7 +17,8 @@ class CreateProdutosTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->float('value');
-            $table->boolean('status');
+            $table->boolean('status')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

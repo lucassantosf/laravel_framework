@@ -35,6 +35,7 @@ class CreateClientesTable extends Migration
             $table->string('uf')->nullable();
             $table->string('city')->nullable();
             $table->string('situaçao')->default('Visitante');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
