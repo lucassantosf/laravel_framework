@@ -29,8 +29,7 @@ class ParcelaController extends Controller
     	$cliente = Cliente::find($id);
     	if (isset($cliente)) {
         	$hasVenda = DB::table('vendas')->where('cliente_id',$cliente->id)->first();        	
-        	if (isset($hasVenda)) {
-        		
+        	if (isset($hasVenda)) {        		
         		$parcelas = DB::table('parcelas')->where([
         			['status','Em aberto'],
         			['venda_id',$hasVenda->id]
@@ -64,33 +63,28 @@ class ParcelaController extends Controller
     }
 
     public function postCaixaAberto(Request $request){
-        //$cliente_id = $request->input("cliente_id");
-        $parcelas = $request->input("parcela");
-        
-        exit();
-        $valorTotal = $request->input("valorTotal");
-        $formaPagamento = $request->input("formaPagamento");
-        var_dump($cliente_id);
-        echo '<br>';
-        var_dump($parcelas);
-        echo '<br>';
-        var_dump($valorTotal);
-        echo '<br>';
-        var_dump($formaPagamento);
-        echo '<br>';
-
+        //Trabalha o post do caixa em aberto apos selecionar a forma de pagamento
+        //gera primeiro o recibo e salva
         $recibo = new Recibo();
         $recibo->cliente_id = $request->input("cliente_id");
         $recibo->formaPagamento = $request->input("formaPagamento");
         $recibo->valorRecibo = $request->input("valorTotal");
         $recibo->save();
-
+        //com o recibo salvo trabalhar em cada parcela para gerar os itens do recibo
+        $parcelas = $request->input("parcela");
         foreach($parcelas as $p){
-            $itemRecibo = new ItemRecibo();
-            echo $p;
-            echo '<br>';
+            $itemRecibo = new ItemRecibo();            
+            //alterar status da parcela
+            $parcela = Parcela::find($p);
+            $parcela->status = 'Pago';
+            $parcela->save();
+            //Gerar os itens do recibo
+            $itemRecibo->recibo_id = $recibo->id;
+            $itemRecibo->parcela_id = $p;
+            $itemRecibo->value = $parcela->value;
+            $itemRecibo->save();
         }
-        exit();
+        return redirect('/clients/'.$recibo->cliente_id.'/show');
     }
 
 }

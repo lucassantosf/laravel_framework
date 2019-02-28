@@ -29,7 +29,6 @@ class AdminLoginController extends Controller
 
     	if($authOk){
     		//deu ok na authenticacao
-    		//
     		return redirect()->intended(route('admin.dash'));
     	}
     	return redirect()->back()->withInputs($request->only('email','remember'));

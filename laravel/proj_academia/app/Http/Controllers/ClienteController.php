@@ -85,19 +85,29 @@ class ClienteController extends Controller
     	$client = Cliente::find($id);
     	if(isset($client)){
             $isAtivo = false;
-            $plano_details;
+            //Verifica se o aluno possui plano
             $planoC = DB::table('vendas')->where([
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->first();
             
+            //Se aluno possuir plano - consultar suas parcelas e detalhes deste plano
             if ($planoC) {
                 $isAtivo = true;
                 $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
                 $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get();
             }
-            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas'));
-    	}
+
+            //Consultar Recibos do cliente
+            $recibos = DB::table('recibos')->where([
+                ['cliente_id',$client->id],
+                ['deleted_at',NULL]
+            ])->get();
+            
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos'));
+    	}else{
+            echo 'Cliente inexistente';
+        }
     }
 
     public function newContract($id){

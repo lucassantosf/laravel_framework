@@ -10,13 +10,13 @@
                 <div class="card-body">
                     @if(isset($client))
                         <div class="alert alert-primary" role="alert">
-                            {{$client->name}}
+                            <h4>{{$client->name}}</h4> 
+                            <h5>matricula {{$client->id}}</h5>                            
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" style="">
+                                Dados Pessoais
+                            </button>
+                            <a href="/clients/caixaAberto/{{$client->id}}" class="btn btn-primary btn-sm">Caixa em Aberto</a>
                         </div> 
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" style="">
-                          Dados Pessoais
-                        </button><br><br>
-                        <a href="/clients/caixaAberto/{{$client->id}}" class="btn btn-primary btn-sm">Caixa em Aberto</a> 
-                        <br><br>
                         <!-- Modal de edição -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -224,14 +224,15 @@
                                 Valor Total Plano: R$ {{$planoC->value_total}} 
                             </div>
                             
-                            <br><br>                            
+                            <br>                            
                         @else
                             <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
                         @endif
+                        
                         <fieldset disabled>
                             <div class="form-row">
                             <input placeholder="Histórico de Parcelas" class="form-control center" style="text-align:center; margin: 0 auto;">
-                                <div id="parcelas_historico">
+                                <div id="parcelas_historico"><br>
                                     @if(isset($parcelas))
                                         @foreach($parcelas as $p)
                                             Cod Parcela - {{$p->id}} - Cod Contrato {{$p->venda_id}} - R$ {{$p->value}} - 
@@ -244,6 +245,25 @@
                                             <br>
                                         @endforeach
                                     @endif                  
+                                </div>
+                            </div>
+                        </fieldset>
+                        <br>
+                        <fieldset disabled>
+                            <div class="form-row">
+                            <input placeholder="Histórico de Pagamentos" class="form-control center" style="text-align:center; margin: 0 auto;">
+                                <div id="#">
+                                    @if(isset($recibos))
+                                        @foreach($recibos as $r)
+                                            Cod Recibo - {{$r->id}} |
+                                            Forma de Pagamento - {{$r->formaPagamento}} |
+                                            Valor Total - {{$r->valorRecibo}} |
+                                            Cliente : {{$client->name}} <br>
+                                        @endforeach
+                                    @else
+                                        <br>
+                                        <label>Este aluno não possui pagamentos</label>
+                                    @endif          
                                 </div>
                             </div>
                         </fieldset>

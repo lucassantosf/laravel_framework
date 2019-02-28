@@ -21,6 +21,7 @@ class CreateRecibosTable extends Migration
             $table->foreign('cliente_id')->references('id')->on('clientes');
             $table->softDeletes();
             $table->timestamps();
+            
         });
     }
 

@@ -21,9 +21,8 @@ if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
                         <div class="form-row">
                             <div class="form-group col-md-8">
                                 <label for="name">Nome*</label>
-                                <input type="text" id="name" name="name" class="form-control" value="" > 
+                                <input type="text" id="name" name="name" class="form-control" value="{‌{ old('name') }}" > 
                             </div>
-                            <!-- {‌{old('name')}} -->
                         </div>
 
                         <div class="form-row">
