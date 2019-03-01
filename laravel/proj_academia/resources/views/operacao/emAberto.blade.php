@@ -20,9 +20,6 @@
                             <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
                             Cod.{{$p->id}}-R$ 
                             <label for="{{$p->id}}">{{$p->value}}</label> <br>
-                            <!--
-                            <input type="checkbox" class="parcela2" name="parcela[]" value="{{$p->id}}">
-                            <input type="hidden" class="parcela" name="parcela[]" value="{{$p->value}}">Cod Parcela {{$p->id}} - R$ {{$p->value}}<br>-->
                         @endforeach
                     @endif
                     </div>

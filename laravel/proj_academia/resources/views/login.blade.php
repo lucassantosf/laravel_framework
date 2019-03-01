@@ -5,7 +5,7 @@
 	<div class="row" id="rowLogin">
 		<div class="col-md-10">
 
-			<h2>Academia System</h2>
+			<h2>Academia System</h2>  
 
 		</div>
 		<div class="col-md-2">

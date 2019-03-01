@@ -252,14 +252,16 @@ class PlanoController extends Controller
         $venda->dt_fim = date('d/m/Y', strtotime("+".$duracao." months") );//somar a duracao a data atual
         $venda->save();
         //salvar cada parcela no banco
+        $cliente = Cliente::find($venda->cliente_id);//procurar o nome do cliente para salvar na parcela
         for($i=0 ; $i<$condicao; $i++){
             $parcela = new Parcela();
             $parcela->venda_id = $venda->id;
+            $parcela->nome_cliente = $cliente->name;
             $parcela->value = $valor_mensal;
-            $parcela->save();
+            $parcela->save(); 
+
         }
         //Tornar aluno ativo
-        $cliente = Cliente::find($venda->cliente_id);
         $cliente->situaçao = 'Ativo';
         $cliente->save();
         $msg = 'Venda realizada com sucesso';

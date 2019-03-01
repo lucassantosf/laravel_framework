@@ -18,11 +18,11 @@ class ParcelaController extends Controller
 
     public function mostrarParcelas(){
         $parcelas = DB::table('parcelas')->where('status','Em aberto')->get();
-        foreach ($parcelas as $p) {
-        	echo 'id '.$p->id.' venda_id '.$p->venda_id.' value '.$p->value.' status '.$p->status.'<br>';
-        }
-        exit();
-    	return view('operacao.emAberto');
+        //foreach ($parcelas as $p) {
+        //	echo 'id '.$p->id.' venda_id '.$p->venda_id.' value '.$p->value.' status '.$p->status.'<br>';
+        //}
+        //exit();
+    	return view('operacao.emAbertoPrincipal',compact('parcelas'));
     }
 
     public function parcelasEmAberto($id){
@@ -85,6 +85,11 @@ class ParcelaController extends Controller
             $itemRecibo->save();
         }
         return redirect('/clients/'.$recibo->cliente_id.'/show');
+    }
+
+    public function buscarParcelasAberto($nome){
+        $parcelas = DB::table('parcelas')->where('nome_cliente','like','%'.$nome.'%')->get();
+        return json_encode($parcelas);
     }
 
 }

@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
 	//Parcelas
 	Route::get('/clients/buscarParcelas/{id}','ParcelaController@showParcelasVenda');
 	Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
+	Route::get('/clients/buscarParcelasAberto/{nome}','ParcelaController@buscarParcelasAberto');
 	Route::get('/clients/pagarParcela/{id}','ParcelaController@payParcela');
 	Route::get('/clients/estornarParcela/{id}','ParcelaController@estornarParcela');
 	Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');
