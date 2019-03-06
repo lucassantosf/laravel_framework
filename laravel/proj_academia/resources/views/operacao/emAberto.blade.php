@@ -12,7 +12,7 @@
                 
                 <div class="card-body">
                     <form action="/clients/caixaAberto/pagarParcela" method="POST"> @csrf
-                    <input type="hidden" name="client_id" value="{{$cliente->id}}">
+                    <input type="hidden" name="cliente_id" value="{{$cliente->id}}">
                     <label class="alert alert-primary">Selecione as parcelas</label><br>
                     <div id="selecionarParcela">
                     @if(isset($parcelas))

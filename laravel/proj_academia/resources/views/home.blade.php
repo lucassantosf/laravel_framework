@@ -2,12 +2,11 @@
 
 @section('content')
 <div class="container">
-
-  Home<br>
-  <a href="/clients/buscarParcelas">Parcelas em Aberto</a><br>
-  Vender Produto/Serviço<br>
-
-    
+	
+	<a href="#">Home</a><br>
+	<a href="/clients/buscarParcelas">Parcelas em Aberto</a><br>
+	<a href="/vendas/view">Vender</a><br>
+     
 </div>
 @endsection
  

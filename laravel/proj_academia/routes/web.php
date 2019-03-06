@@ -73,4 +73,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/clients/caixaAberto/pagarParcela','ParcelaController@pagarParcelas');
 	Route::post('/clients/caixaAberto/post','ParcelaController@postCaixaAberto');
 
+	//Vendas
+	Route::get('/vendas/view','VendaController@returnView');
+
 });

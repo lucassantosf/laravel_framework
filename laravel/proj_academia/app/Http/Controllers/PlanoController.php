@@ -257,6 +257,7 @@ class PlanoController extends Controller
             $parcela = new Parcela();
             $parcela->venda_id = $venda->id;
             $parcela->nome_cliente = $cliente->name;
+            $parcela->cliente_id = $venda->cliente_id;
             $parcela->value = $valor_mensal;
             $parcela->save(); 
 

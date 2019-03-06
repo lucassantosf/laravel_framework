@@ -19,6 +19,8 @@ class CreateParcelasTable extends Migration
             $table->foreign('venda_id')->references('id')->on('vendas');
             $table->float('value');
             $table->string('nome_cliente')->nullable();
+            $table->integer('cliente_id')->unsigned();
+            $table->foreign('cliente_id')->references('id')->on('clientes');
             $table->string('status')->default('Em aberto');
             $table->softDeletes();
             $table->timestamps();

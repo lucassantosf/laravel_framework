@@ -18,19 +18,19 @@
                         <button class="btn btn-dark btn-sm" onclick="limparCampos()">Limpar Campo</button>
                       </div>
                     </div>
+                    <form action="/clients/caixaAberto/pagarParcela" method="POST">
+                        @csrf
+                        <div id="parcelasCliente">
+                            
+                        </div>
 
-                    <div id="parcelasCliente">
-                        
-                    </div>
-
-                    <div id="total"><!-- Incluir valor total -->                        
-                    </div>
-                    
+                        <div id="total"><!-- Incluir valor total -->                        
+                        </div>
                     
                 </div>
                 <div class="card-footer"> 
                     <button type="submit" class="btn btn-sm btn-primary">Pagar</button>
-                    
+                    </form>
                 </div>
             </div>
         </div>
@@ -42,6 +42,7 @@
         
         $(document).ready(function() { 
             //
+            //calcularValorTotal(0);
         });
 
         function buscarParcelas(){
@@ -60,8 +61,11 @@
                         $("#parcelasCliente").html('');   
                         $.each(obj, function(i,item){
                             $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i].id+'" value="'+obj[i].id+'">'+ 'Cod ' + obj[i].id + ' R$ ' + '<label for="'+obj[i].id+'">'+obj[i].value + '</label>'+ ' Responsável ' + obj[i].nome_cliente + '<br>');
+                            $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i].cliente_id+'">');
                         });
                     }
+                    //Chamar aqui o evento de calcular o total das parcelas
+                    calcularValorTotal(0);                    
                 });
             }else{
                 alert('Pesquisa Vazia');
@@ -77,7 +81,6 @@
         function calcularValorTotal(valor){
             total = valor;
             $(".parcela").change(function(){
-                alert('change'); 
                 if($(this).prop("checked") == true){
                     $("#total").html('');                    
                     label = $(this).prop("labels");

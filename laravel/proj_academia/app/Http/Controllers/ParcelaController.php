@@ -17,11 +17,7 @@ class ParcelaController extends Controller
     }
 
     public function mostrarParcelas(){
-        $parcelas = DB::table('parcelas')->where('status','Em aberto')->get();
-        //foreach ($parcelas as $p) {
-        //	echo 'id '.$p->id.' venda_id '.$p->venda_id.' value '.$p->value.' status '.$p->status.'<br>';
-        //}
-        //exit();
+        $parcelas = DB::table('parcelas')->where('status','Em aberto')->get();        
     	return view('operacao.emAbertoPrincipal',compact('parcelas'));
     }
 
@@ -56,7 +52,7 @@ class ParcelaController extends Controller
     }
 
     public function pagarParcelas(Request $request){
-    	$cliente_id = $request->input("client_id");
+    	$cliente_id = $request->input("cliente_id");
         $parcelas =	$request->input("parcela");
         $valorTotal = $request->input("valorTotal");
     	return view('operacao.formaPagamentoCaixaAberto',compact('cliente_id','parcelas','valorTotal'));
@@ -66,6 +62,8 @@ class ParcelaController extends Controller
         //Trabalha o post do caixa em aberto apos selecionar a forma de pagamento
         //gera primeiro o recibo e salva
         $recibo = new Recibo();
+        //var_dump($request->input("cliente_id"));
+        //exit();
         $recibo->cliente_id = $request->input("cliente_id");
         $recibo->formaPagamento = $request->input("formaPagamento");
         $recibo->valorRecibo = $request->input("valorTotal");
@@ -88,7 +86,10 @@ class ParcelaController extends Controller
     }
 
     public function buscarParcelasAberto($nome){
-        $parcelas = DB::table('parcelas')->where('nome_cliente','like','%'.$nome.'%')->get();
+        $parcelas = DB::table('parcelas')->where([
+            ['nome_cliente','like','%'.$nome.'%'],
+            ['status','Em aberto'],
+            ])->get();
         return json_encode($parcelas);
     }
 

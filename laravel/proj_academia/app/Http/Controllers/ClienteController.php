@@ -96,6 +96,8 @@ class ClienteController extends Controller
                 $isAtivo = true;
                 $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
                 $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get();
+                //var_dump($parcelas);
+                //exit();
             }
 
             //Consultar Recibos do cliente

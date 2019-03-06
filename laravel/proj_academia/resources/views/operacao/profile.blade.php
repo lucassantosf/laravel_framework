@@ -295,7 +295,7 @@
 
         function estornarParcela(id){
             $("#"+id).html('Em aberto');            
-            $("#parcelas_historico").append('<a href="#">Estornar</a>');
+            //$("#parcelas_historico").append('<a href="#">Estornar</a>');
             $.get("/clients/estornarParcela/"+id, function(data){
                 console.log('Estornar parcela id '+id);
             });
