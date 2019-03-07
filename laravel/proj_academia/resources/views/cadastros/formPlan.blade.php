@@ -126,7 +126,6 @@
             </div>
         </div>
     @endif
-
     <!-- Form para editar o plano-->
     @if($i==2)
         <div class="col-md-8">

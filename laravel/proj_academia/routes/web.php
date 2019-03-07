@@ -75,5 +75,8 @@ Route::middleware(['auth'])->group(function () {
 
 	//Vendas
 	Route::get('/vendas/view','VendaController@returnView');
-
+	Route::get('/vendas/viewWithClient/{id}/{name}','VendaController@returnViewWithClient');
+	Route::get('/vendas/searchClientByName/{name}','VendaController@getClientsName');
+	Route::get('/vendas/searchProdByName/{name}','VendaController@getProdsName');
+	
 });

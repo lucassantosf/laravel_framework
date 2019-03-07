@@ -21,5 +21,25 @@ class ProdutosSeeder extends Seeder
             'name' => 'Avaliacao Física',
             'value' => 100,
         ]);
+
+        DB::table('produtos')->insert([
+            'name' => 'Avaliacao Dermatologica',
+            'value' => 99,
+        ]);
+
+        DB::table('produtos')->insert([
+            'name' => 'Camisa Azul A',
+            'value' => 30,
+        ]);
+
+        DB::table('produtos')->insert([
+            'name' => 'Garrafinha',
+            'value' => 5,
+        ]);
+
+        DB::table('produtos')->insert([
+            'name' => 'Massagem Tipo 2',
+            'value' => 190,
+        ]);
     }
 }

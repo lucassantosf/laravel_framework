@@ -16,6 +16,7 @@
                                 Dados Pessoais
                             </button>
                             <a href="/clients/caixaAberto/{{$client->id}}" class="btn btn-primary btn-sm">Caixa em Aberto</a>
+                            <a href="/vendas/viewWithClient/{{$client->id}}/{{$client->name}}" class="btn btn-primary btn-sm">Realizar Vendas</a>
                         </div> 
                         <!-- Modal de edição -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
