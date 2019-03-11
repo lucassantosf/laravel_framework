@@ -11,12 +11,13 @@
                     @if(isset($cliente_id))
                         {{$cliente_name}}
                     @else
+                    <form action="/vendas/viewPost" method="POST">@csrf
                         <div class="input-group input-group-sm mb-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanCliente">Escolha um cliente</span>
                             </div>
-                            <input type="text" class="form-control" id="nomeCliente">
-                            <select class="form-control" id="nomesClientes">    
+                            <input type="text" class="form-control" id="nomeCliente" name="nomeCliente">
+                            <select class="form-control" id="nomesClientes" name="nomesClientes">    
                                 <!-- Incluir nomes pesquisados -->     
                             </select>
                         </div><hr>
@@ -24,7 +25,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanProduto">Escolher produtos</span>
                             </div>
-                            <input type="text" class="form-control" id="nomeProduto">
+                            <input type="text" class="form-control" id="nomeProduto" disabled>
                             <select class="form-control" id="nomesProdutos">
                                 <!-- Produtos incluidos ao ser pesquisado -->
                             </select>
@@ -52,7 +53,8 @@
                 </div>
 
                 <div class="card-footer">
-                    <button class="btn btn-primary btn-sm">Confirmar Venda</button>
+                    <button class="btn btn-primary btn-sm" type="submit">Confirmar Venda</button>
+                    </form>
                 </div>
                  
             </div>
@@ -68,6 +70,8 @@
             let lastProductValue;
             let valueTotal;
             let memoryBeforeDesconto;
+            let memoryDesconto;
+
             setValueTotal(0);
             carregarSelectClientes();
             carregarSelectProdutos();
@@ -93,6 +97,12 @@
         function setmemoryBeforeDesconto(valor){
             this.memoryBeforeDesconto = valor;
         }
+        function getMemoryDesconto(){
+            return parseFloat(this.memoryDesconto);
+        }
+        function setMemoryDesconto(valor){
+            this.memoryDesconto = valor;
+        }
         //Adicionar produto selecionado na tabela de produtos
         function addProductOnTable(){
             $('#add_modal').on("click",function(e) {
@@ -102,9 +112,10 @@
                 var itemSelecionado = $("#nomesProdutos option:selected").val();
                 $('#produtos').append('<tr>'+
                                           '<td><input type="hidden" name="modals[]" value="'+itemSelecionado+'">'+texto+'</td>'+
-                                          '<td><input type="button" class="btn-danger excluir" id="excluir" value="-" onclick="remover(this,'+valorSelected+')"></td>'+             
+                                          '<td><input type="button" class="btn-danger excluir" id="excluir" value="x" onclick="remover(this,'+valorSelected+')"></td>'+             
                 '</tr>');
                 setValueTotal(getValueTotal() + getLastProductValue());
+                setmemoryBeforeDesconto(getValueTotal());
                 $("#vlTotal").val(getValueTotal());
                 $("#desconto").prop("disabled", false);
             });
@@ -128,11 +139,18 @@
             var timeout = null;
             // Listen for keystroke events
             nomeCliente.onkeyup = function (e) {
-                // Clear the timeout if it has already been set.
-                // This will prevent the previous task from executing
-                // if it has been less than <MILLISECONDS>
+                //Se nome estiver vazio desabilitar campo pesquisa de produtos
+                if (nomeCliente == '') {
+                    $("#nomeProduto").prop("disabled", true);    
+                    return false;                                    
+                }
+                //Habilitar campo de pesquisa para produtos
+                $("#nomeProduto").prop("disabled", false);
+                    // Clear the timeout if it has already been set.
+                    // This will prevent the previous task from executing
+                    // if it has been less than <MILLISECONDS>
                 clearTimeout(timeout);
-                // Make a new timeout set to go off in 800ms
+                    // Make a new timeout set to go off in 800ms
                 timeout = setTimeout(function () {
                     limparSelectClient();         
                     $.get("/vendas/searchClientByName/"+textInput.value, function(data){
@@ -141,6 +159,7 @@
                         }
                     });
                 }, 500);
+                
             };
         }
         //Adicionar options em select de acordo ao pesquisado pelo user        
@@ -148,6 +167,10 @@
             var textInput = document.getElementById('nomeProduto');
             var timeout = null;
             nomeProduto.onkeyup = function (e) {
+                //Se pesquisa de produtos ficar vazia não consumir pesquisa
+                if (nomeProduto == '') {
+                    return false;                                    
+                }
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
                     limparSelectProduct();         
@@ -163,7 +186,11 @@
         function remover(data, valor){
             //console.log(data);
             $(data).parents('tr').remove();
-            setValueTotal(getValueTotal() - valor);
+            
+            valorTotalNow = $('#vlTotal').val();
+            setValueTotal(valorTotalNow - valor);
+            //setValueTotal(getmemoryBeforeDesconto());
+
             $("#vlTotal").val(getValueTotal());
         } 
         //Irá pegar o valor atual do ultimo produto pesquisado
@@ -172,25 +199,31 @@
             //console.log('Last valor ' + this.lastProductValue);
             $('#vlTotal').append(valor);
         }
-
-        //Listen Desconto -- CONTINUAR AQUI
+        //Listen Desconto
         function listenDesconto(){ 
             var desconto = document.getElementById('desconto');
             var timeout = null;
             desconto.onkeyup = function (e) {
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
-                    setmemoryBeforeDesconto(getValueTotal());
-                    console.log(getmemoryBeforeDesconto());
                     if(!desconto.value == ''){
-                        setValueTotal(getValueTotal() - desconto.value);   
-                        $("#vlTotal").val(getValueTotal());       
+                        if((getValueTotal() - desconto.value) < 0){
+                            alert('Valor desconto impossível');
+                            setMemoryDesconto(0);
+                            setValueTotal(getmemoryBeforeDesconto());
+                        }else{
+                            setMemoryDesconto(desconto.value);
+                            setValueTotal(getValueTotal() - getMemoryDesconto());  
+                        }
+                        //$("#vlTotal").val(getValueTotal());  
                     }else{
-                        setmemoryBeforeDesconto(getmemoryBeforeDesconto());
-                        $("#vlTotal").val(getmemoryBeforeDesconto()); 
+                        //$("#vlTotal").val(getmemoryBeforeDesconto()); 
                     }   
-                }, 500);
+                    $("#vlTotal").val(getValueTotal());  
 
+                    setmemoryBeforeDesconto(getmemoryBeforeDesconto());
+                    setValueTotal(getmemoryBeforeDesconto());
+                }, 500);
             };
         }
     </script>

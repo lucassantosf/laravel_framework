@@ -25,4 +25,9 @@ class VendaController extends Controller
         $names = DB::table('produtos')->where('name','LIKE','%'.$name.'%')->orderBy('name')->get();
         return $names;
     }
+
+    public function postVenda(Request $request){
+    	echo 'Id cliente'.$request->input("nomesClientes");
+    	exit(); 
+    }
 }
