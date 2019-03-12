@@ -11,7 +11,7 @@
                     @if(isset($cliente_id))
                         {{$cliente_name}}
                     @else
-                    <form action="/vendas/viewPost" method="POST">@csrf
+                    <form action="/vendas/viewPost" method="POST" id="formVenda">@csrf
                         <div class="input-group input-group-sm mb-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanCliente">Escolha um cliente</span>
@@ -26,21 +26,19 @@
                                 <span class="input-group-text" id="spanProduto">Escolher produtos</span>
                             </div>
                             <input type="text" class="form-control" id="nomeProduto" disabled>
-                            <select class="form-control" id="nomesProdutos">
+                            <select class="form-control" id="nomesProdutos" name="produto">
                                 <!-- Produtos incluidos ao ser pesquisado -->
                             </select>
-                            <input type="button" id="add_modal" class="btn btn-primary btn-sm" value="+">
+                            <input type="button" id="add_prod" class="btn btn-primary btn-sm" value="+" disabled>
                         </div><br>
-                        <table class="table" id="produtos">
-                            <tbody>  
-                                <!-- Produtos incluido dinamicamente -->     
-                            </tbody>
-                        </table><hr>
+                        <table class="table table-hover" id="produtos">                              
+                            <!-- Produtos incluido dinamicamente -->  
+                        </table>
                         <div class="input-group input-group-sm">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanDesconto">Desconto</span>
                             </div>
-                            <input type="text" class="form-control" id="desconto" name="desconto" disabled>                             
+                            <input type="text" class="form-control" id="desconto" name="desconto" disabled>
                         </div>
                         <hr>
                         <div class="input-group input-group-sm">
@@ -71,14 +69,34 @@
             let valueTotal;
             let memoryBeforeDesconto;
             let memoryDesconto;
+            let contador;
 
+            initCampos();
             setValueTotal(0);
+            setContador(0);
             carregarSelectClientes();
             carregarSelectProdutos();
             addProductOnTable();
             listenDesconto();
+
+            //Impedir submit da venda sem dados
+            $("#formVenda").submit(function( event ) {
+                cli = $("#nomesClientes option:selected").val();
+                linhasTable = $('#produtos tr').length;
+                vl = $("#vlTotal").val();
+                if(!cli || !vl || linhasTable<=0){
+                    alert('Venda sem informações obrigatórias');
+                    return false;
+                }
+            });
         });
         //Área de Getters e Setters
+        function getContador(){
+            return parseFloat(this.contador);
+        }
+        function setContador(valor){
+            this.contador = valor;
+        }
         function getLastProductValue(){
             return parseFloat(this.lastProductValue);
         }
@@ -103,16 +121,25 @@
         function setMemoryDesconto(valor){
             this.memoryDesconto = valor;
         }
+        //Zerar campos no back
+        function initCampos(){
+            $("#nomeCliente").val('');
+            $("#nomeProduto").val('');
+            $("#desconto").val('');
+            $("#vlTotal").val('');
+        }
         //Adicionar produto selecionado na tabela de produtos
         function addProductOnTable(){
-            $('#add_modal').on("click",function(e) {
+            $('#add_prod').on("click",function(e) {
                 var texto = $("#nomesProdutos option:selected").text(); 
                 valorSelected  = $("#nomesProdutos option:selected").data("valor"); 
                 setLastProductValue(valorSelected); 
+                setContador(getContador() + valorSelected);
                 var itemSelecionado = $("#nomesProdutos option:selected").val();
-                $('#produtos').append('<tr>'+
-                                          '<td><input type="hidden" name="modals[]" value="'+itemSelecionado+'">'+texto+'</td>'+
-                                          '<td><input type="button" class="btn-danger excluir" id="excluir" value="x" onclick="remover(this,'+valorSelected+')"></td>'+             
+                $('#produtos').append('<tr class="table-primary">'+
+                                        '<td>R$ '+valorSelected+'</td>'+
+                                        '<td><input type="hidden" name="prods[]" value="'+itemSelecionado+'">'+texto+'</td>'+
+                                        '<td><input type="button" class="btn-danger excluir" id="excluir" value="x" onclick="remover(this,'+valorSelected+')"></td>'+
                 '</tr>');
                 setValueTotal(getValueTotal() + getLastProductValue());
                 setmemoryBeforeDesconto(getValueTotal());
@@ -158,8 +185,7 @@
                             $("#nomesClientes").append('<option value="'+data[i].id+'">'+data[i].name+'</option>');
                         }
                     });
-                }, 500);
-                
+                }, 500);                
             };
         }
         //Adicionar options em select de acordo ao pesquisado pelo user        
@@ -169,12 +195,14 @@
             nomeProduto.onkeyup = function (e) {
                 //Se pesquisa de produtos ficar vazia não consumir pesquisa
                 if (nomeProduto == '') {
+                    $("#add_prod").prop("disabled", true); 
                     return false;                                    
                 }
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
                     limparSelectProduct();         
                     $.get("/vendas/searchProdByName/"+textInput.value, function(data){
+                        $("#add_prod").prop("disabled", false);    
                         for (i = 0; i < data.length; i++) {                   
                             $("#nomesProdutos").append('<option value="'+data[i].id+'" data-valor="'+data[i].value+'">'+data[i].name+'</option>');
                         }
@@ -184,21 +212,19 @@
         }         
         //Remover linhas da tabela de produtos
         function remover(data, valor){
-            //console.log(data);
-            $(data).parents('tr').remove();
-            
+            $(data).parents('tr').remove();            
             valorTotalNow = $('#vlTotal').val();
             setValueTotal(valorTotalNow - valor);
-            //setValueTotal(getmemoryBeforeDesconto());
-
+            setContador(getContador() - valor);
+            //Caso produtos removidos somarem negativo tudo é zerado
+            if(getValueTotal() < 0){
+                setValueTotal(0);
+                setmemoryBeforeDesconto(0);
+                setLastProductValue(0);
+                setContador(0);
+            }
             $("#vlTotal").val(getValueTotal());
-        } 
-        //Irá pegar o valor atual do ultimo produto pesquisado
-        function valorAtual(valor){
-            this.lastProductValue = valor;
-            //console.log('Last valor ' + this.lastProductValue);
-            $('#vlTotal').append(valor);
-        }
+        }         
         //Listen Desconto
         function listenDesconto(){ 
             var desconto = document.getElementById('desconto');
@@ -207,22 +233,21 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(function () {
                     if(!desconto.value == ''){
-                        if((getValueTotal() - desconto.value) < 0){
+                        if((getContador() - desconto.value) < 0){
                             alert('Valor desconto impossível');
                             setMemoryDesconto(0);
-                            setValueTotal(getmemoryBeforeDesconto());
+                            setValueTotal(getmemoryBeforeDesconto());                            
                         }else{
-                            setMemoryDesconto(desconto.value);
-                            setValueTotal(getValueTotal() - getMemoryDesconto());  
+                            setMemoryDesconto(desconto.value); 
+                            setValueTotal(getContador() - getMemoryDesconto());  
+                            $("#vlTotal").val(getValueTotal()); 
                         }
-                        //$("#vlTotal").val(getValueTotal());  
                     }else{
-                        //$("#vlTotal").val(getmemoryBeforeDesconto()); 
+                        $("#vlTotal").val(getContador()); 
+                        setMemoryDesconto(0);    
+                        setValueTotal(getContador());                    
                     }   
-                    $("#vlTotal").val(getValueTotal());  
-
                     setmemoryBeforeDesconto(getmemoryBeforeDesconto());
-                    setValueTotal(getmemoryBeforeDesconto());
                 }, 500);
             };
         }

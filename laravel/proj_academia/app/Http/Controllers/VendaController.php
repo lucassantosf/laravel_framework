@@ -27,7 +27,12 @@ class VendaController extends Controller
     }
 
     public function postVenda(Request $request){
-    	echo 'Id cliente'.$request->input("nomesClientes");
+    	echo 'Id cliente '.$request->input("nomesClientes").'<br>';
+    	var_dump($request->input("prods"));
+    	echo '<br>';
+    	echo 'Desconto '.$request->input("desconto").'<br>';
+    	echo 'Valor Total '.$request->input("vlTotal").'<br>';
+    	
     	exit(); 
     }
 }
