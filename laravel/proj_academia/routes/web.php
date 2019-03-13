@@ -15,8 +15,6 @@ Route::get('/admin/login', 'Auth\AdminLoginController@index')->name('admin.login
 
 Route::post('/admin/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
 
-//Route::get('/teste','LoginController@index');
-
 Route::middleware(['auth'])->group(function () {
 	// Cadastros
 	Route::get('/cadastros/users','CadastrosController@indexUser');
@@ -79,5 +77,4 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/vendas/viewWithClient/{id}/{name}','VendaController@returnViewWithClient');
 	Route::get('/vendas/searchClientByName/{name}','VendaController@getClientsName');
 	Route::get('/vendas/searchProdByName/{name}','VendaController@getProdsName');
-	
 });

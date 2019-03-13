@@ -5,27 +5,32 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Realizar Venda < <a href="/home">Voltar</a></div>
-
-                <div class="card-body">
                     @if(isset($cliente_id))
-                        {{$cliente_name}}
+                    <div class="card-header">Realizar Venda</div>
+                    <div class="card-body">
+                    <form action="/vendas/viewPost" method="POST" id="formVenda">@csrf                        
+                        <input type="hidden" class="form-control" id="nomesClientes" name="nomesClientes" value="{{$cliente_id}}">
+                        <h2><a href="/clients/{{$cliente_id}}/show" class="badge badge-info" id="nomeCliente" name="nomeCliente">{{$cliente_name}}</a></h2>  
+                        <br>
                     @else
+                    <div class="card-header">Realizar Venda < <a href="/home">Voltar</a></div>
+                    <div class="card-body">
                     <form action="/vendas/viewPost" method="POST" id="formVenda">@csrf
                         <div class="input-group input-group-sm mb-12">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="spanCliente">Escolha um cliente</span>
+                                    <span class="input-group-text" id="spanCliente">Escolha um cliente</span>
                             </div>
                             <input type="text" class="form-control" id="nomeCliente" name="nomeCliente">
                             <select class="form-control" id="nomesClientes" name="nomesClientes">    
-                                <!-- Incluir nomes pesquisados -->     
+                                    <!-- Incluir nomes pesquisados -->     
                             </select>
                         </div><hr>
+                    @endif
                         <div class="input-group input-group-sm mb-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanProduto">Escolher produtos</span>
                             </div>
-                            <input type="text" class="form-control" id="nomeProduto" disabled>
+                            <input type="text" class="form-control" id="nomeProduto" @if(!isset($cliente_id)) disabled @endif>
                             <select class="form-control" id="nomesProdutos" name="produto">
                                 <!-- Produtos incluidos ao ser pesquisado -->
                             </select>
@@ -47,11 +52,10 @@
                             </div>
                             <input type="text" class="form-control" id="vlTotal" name="vlTotal">                             
                         </div>
-                    @endif
                 </div>
 
                 <div class="card-footer">
-                    <button class="btn btn-primary btn-sm" type="submit">Confirmar Venda</button>
+                    <button class="btn btn-primary btn-sm" type="submit" @if(isset($cliente_id)) onclick="validarCamposOnSubmit(true)" @else onclick="validarCamposOnSubmit(false)" @endif >Confirmar Venda</button>     
                     </form>
                 </div>
                  
@@ -79,16 +83,7 @@
             addProductOnTable();
             listenDesconto();
 
-            //Impedir submit da venda sem dados
-            $("#formVenda").submit(function( event ) {
-                cli = $("#nomesClientes option:selected").val();
-                linhasTable = $('#produtos tr').length;
-                vl = $("#vlTotal").val();
-                if(!cli || !vl || linhasTable<=0){
-                    alert('Venda sem informações obrigatórias');
-                    return false;
-                }
-            });
+            
         });
         //Área de Getters e Setters
         function getContador(){
@@ -120,6 +115,23 @@
         }
         function setMemoryDesconto(valor){
             this.memoryDesconto = valor;
+        }
+        //Validar campos no onsubmit e impedir submit da venda sem dados
+        function validarCamposOnSubmit(hasCliente){
+            $("#formVenda").submit(function(e) {
+                e.preventDefault();
+                linhasTable = $('#produtos tr').length;
+                vl = $("#vlTotal").val();
+                if(hasCliente) {
+                    cli = $("#nomesClientes").val();  
+                }else{
+                    cli = $("#nomesClientes option:selected").val(); 
+                }
+                if(!cli || !vl || linhasTable<=0){
+                    console.log('Venda sem informações obrigatórias');
+                    return false;
+                }
+            });
         }
         //Zerar campos no back
         function initCampos(){
