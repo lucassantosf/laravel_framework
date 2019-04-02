@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
 class VendaController extends Controller
 {
     public function returnView(){
@@ -26,13 +25,4 @@ class VendaController extends Controller
         return $names;
     }
 
-    public function postVenda(Request $request){
-    	echo 'Id cliente '.$request->input("nomesClientes").'<br>';
-    	var_dump($request->input("prods"));
-    	echo '<br>';
-    	echo 'Desconto '.$request->input("desconto").'<br>';
-    	echo 'Valor Total '.$request->input("vlTotal").'<br>';
-    	
-    	exit(); 
-    }
 }

@@ -50,7 +50,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="spanVlTotal">Valor Total</span>
                             </div>
-                            <input type="text" class="form-control" id="vlTotal" name="vlTotal">                             
+                            <input type="text" class="form-control" id="vlTotal" name="vlTotal">
                         </div>
                 </div>
 
@@ -82,7 +82,6 @@
             carregarSelectProdutos();
             addProductOnTable();
             listenDesconto();
-
             
         });
         //Área de Getters e Setters
@@ -119,19 +118,19 @@
         //Validar campos no onsubmit e impedir submit da venda sem dados
         function validarCamposOnSubmit(hasCliente){
             $("#formVenda").submit(function(e) {
-                e.preventDefault();
                 linhasTable = $('#produtos tr').length;
                 vl = $("#vlTotal").val();
                 if(hasCliente) {
-                    cli = $("#nomesClientes").val();  
+                    cli = $("#nomesClientes").val();                      
                 }else{
-                    cli = $("#nomesClientes option:selected").val(); 
+                    cli = $("#nomesClientes option:selected").val();                    
                 }
                 if(!cli || !vl || linhasTable<=0){
-                    console.log('Venda sem informações obrigatórias');
+                    console.log('Informações obrigatórias pendente!');
                     return false;
                 }
             });
+
         }
         //Zerar campos no back
         function initCampos(){

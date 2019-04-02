@@ -62,8 +62,6 @@ class ParcelaController extends Controller
         //Trabalha o post do caixa em aberto apos selecionar a forma de pagamento
         //gera primeiro o recibo e salva
         $recibo = new Recibo();
-        //var_dump($request->input("cliente_id"));
-        //exit();
         $recibo->cliente_id = $request->input("cliente_id");
         $recibo->formaPagamento = $request->input("formaPagamento");
         $recibo->valorRecibo = $request->input("valorTotal");

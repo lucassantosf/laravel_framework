@@ -15,7 +15,7 @@ class CreateVendaAvulsasTable extends Migration
     {
         Schema::create('venda_avulsas', function (Blueprint $table) {
             $table->increments('id');
-            $table->float('desconto');
+            $table->float('desconto')->nullable();
             $table->float('value');
             $table->softDeletes();
             $table->timestamps(); 
