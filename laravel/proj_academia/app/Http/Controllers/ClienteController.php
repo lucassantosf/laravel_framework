@@ -8,6 +8,7 @@ use App\Cliente;
 use App\Plano;
 use App\Modalidade;
 use App\Venda;
+use App\Produto;
 
 class ClienteController extends Controller
 {
@@ -105,8 +106,33 @@ class ClienteController extends Controller
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->get();
-            
-            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos'));
+
+            //Consultar Histórico de Compras de Vendas Avulsas
+            $compras = DB::table('venda_avulsas')->where([
+                ['cliente_id',$client->id],
+                ['deleted_at',NULL]
+            ])->get();
+
+            $nomesprods = [];
+
+            if(count($compras) > 0){
+                //Para cada venda avulsa, consultar tabela itens venda avulsas
+                foreach ($compras as $c) {
+                    // $c->id) id de cada compra
+                    $itens = DB::table('item_venda_avulsas')->where([
+                        ['venda_avulsa_id',$c->id],
+                        ['deleted_at',NULL]
+                    ])->get();   
+                    foreach ($itens as $i) {
+                        //Adicionar no array nome_produtos_comprados o nome de cada vendido
+                        array_push($nomesprods, $i->descricao_produto);
+                    }
+                }
+            }else{
+                echo 'Sem compras realizadas';
+            }
+
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods'));
     	}else{
             echo 'Cliente inexistente';
         }

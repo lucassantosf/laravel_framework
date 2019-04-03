@@ -51,7 +51,6 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/cadastros/plans/postVenda','PlanoController@postVenda');
 
 	// Relatórios
-
 	// Clientes e Incluir Clientes
 	Route::get('/clients','ClienteController@indexClients');
 	Route::get('/incluir/clients','ClienteController@indexClientsAdd');

@@ -252,6 +252,28 @@
                         <br>
                         <fieldset disabled>
                             <div class="form-row">
+                            <input placeholder="Histórico de Compras" class="form-control center" style="text-align:center; margin: 0 auto;"> 
+                            </div>
+                        </fieldset>
+                        <div id="#">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            @if(isset($nomesprods))
+                                                @foreach($nomesprods as $c)
+                                                    <tr>
+                                                        <td style="text-align: center">{{$c}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                    <tr>
+                                                        <td>Sem compras realizadas ainda!</td>
+                                                    </tr>
+                                            @endif              
+                                      </tbody>
+                                    </table>                                          
+                                </div>
+                        <fieldset disabled>
+                            <div class="form-row">
                             <input placeholder="Histórico de Pagamentos" class="form-control center" style="text-align:center; margin: 0 auto;">
                                 <div id="#">
                                     @if(isset($recibos))

@@ -17,6 +17,7 @@ class CreateItemVendaAvulsasTable extends Migration
             $table->increments('id');
             $table->integer('produto_id')->unsigned();
             $table->foreign('produto_id')->references('id')->on('produtos');
+            $table->string('descricao_produto');
             $table->integer('venda_avulsa_id')->unsigned();
             $table->foreign('venda_avulsa_id')->references('id')->on('venda_avulsas');
             $table->softDeletes();

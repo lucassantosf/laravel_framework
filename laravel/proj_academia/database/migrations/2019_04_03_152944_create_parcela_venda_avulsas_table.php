@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVendaAvulsasTable extends Migration
+class CreateParcelaVendaAvulsasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,17 @@ class CreateVendaAvulsasTable extends Migration
      */
     public function up()
     {
-        Schema::create('venda_avulsas', function (Blueprint $table) {
+        Schema::create('parcela_venda_avulsas', function (Blueprint $table) {
             $table->increments('id');
-            $table->float('desconto')->nullable();
+            $table->integer('venda_avulsa_id')->unsigned();
+            $table->foreign('venda_avulsa_id')->references('id')->on('venda_avulsas');
             $table->float('value');
+            $table->string('nome_cliente')->nullable();
             $table->integer('cliente_id')->unsigned();
             $table->foreign('cliente_id')->references('id')->on('clientes');
+            $table->string('status')->default('Em aberto');
             $table->softDeletes();
-            $table->timestamps(); 
+            $table->timestamps();
         });
     }
 
@@ -31,6 +34,6 @@ class CreateVendaAvulsasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('venda_avulsas');
+        Schema::dropIfExists('parcela_venda_avulsas');
     }
 }
