@@ -9,6 +9,7 @@ use App\Plano;
 use App\Modalidade;
 use App\Venda;
 use App\Produto;
+use App\Recibo;
 
 class ClienteController extends Controller
 {
@@ -83,6 +84,7 @@ class ClienteController extends Controller
     }
 
     public function showClient($id){
+
     	$client = Cliente::find($id);
     	if(isset($client)){
             $isAtivo = false;
@@ -91,14 +93,12 @@ class ClienteController extends Controller
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->first();
-            
+
             //Se aluno possuir plano - consultar suas parcelas e detalhes deste plano
             if ($planoC) {
                 $isAtivo = true;
                 $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
-                $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get();
-                //var_dump($parcelas);
-                //exit();
+                $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get(); 
             }
 
             //Consultar Recibos do cliente
@@ -118,7 +118,7 @@ class ClienteController extends Controller
             if(count($compras) > 0){
                 //Para cada venda avulsa, consultar tabela itens venda avulsas
                 foreach ($compras as $c) {
-                    // $c->id) id de cada compra
+                    // $c->id é id de cada compra
                     $itens = DB::table('item_venda_avulsas')->where([
                         ['venda_avulsa_id',$c->id],
                         ['deleted_at',NULL]
@@ -128,11 +128,14 @@ class ClienteController extends Controller
                         array_push($nomesprods, $i->descricao_produto);
                     }
                 }
-            }else{
-                echo 'Sem compras realizadas';
-            }
+            } 
 
-            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods'));
+            //Consultar parcelas de vendas avulsas
+            $parcelas_vendas_avulsas = DB::table('parcela_venda_avulsas')->where('cliente_id',$client->id)->get();
+            //var_dump($parcelas_vendas_avulsas);
+            //exit();
+            
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods','parcelas_vendas_avulsas'));
     	}else{
             echo 'Cliente inexistente';
         }
@@ -159,7 +162,14 @@ class ClienteController extends Controller
                 $cliente->situaçao = 'Visitante'; 
                 $cliente->save();
                 $venda->delete();
-                
+                //Estornar os recibos vinculados à venda
+                $recibos = DB::table('recibos')->where('venda_id', $venda->id)->get();                 
+                foreach ($recibos as $r) {
+                    $recibo = Recibo::find($r->id);
+                    if(isset($recibo)){
+                        $recibo->delete();
+                    }
+                }
             }catch(Exception $e){
                 return redirect('/cadastros/plans');
             }

@@ -231,47 +231,67 @@
                         @endif
                         
                         <fieldset disabled>
-                            <div class="form-row">
                             <input placeholder="Histórico de Parcelas" class="form-control center" style="text-align:center; margin: 0 auto;">
-                                <div id="parcelas_historico"><br>
-                                    @if(isset($parcelas))
-                                        @foreach($parcelas as $p)
-                                            Cod Parcela - {{$p->id}} - Cod Contrato {{$p->venda_id}} - R$ {{$p->value}} - 
-                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>
-                                            
-                                            @if( ($p->status) != 'Em aberto' )
-                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
-                                            @endif
-
-                                            <br>
-                                        @endforeach
-                                    @endif                  
-                                </div>
-                            </div>
                         </fieldset>
-                        <br>
+                                <div id="parcelas_historico">
+                                    <table class="table table-hover">                                        
+                                        <tbody>                                        
+                                            @if(isset($parcelas))
+                                                @foreach($parcelas as $p)
+                                                    <tr>
+                                                        <td>Cod Parcela {{$p->id}}</td>
+                                                        <td>Cod Contrato {{$p->venda_id}}</td>
+                                                        <td>R${{$p->value}}</td>
+                                                        <td>
+                                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>
+                                                            @if( ($p->status) != 'Em aberto' )
+                                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
+                                                            @endif
+                                                        </td> 
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        
+                                            @if(isset($parcelas_vendas_avulsas))
+                                                @foreach($parcelas_vendas_avulsas as $p)
+                                                    <tr>
+                                                        <td>Cod Parcela {{$p->id}}</td>
+                                                        <td>Cod Venda {{$p->venda_avulsa_id}}</td>
+                                                        <td>R${{$p->value}}</td>
+                                                        <td>
+                                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>                                            
+                                                            @if( ($p->status) != 'Em aberto' )
+                                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
+                                                            @endif
+                                                        </td> 
+                                                    </tr>                                             
+                                                @endforeach
+                                            @endif    
+                                        </tbody>
+                                    </table>              
+                                </div>
                         <fieldset disabled>
                             <div class="form-row">
                             <input placeholder="Histórico de Compras" class="form-control center" style="text-align:center; margin: 0 auto;"> 
                             </div>
                         </fieldset>
                         <div id="#">
-                                    <table class="table table-hover">
-                                        <tbody>
-                                            @if(isset($nomesprods))
-                                                @foreach($nomesprods as $c)
-                                                    <tr>
-                                                        <td style="text-align: center">{{$c}}</td>
-                                                    </tr>
-                                                @endforeach
-                                            @else
-                                                    <tr>
-                                                        <td>Sem compras realizadas ainda!</td>
-                                                    </tr>
-                                            @endif              
-                                      </tbody>
-                                    </table>                                          
-                                </div>
+                            <table class="table table-hover">
+                                <tbody>
+                                    @if(isset($nomesprods))
+                                        @foreach($nomesprods as $c)
+                                            <tr>
+                                                <td style="text-align: center">{{$c}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td>Sem compras realizadas ainda!</td>
+                                        </tr>
+                                    @endif              
+                              </tbody>
+                            </table>                                          
+                        </div>
                         <fieldset disabled>
                             <div class="form-row">
                             <input placeholder="Histórico de Pagamentos" class="form-control center" style="text-align:center; margin: 0 auto;">
@@ -301,11 +321,12 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
     <script type="text/javascript">
         
-        $(document).ready(function() {   
-             
+        $(document).ready(function() {                
             mascaraCampos();
+            //Se for ativo mostrar progressBar duracao do contrato
+            @if($isAtivo)
             progressBarDuracao(); 
- 
+            @endif 
         });
 
         function pagarParcela(id){

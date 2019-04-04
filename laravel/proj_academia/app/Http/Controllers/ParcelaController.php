@@ -65,7 +65,15 @@ class ParcelaController extends Controller
         $recibo->cliente_id = $request->input("cliente_id");
         $recibo->formaPagamento = $request->input("formaPagamento");
         $recibo->valorRecibo = $request->input("valorTotal");
+
+        $lastVenda = DB::table('vendas')->where([
+            ['cliente_id',$recibo->cliente_id],
+            ['deleted_at',NULL],
+            ])->latest()->first();
+        
+        $recibo->venda_id = $lastVenda->id;        
         $recibo->save();
+
         //com o recibo salvo trabalhar em cada parcela para gerar os itens do recibo
         $parcelas = $request->input("parcela");
         foreach($parcelas as $p){

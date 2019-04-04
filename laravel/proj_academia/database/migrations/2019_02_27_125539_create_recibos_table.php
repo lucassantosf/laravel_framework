@@ -19,6 +19,8 @@ class CreateRecibosTable extends Migration
             $table->float('valorRecibo');
             $table->integer('cliente_id')->unsigned();
             $table->foreign('cliente_id')->references('id')->on('clientes');
+            $table->integer('venda_id')->unsigned();
+            $table->foreign('venda_id')->references('id')->on('vendas');
             $table->softDeletes();
             $table->timestamps();
             
