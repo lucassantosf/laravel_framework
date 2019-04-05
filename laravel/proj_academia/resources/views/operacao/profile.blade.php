@@ -3,10 +3,9 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-header">Detalhes de Cliente < <a href="/clients">Voltar</a></div>
-
                 <div class="card-body">
                     @if(isset($client))
                         <div class="alert alert-primary" role="alert">
@@ -203,113 +202,115 @@
                                 </form>
                             </div>
                         </div>
-
-                        <fieldset disabled>
-                            <div class="form-row">
-                            <input placeholder="Planos" class="form-control center" style="text-align:center; margin: 0 auto;">
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills_planos_historico" data-toggle="pill" href="#planos_historico" role="tab" aria-controls="pills-home" aria-selected="true">Planos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#parcelas_historico" role="tab" aria-controls="pills-profile" aria-selected="false">Histórico de Parcelas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#compras_historico" role="tab" aria-controls="pills-profile" aria-selected="false">Histórico de Compras</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#recibos_historico" role="tab" aria-controls="pills-profile" aria-selected="false">Histórico de Pagamentos</a>
+                            </li> 
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="planos_historico" role="tabpanel" aria-labelledby="pills_planos_historico">
+                                @if($isAtivo)
+                                    <br>
+                                    <div class="alert alert-primary" role="alert">
+                                        {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-outline-danger btn-sm">Estornar</a>
+                                    </div>
+                                    <div class="alert alert-primary" style="text-align:center; margin: 0 auto;" role="alert">
+                                        Duração do contrato<br>
+                                        <label id="dt_inicio">{{$planoC->dt_inicio}} - </label>
+                                        <label id="dt_fim">{{$planoC->dt_fim}}</label>
+                                        <div class="progress">
+                                          <div class="progress-bar bg-success" role="progressbar"  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="progressDt"></div>
+                                        </div>
+                                    </div><br>                            
+                                    <div class="alert alert-primary" role="alert">
+                                        Valor Total Plano: R$ {{$planoC->value_total}} 
+                                    </div>          
+                                @else <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
+                                @endif 
                             </div>
-                        </fieldset><br>
-                        @if($isAtivo)
-                            <div class="alert alert-primary" role="alert">
-                                {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-outline-danger btn-sm">Estornar</a>
-                            </div>
-                            <div class="alert alert-primary" style="text-align:center; margin: 0 auto;" role="alert">
-                                Duração do contrato<br>
-                                <label id="dt_inicio">{{$planoC->dt_inicio}} - </label>
-                                <label id="dt_fim">{{$planoC->dt_fim}}</label>
-                                <div class="progress">
-                                  <div class="progress-bar bg-success" role="progressbar"  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="progressDt"></div>
-                                </div>
-                            </div><br>                            
-                            <div class="alert alert-primary" role="alert">
-                                Valor Total Plano: R$ {{$planoC->value_total}} 
-                            </div>
-                            
-                            <br>                            
-                        @else
-                            <a href="/clients/novoContrato/{{$client->id}}">Novo Contrato</a>
-                        @endif
-                        
-                        <fieldset disabled>
-                            <input placeholder="Histórico de Parcelas" class="form-control center" style="text-align:center; margin: 0 auto;">
-                        </fieldset>
-                                <div id="parcelas_historico">
-                                    <table class="table table-hover">                                        
-                                        <tbody>                                        
-                                            @if(isset($parcelas))
-                                                @foreach($parcelas as $p)
-                                                    <tr>
-                                                        <td>Cod Parcela {{$p->id}}</td>
-                                                        <td>Cod Contrato {{$p->venda_id}}</td>
-                                                        <td>R${{$p->value}}</td>
-                                                        <td>
-                                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>
-                                                            @if( ($p->status) != 'Em aberto' )
-                                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
-                                                            @endif
-                                                        </td> 
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        
-                                            @if(isset($parcelas_vendas_avulsas))
-                                                @foreach($parcelas_vendas_avulsas as $p)
-                                                    <tr>
-                                                        <td>Cod Parcela {{$p->id}}</td>
-                                                        <td>Cod Venda {{$p->venda_avulsa_id}}</td>
-                                                        <td>R${{$p->value}}</td>
-                                                        <td>
-                                                            <span class="border border-1 border-warning rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</span>                                            
-                                                            @if( ($p->status) != 'Em aberto' )
-                                                                <a onclick="estornarParcela({{$p->id}})">Estornar</a>
-                                                            @endif
-                                                        </td> 
-                                                    </tr>                                             
-                                                @endforeach
-                                            @endif    
-                                        </tbody>
-                                    </table>              
-                                </div>
-                        <fieldset disabled>
-                            <div class="form-row">
-                            <input placeholder="Histórico de Compras" class="form-control center" style="text-align:center; margin: 0 auto;"> 
-                            </div>
-                        </fieldset>
-                        <div id="#">
-                            <table class="table table-hover">
-                                <tbody>
-                                    @if(isset($nomesprods))
-                                        @foreach($nomesprods as $c)
+                            <div class="tab-pane fade" id="parcelas_historico" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                <table class="table table-hover">
+                                    <tbody>                                        
+                                        @if(isset($parcelas))
                                             <tr>
-                                                <td style="text-align: center">{{$c}}</td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td>Sem compras realizadas ainda!</td>
-                                        </tr>
-                                    @endif              
-                              </tbody>
-                            </table>                                          
-                        </div>
-                        <fieldset disabled>
-                            <div class="form-row">
-                            <input placeholder="Histórico de Pagamentos" class="form-control center" style="text-align:center; margin: 0 auto;">
-                                <div id="#">
-                                    @if(isset($recibos))
-                                        @foreach($recibos as $r)
-                                            Cod Recibo - {{$r->id}} |
-                                            Forma de Pagamento - {{$r->formaPagamento}} |
-                                            Valor Total - {{$r->valorRecibo}} |
-                                            Cliente : {{$client->name}} <br>
-                                        @endforeach
-                                    @else
-                                        <br>
-                                        <label>Este aluno não possui pagamentos</label>
-                                    @endif          
-                                </div>
+                                            @foreach($parcelas as $p)
+                                                <tr>
+                                                    <td>Cod Parcela {{$p->id}}</td>
+                                                    <td>Cod Contrato {{$p->venda_id}}</td>
+                                                    <td>R${{$p->value}}</td>
+                                                    <td class="parcela{{$p->id}}">
+                                                        @if($p->status == 'Em aberto')
+                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
+                                                        @else
+                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
+                                                        @endif
+                                                    </td> 
+                                                </tr>
+                                            @endforeach
+                                        @endif                                        
+                                        @if(isset($parcelas_vendas_avulsas))
+                                            @foreach($parcelas_vendas_avulsas as $p)
+                                                <tr>
+                                                    <td>Cod Parcela {{$p->id}}</td>
+                                                    <td>Cod Venda {{$p->venda_avulsa_id}}</td>
+                                                    <td>R${{$p->value}}</td>
+                                                    <td class="parcela{{$p->id}}">
+                                                        @if($p->status == 'Em aberto')
+                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcelaVA({{$p->id}})">{{$p->status}}</a> 
+                                                        @else
+                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
+                                                        @endif
+                                                    </td>  
+                                                </tr>                                             
+                                            @endforeach
+                                        @endif    
+                                    </tbody>
+                                </table> 
                             </div>
-                        </fieldset>
+                            <div class="tab-pane fade" id="compras_historico" role="tabpanel" aria-labelledby="pills-contact-tab">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        @if(isset($nomesprods))
+                                            @foreach($nomesprods as $c)
+                                                <tr>
+                                                    <td style="text-align: center">{{$c}}</td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td>Sem compras realizadas ainda!</td>
+                                            </tr>
+                                        @endif              
+                                  </tbody>
+                                </table> 
+                            </div>
+                            <div class="tab-pane fade" id="recibos_historico" role="tabpanel" aria-labelledby="pills-contact-tab">
+                                <table class="table table-hover" id="historicoPagamento">
+                                    <tbody>
+                                        @if(isset($recibos))
+                                            @foreach($recibos as $r)
+                                                <tr>
+                                                <td>Recibo {{$r->id}}</td>
+                                                <td>Forma de Pagamento - {{$r->formaPagamento}} </td>
+                                                <td>Valor R${{$r->valorRecibo}} </td>
+                                            </tr>
+                                            @endforeach                                    
+                                        @endif                                                  
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
+                        
+                                                
                     @endif
                 </div>
             </div>
@@ -330,20 +331,33 @@
         });
 
         function pagarParcela(id){
-            $("#"+id).html('Pago');
-            $("#"+id).append('<a onclick="estornarParcela('+id+')">Estornar</a>');
-            $.get("/clients/pagarParcela/"+id, function(data){
-                console.log('Pagou parcela id '+id);
+            $("#"+id).remove();
+            $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
+            $.get("/clients/pagarParcela/"+id);
+            //$("#historicoPagamento").append('<tr><td>Nova linha 1</td><td>Nova linha 2</td></tr>');
+            this.getRecibo(id);
+        }
+
+        function pagarParcelaVA(id){
+            $("#"+id).remove();
+            $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
+            $.get("/clients/pagarParcelaVA/"+id);
+            this.getRecibo(id);
+        }
+
+        function getRecibo(parcela_id){
+            $.getJSON("/clients/getRecibo/"+parcela_id, function(data){
+                $("#historicoPagamento").append('<tr><td>Recibo '+data.id+'</td><td>Forma de Pagamento - '+data.formaPagamento+'</td><td>Valor R$'+data.valorRecibo+'</td></tr>');
             });
         }
 
-        function estornarParcela(id){
-            $("#"+id).html('Em aberto');            
-            //$("#parcelas_historico").append('<a href="#">Estornar</a>');
-            $.get("/clients/estornarParcela/"+id, function(data){
-                console.log('Estornar parcela id '+id);
-            });
-        }
+        //function estornarParcela(id){
+        //    $("#"+id).html('Em aberto');            
+        //    //$("#parcelas_historico").append('<a href="#">Estornar</a>');
+        //    $.get("/clients/estornarParcela/"+id, function(data){
+        //        console.log('Estornar parcela id '+id);
+        //    });
+        //}
 
         function mascaraCampos(){
             $("#dt_born").mask('00/00/0000', {reverse: true});

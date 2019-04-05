@@ -21,12 +21,9 @@
                     <form action="/clients/caixaAberto/pagarParcela" method="POST">
                         @csrf
                         <div id="parcelasCliente">
-                            
                         </div>
-
                         <div id="total"><!-- Incluir valor total -->                        
-                        </div>
-                    
+                        </div>                    
                 </div>
                 <div class="card-footer"> 
                     <button type="submit" class="btn btn-sm btn-primary">Pagar</button>
@@ -53,16 +50,22 @@
                 //Requisição AJAX GET retornando parcelas em aberto do plano seleciondo
                 $.get("/clients/buscarParcelasAberto/"+nomeCliente, function(data){
                     $("#parcelasCliente").html('');
-                    
                     obj = JSON.parse(data);
                     if(obj.length  == 0){
                         $("#parcelasCliente").html('Sem resultados para a pesquisa');   
                     }else{
-                        $("#parcelasCliente").html('');   
+                        $("#parcelasCliente").html(''); 
                         $.each(obj, function(i,item){
-                            $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i].id+'" value="'+obj[i].id+'">'+ 'Cod ' + obj[i].id + ' R$ ' + '<label for="'+obj[i].id+'">'+obj[i].value + '</label>'+ ' Responsável ' + obj[i].nome_cliente + '<br>');
-                            $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i].cliente_id+'">');
+                            $.each(obj[i], function(i2,item2){
+                                $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i][i2].id+'" value="'+obj[i][i2].id+'">'+ 'Cod ' + obj[i][i2].id + ' R$ ' + '<label for="'+obj[i][i2].id+'">'+obj[i][i2].value + '</label>'+ ' Responsável ' + obj[i][i2].nome_cliente + '<br>');
+                                $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i][i2].cliente_id+'">');
+                            });
                         });
+
+                        //$.each(obj, function(i,item){
+                        //    $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i].id+'" value="'+obj[i].id+'">'+ 'Cod ' + obj[i].id + ' R$ ' + '<label for="'+obj[i].id+'">'+obj[i].value + '</label>'+ ' Responsável ' + obj[i].nome_cliente + '<br>');
+                        //    $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i].cliente_id+'">');
+                        //});
                     }
                     //Chamar aqui o evento de calcular o total das parcelas
                     calcularValorTotal(0);                    

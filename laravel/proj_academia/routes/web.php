@@ -65,7 +65,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
 	Route::get('/clients/buscarParcelasAberto/{nome}','ParcelaController@buscarParcelasAberto');
 	Route::get('/clients/pagarParcela/{id}','ParcelaController@payParcela');
-	Route::get('/clients/estornarParcela/{id}','ParcelaController@estornarParcela');
+	Route::get('/clients/pagarParcelaVA/{id}','ParcelaController@payParcelaVA');
+	Route::get('/clients/getRecibo/{id}','ParcelaController@getRecibo');
+	//Route::get('/clients/estornarParcela/{id}','ParcelaController@estornarParcela');
 	Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');
 	Route::post('/clients/caixaAberto/pagarParcela','ParcelaController@pagarParcelas');
 	Route::post('/clients/caixaAberto/post','ParcelaController@postCaixaAberto');
@@ -77,3 +79,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/vendas/searchClientByName/{name}','VendaController@getClientsName');
 	Route::get('/vendas/searchProdByName/{name}','VendaController@getProdsName');
 });
+
+/*
+                            <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
+                            Cod.{{$p->id}}-R$ 
+                            <label for="{{$p->id}}">{{$p->value}}</label> <br>-->*/

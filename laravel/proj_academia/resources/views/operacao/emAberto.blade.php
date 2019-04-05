@@ -4,22 +4,22 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                
+            <div class="card">                
                 <div class="card-header">Caixa em Aberto de {{$cliente->name}} 
                     < <a href="/clients/{{$cliente->id}}/show" class="link">Voltar</a>
-                </div>
-                
+                </div>                
                 <div class="card-body">
                     <form action="/clients/caixaAberto/pagarParcela" method="POST"> @csrf
                     <input type="hidden" name="cliente_id" value="{{$cliente->id}}">
                     <label class="alert alert-primary">Selecione as parcelas</label><br>
                     <div id="selecionarParcela">
                     @if(isset($parcelas))
-                        @foreach($parcelas as $p)
-                            <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
-                            Cod.{{$p->id}}-R$ 
-                            <label for="{{$p->id}}">{{$p->value}}</label> <br>
+                        @foreach($parcelas as $parc)
+                            @foreach($parc as $p)
+                                <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
+                                    Cod.{{$p->id}}-R$ 
+                                <label for="{{$p->id}}">{{$p->value}}</label> <br>
+                            @endforeach                            
                         @endforeach
                     @endif
                     </div>
