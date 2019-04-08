@@ -168,8 +168,43 @@ class ClienteController extends Controller
                     $recibo = Recibo::find($r->id);
                     if(isset($recibo)){
                         $recibo->delete();
-                    }
+
+                        //Verificação para saber se dentro do recibo possui uma parcela VA - se possuir torna-la em aberto
+
+                        $ir = DB::table('item_recibos')->where('recibo_id', $r->id)->get();
+                        foreach ($ir as $i) {
+                            $isVA = DB::table('parcela_venda_avulsas')->where([
+                                ['id', $i->parcela_id],
+                                ['cliente_id',$cliente_id],
+                            ])->get();
+                            if(count($isVA)>0) {
+                                foreach ($isVA as $VA) {
+                                    DB::table('parcela_venda_avulsas')
+                                    ->where('id', $VA->id)
+                                    ->update(['status' => 'Em aberto']);
+                                }
+                            }
+                        }
+
+                    } 
                 }
+                /*
+                $recibos = DB::table('recibos')->where('venda_id', '3')->get();                 
+                foreach ($recibos as $r) {
+                    $recibo = Recibo::find($r->id);
+                    echo $r->id.'<br>';
+                    $ir = DB::table('item_recibos')->where('recibo_id', $r->id)->get();
+                    foreach ($ir as $i) {
+                        echo 'Parcela paga deste recibo'.$i->parcela_id.'<br>';
+                        $isVA = DB::table('parcela_venda_avulsas')->where([
+                            ['id', $i->parcela_id],
+                            ['cliente_id','3'],
+                        ])->get();
+                        if(count($isVA)>0) echo 'Parcela Venda Avulsa';
+                    }
+                }*/
+
+
             }catch(Exception $e){
                 return redirect('/cadastros/plans');
             }

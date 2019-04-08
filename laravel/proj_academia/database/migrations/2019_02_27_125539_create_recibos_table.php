@@ -12,7 +12,7 @@ class CreateRecibosTable extends Migration
      * @return void
      */
     public function up()
-    {
+    { 
         Schema::create('recibos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('formaPagamento');
@@ -22,8 +22,7 @@ class CreateRecibosTable extends Migration
             $table->integer('venda_id')->unsigned()->nullable();
             $table->foreign('venda_id')->references('id')->on('vendas');
             $table->softDeletes();
-            $table->timestamps();
-            
+            $table->timestamps();            
         });
     }
 

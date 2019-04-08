@@ -117,7 +117,7 @@ class ParcelaController extends Controller
 
         //com o recibo salvo trabalhar em cada parcela para gerar os itens do recibo
         $parcelas = $request->input("parcela");
-
+        
         foreach($parcelas as $p){
             $itemRecibo = new ItemRecibo();            
             //alterar status da parcela

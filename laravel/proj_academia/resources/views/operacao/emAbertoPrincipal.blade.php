@@ -60,12 +60,7 @@
                                 $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i][i2].id+'" value="'+obj[i][i2].id+'">'+ 'Cod ' + obj[i][i2].id + ' R$ ' + '<label for="'+obj[i][i2].id+'">'+obj[i][i2].value + '</label>'+ ' Responsável ' + obj[i][i2].nome_cliente + '<br>');
                                 $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i][i2].cliente_id+'">');
                             });
-                        });
-
-                        //$.each(obj, function(i,item){
-                        //    $("#parcelasCliente").append('<input type="checkbox" class="parcela" name="parcela[]" id="'+obj[i].id+'" value="'+obj[i].id+'">'+ 'Cod ' + obj[i].id + ' R$ ' + '<label for="'+obj[i].id+'">'+obj[i].value + '</label>'+ ' Responsável ' + obj[i].nome_cliente + '<br>');
-                        //    $("#parcelasCliente").append('<input type="hidden" name="cliente_id" value="'+obj[i].cliente_id+'">');
-                        //});
+                        }); 
                     }
                     //Chamar aqui o evento de calcular o total das parcelas
                     calcularValorTotal(0);                    
@@ -85,24 +80,31 @@
             total = valor;
             $(".parcela").change(function(){
                 if($(this).prop("checked") == true){
+                    console.log(this);
                     $("#total").html('');                    
                     label = $(this).prop("labels");
                     text = $(label).text();
-                    valor = parseFloat(text);
+                    console.log(text);                    
+                    valor = parseFloat(text);                    
                     total = total + valor;
+                    
                     $("#total").append('<input type="hidden" name="valorTotal" value="'+total.toFixed(2)+'"> '); 
                     $("#total").append('R$');   
-                    $("#total").append(total.toFixed(2));   
+                    $("#total").append(total.toFixed(2));
                                       
                 }else{
                     $("#total").html('');                    
                     label = $(this).prop("labels");
                     text = $(label).text();
+                    console.log(text);                    
+
                     valor = parseFloat(text);
                     total = total - valor;
                     $("#total").append('<input type="hidden" name="valorTotal" value="'+total.toFixed(2)+'"> '); 
                     $("#total").append('R$');   
                     $("#total").append(total.toFixed(2)); 
+                    console.log(total);
+
                 }
             });
         }
