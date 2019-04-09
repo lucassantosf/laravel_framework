@@ -242,37 +242,23 @@
                                     <tbody>                                        
                                         @if(isset($parcelas))
                                             <tr>
-                                            @foreach($parcelas as $p)
-                                                <tr>
-                                                    <td>Cod Parcela {{$p->id}}</td>
-                                                    <td>Cod Contrato {{$p->venda_id}}</td>
-                                                    <td>R${{$p->value}}</td>
-                                                    <td class="parcela{{$p->id}}">
-                                                        @if($p->status == 'Em aberto')
-                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
-                                                        @else
-                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                        @endif
-                                                    </td> 
-                                                </tr>
+                                            @foreach($parcelas as $pa)
+                                                @foreach($pa as $p) 
+                                                    <tr>
+                                                        <td>Cod Parcela {{$p->id}}</td>
+                                                        <td>Cod Contrato {{$p->venda_id}}</td>
+                                                        <td>R${{$p->value}}</td>
+                                                        <td class="parcela{{$p->id}}">
+                                                            @if($p->status == 'Em aberto')
+                                                            <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
+                                                            @else
+                                                            <span class="border border-1 border-info rounded">{{$p->status}}</span>
+                                                            @endif
+                                                        </td> 
+                                                    </tr>                                              
+                                                @endforeach 
                                             @endforeach
-                                        @endif                                        
-                                        @if(isset($parcelas_vendas_avulsas))
-                                            @foreach($parcelas_vendas_avulsas as $p)
-                                                <tr>
-                                                    <td>Cod Parcela {{$p->id}}</td>
-                                                    <td>Cod Venda {{$p->venda_avulsa_id}}</td>
-                                                    <td>R${{$p->value}}</td>
-                                                    <td class="parcela{{$p->id}}">
-                                                        @if($p->status == 'Em aberto')
-                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcelaVA({{$p->id}})">{{$p->status}}</a> 
-                                                        @else
-                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                        @endif
-                                                    </td>  
-                                                </tr>                                             
-                                            @endforeach
-                                        @endif    
+                                        @endif     
                                     </tbody>
                                 </table> 
                             </div>
@@ -337,13 +323,13 @@
             //$("#historicoPagamento").append('<tr><td>Nova linha 1</td><td>Nova linha 2</td></tr>');
             this.getRecibo(id);
         }
-
+        /*
         function pagarParcelaVA(id){
             $("#"+id).remove();
             $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
             $.get("/clients/pagarParcelaVA/"+id);
             this.getRecibo(id);
-        }
+        }*/
 
         function getRecibo(parcela_id){
             $.getJSON("/clients/getRecibo/"+parcela_id, function(data){

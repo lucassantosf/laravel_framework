@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\VendaAvulsa;
 use App\ItemVendaAvulsa;
-use App\ParcelaVendaAvulsa;
+use App\Parcela;
 use App\Cliente;
 use App\Produto;
 
@@ -31,7 +31,7 @@ class VendaAvulsaController extends Controller
         	$item_venda_avulsa->save();
         }        	
         //Gerar a parcela única da venda avulsa
-    	$parcelaVendaAvulsa = new ParcelaVendaAvulsa();
+    	$parcelaVendaAvulsa = new Parcela();
     	$parcelaVendaAvulsa->venda_avulsa_id = $venda_avulsa->id;
     	$parcelaVendaAvulsa->value = $venda_avulsa->value;
     	$parcelaVendaAvulsa->cliente_id = $cliente->id;

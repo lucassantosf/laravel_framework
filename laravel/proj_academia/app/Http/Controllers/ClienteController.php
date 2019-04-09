@@ -9,6 +9,7 @@ use App\Plano;
 use App\Modalidade;
 use App\Venda;
 use App\Produto;
+use App\Parcela;
 use App\Recibo;
 
 class ClienteController extends Controller
@@ -88,19 +89,41 @@ class ClienteController extends Controller
     	$client = Cliente::find($id);
     	if(isset($client)){
             $isAtivo = false;
+            $parcelas = [];
             //Verifica se o aluno possui plano
             $planoC = DB::table('vendas')->where([
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->first();
 
-            //Se aluno possuir plano - consultar suas parcelas e detalhes deste plano
+            //Se aluno possuir plano - consultar detalhes cadastrais do plano
             if ($planoC) {
                 $isAtivo = true;
-                $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
-                $parcelas = DB::table('parcelas')->where('venda_id',$planoC->id)->get(); 
+                $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();                 
             }
 
+            //Consulta de Parcelas
+            $parcelasConsulta1 = DB::table('parcelas')
+                ->where([['cliente_id',$client->id],['deleted_at',NULL],])
+                ->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
+                ->get();
+            //var_dump($parcelasConsulta1);
+            //exit();
+            /*
+            $parcelasConsulta2 = DB::table('parcelas')
+                ->where('cliente_id',$client->id)
+                ->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
+                ->get(); 
+                if (count($parcelasConsulta2)>0) {
+                array_push($parcelas, $parcelasConsulta2);
+            } 
+            */
+            if (count($parcelasConsulta1)>0) {
+                array_push($parcelas, $parcelasConsulta1);
+            } 
+               
+            //--------Fim consulta de Parcelas
+ 
             //Consultar Recibos do cliente
             $recibos = DB::table('recibos')->where([
                 ['cliente_id',$client->id],
@@ -114,7 +137,6 @@ class ClienteController extends Controller
             ])->get();
 
             $nomesprods = [];
-
             if(count($compras) > 0){
                 //Para cada venda avulsa, consultar tabela itens venda avulsas
                 foreach ($compras as $c) {
@@ -128,14 +150,8 @@ class ClienteController extends Controller
                         array_push($nomesprods, $i->descricao_produto);
                     }
                 }
-            } 
-
-            //Consultar parcelas de vendas avulsas
-            $parcelas_vendas_avulsas = DB::table('parcela_venda_avulsas')->where('cliente_id',$client->id)->get();
-            //var_dump($parcelas_vendas_avulsas);
-            //exit();
-            
-            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods','parcelas_vendas_avulsas'));
+            }  
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods'));
     	}else{
             echo 'Cliente inexistente';
         }
@@ -153,6 +169,7 @@ class ClienteController extends Controller
     	return view('operacao.novoContrato',compact('client','plans','duracoes','plan_id','modals'));
     }
 
+    //Esta função faz o estorno do plano, junto com recibos
     public function estornarContract($venda_id,$cliente_id){
         $venda = Venda::find($venda_id);
         if($venda){
@@ -161,50 +178,40 @@ class ClienteController extends Controller
                 $cliente = Cliente::find($cliente_id);
                 $cliente->situaçao = 'Visitante'; 
                 $cliente->save();
-                $venda->delete();
-                //Estornar os recibos vinculados à venda
-                $recibos = DB::table('recibos')->where('venda_id', $venda->id)->get();                 
+  
+                //Deletar parcelas da venda
+                $parcelas_venda = DB::table('parcelas')->where('venda_id', $venda->id)->get(); 
+                if(count($parcelas_venda)>0){
+                    foreach ($parcelas_venda as $p) {   
+                        $parcela = Parcela::find($p->id);
+                        $parcela->delete();
+                    }
+                }  
+
+                //Estornar os recibos vinculados à venda do plano estornado
+                $recibos = DB::table('recibos')->where('venda_id', $venda->id)->get();
+                
+                //RECIBO QUANDO NÃO TEM VENDA_ID VA_ID - É ESTORNADO AINDA - CRIAR ESTA INTEGRAÇÃO
+
                 foreach ($recibos as $r) {
                     $recibo = Recibo::find($r->id);
                     if(isset($recibo)){
                         $recibo->delete();
-
-                        //Verificação para saber se dentro do recibo possui uma parcela VA - se possuir torna-la em aberto
-
                         $ir = DB::table('item_recibos')->where('recibo_id', $r->id)->get();
                         foreach ($ir as $i) {
-                            $isVA = DB::table('parcela_venda_avulsas')->where([
-                                ['id', $i->parcela_id],
-                                ['cliente_id',$cliente_id],
-                            ])->get();
-                            if(count($isVA)>0) {
-                                foreach ($isVA as $VA) {
-                                    DB::table('parcela_venda_avulsas')
-                                    ->where('id', $VA->id)
-                                    ->update(['status' => 'Em aberto']);
-                                }
-                            }
+                            $parcela = Parcela::find($i->parcela_id);
+                            if(isset($parcela->venda_avulsa_id)){
+                                DB::table('parcelas')
+                                ->where('venda_avulsa_id', $parcela->venda_avulsa_id)
+                                ->update(['status' => 'Em aberto']);
+                            } 
                         }
-
                     } 
-                }
-                /*
-                $recibos = DB::table('recibos')->where('venda_id', '3')->get();                 
-                foreach ($recibos as $r) {
-                    $recibo = Recibo::find($r->id);
-                    echo $r->id.'<br>';
-                    $ir = DB::table('item_recibos')->where('recibo_id', $r->id)->get();
-                    foreach ($ir as $i) {
-                        echo 'Parcela paga deste recibo'.$i->parcela_id.'<br>';
-                        $isVA = DB::table('parcela_venda_avulsas')->where([
-                            ['id', $i->parcela_id],
-                            ['cliente_id','3'],
-                        ])->get();
-                        if(count($isVA)>0) echo 'Parcela Venda Avulsa';
-                    }
-                }*/
+                } 
+                //Deletar a venda por final
+                $venda->delete();
 
-
+                //Fim do processo estorno
             }catch(Exception $e){
                 return redirect('/cadastros/plans');
             }

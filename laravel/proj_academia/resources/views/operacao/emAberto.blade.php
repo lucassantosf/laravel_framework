@@ -14,12 +14,12 @@
                     <label class="alert alert-primary">Selecione as parcelas</label><br>
                     <div id="selecionarParcela">
                     @if(isset($parcelas))
-                        @foreach($parcelas as $parc)
-                            @foreach($parc as $p)
+                        @foreach($parcelas as $p)
+                            
                                 <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
                                     Cod.{{$p->id}}-R$ 
                                 <label for="{{$p->id}}">{{$p->value}}</label> <br>
-                            @endforeach                            
+                                                       
                         @endforeach
                     @endif
                     </div>

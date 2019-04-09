@@ -15,8 +15,10 @@ class CreateParcelasTable extends Migration
     {
         Schema::create('parcelas', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('venda_id')->unsigned();
+            $table->integer('venda_id')->unsigned()->nullable();
             $table->foreign('venda_id')->references('id')->on('vendas');
+            $table->integer('venda_avulsa_id')->unsigned()->nullable();
+            $table->foreign('venda_avulsa_id')->references('id')->on('venda_avulsas');
             $table->float('value');
             $table->string('nome_cliente')->nullable();
             $table->integer('cliente_id')->unsigned();

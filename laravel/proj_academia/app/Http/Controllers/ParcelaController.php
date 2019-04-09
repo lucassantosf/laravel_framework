@@ -8,7 +8,6 @@ use App\Parcela;
 use App\Cliente;
 use App\Recibo;
 use App\ItemRecibo;
-use App\ParcelaVendaAvulsa;
 
 class ParcelaController extends Controller
 {
@@ -22,23 +21,16 @@ class ParcelaController extends Controller
     	return view('operacao.emAbertoPrincipal',compact('parcelas'));
     }
 
+    //Esta função é utilizada na tela Caixa em Aberto quando tem o cliente individual, mostra todas parcelas em aberto
     public function parcelasEmAberto($id){
     	$cliente = Cliente::find($id);
     	if (isset($cliente)) {
-        	$hasVenda = DB::table('vendas')->where('cliente_id',$cliente->id)->first();        	
-        	if (isset($hasVenda)) {
-                $parcelas = [];        		
-        		$consulta1 = DB::table('parcelas')->where([
-        			['status','Em aberto'],
-        			['venda_id',$hasVenda->id]
-        		])->get(); 
-                $consulta2 = DB::table('parcela_venda_avulsas')->where([
-                    ['cliente_id',$cliente->id],
-                    ['status','Em aberto'],
-                ])->get(); 
-                array_push($parcelas, $consulta1);
-                array_push($parcelas, $consulta2);
-        	} 
+    		$parcelas = DB::table('parcelas')->where([
+    			['status','Em aberto'],
+                ['cliente_id',$id],
+                ['deleted_at',NULL],
+    		])->get(); 
+
     	}
     	return view('operacao.emAberto',compact('cliente','parcelas'));
     }
@@ -54,16 +46,12 @@ class ParcelaController extends Controller
     }
 
     //Esta função paga uma parcela individualmente e gera um recibo em dinheiro
-    public function payParcela($id,$VA = false){
+    public function payParcela($id){
     	$parcela = Parcela::find($id);
-    	if (isset($parcela) && !$VA) {
+    	if (isset($parcela)) {
     		$parcela->status = 'Pago';
     		$parcela->save();            
-    	}else{
-            $parcela = ParcelaVendaAvulsa::find($id);
-            $parcela->status = 'Pago';
-            $parcela->save();
-        }
+    	}
         //Gerar o recibo - obs:venda_id->table recibo é null
         $recibo = new Recibo();
         $recibo->cliente_id = $parcela->cliente_id;
@@ -76,21 +64,8 @@ class ParcelaController extends Controller
         $itemRecibo->parcela_id = $parcela->id;
         $itemRecibo->value = $parcela->value;
         $itemRecibo->save();
-    }
-
-    public function payParcelaVA($id){
-        $this->payParcela($id,true);
-    }
-    //Esta função estorna uma parcela individualmente -- FUNÇÂO DEPRECIADA
-    /*
-    public function estornarParcela($id){
-    	$parcela = Parcela::find($id);
-    	if (isset($parcela)) {
-    		$parcela->status = 'Em aberto';
-    		$parcela->save();
-    	}
-    }
-    '*/
+    } 
+    
     public function pagarParcelas(Request $request){
     	$cliente_id = $request->input("cliente_id");        
         $parcelas =	$request->input("parcela");
@@ -98,6 +73,7 @@ class ParcelaController extends Controller
     	return view('operacao.formaPagamentoCaixaAberto',compact('cliente_id','parcelas','valorTotal'));
     }
 
+    //Esta função trata o post do caixa em aberto, salva o recibo e altera status da parcela
     public function postCaixaAberto(Request $request){
         //Trabalha o post do caixa em aberto apos selecionar a forma de pagamento
         //gera primeiro o recibo e salva 
@@ -133,19 +109,7 @@ class ParcelaController extends Controller
                     ->where('id', $p)
                     ->update(['status' => 'Pago']);
                 $parcela = Parcela::find($p);
-            }else{
-                $b = DB::table('parcela_venda_avulsas')->where([
-                    ['id',$p],
-                    ['cliente_id',$request->input("cliente_id")],
-                ])->get();
-                if($b){
-                    //se parcela VA 
-                    DB::table('parcela_venda_avulsas')
-                    ->where('id', $p)
-                    ->update(['status' => 'Pago']);
-                }
-                $parcela = ParcelaVendaAvulsa::find($p);                
-            }   
+            } 
             //Gerar os itens do recibo
             $itemRecibo->recibo_id = $recibo->id;
             $itemRecibo->parcela_id = $p;
@@ -155,18 +119,15 @@ class ParcelaController extends Controller
         return redirect('/clients/'.$recibo->cliente_id.'/show');
     }
 
+    //Buscar parcelas em aberto pelo nome, utilizado na tela Caixa em Aberto
     public function buscarParcelasAberto($nome){
         $parcelas = [];
         $consulta1 = DB::table('parcelas')->where([
             ['nome_cliente','like','%'.$nome.'%'],
             ['status','Em aberto'],
-            ])->get();
-        $consulta12 = DB::table('parcela_venda_avulsas')->where([
-            ['nome_cliente','like','%'.$nome.'%'],
-            ['status','Em aberto'],
-            ])->get();
-        array_push($parcelas, $consulta1);
-        array_push($parcelas, $consulta12);        
+            ['deleted_at',NULL],
+            ])->get(); 
+        array_push($parcelas, $consulta1);       
         return json_encode($parcelas);
     }
 
