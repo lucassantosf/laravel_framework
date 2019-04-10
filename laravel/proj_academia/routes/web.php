@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/clients/buscarParcelas/{id}','ParcelaController@showParcelasVenda');
 	Route::get('/clients/buscarParcelas','ParcelaController@mostrarParcelas');
 	Route::get('/clients/buscarParcelasAberto/{nome}','ParcelaController@buscarParcelasAberto');
-	Route::get('/clients/pagarParcela/{id}','ParcelaController@payParcela');
+	Route::get('/clients/pagarParcela/{id}/{hasContrato}','ParcelaController@payParcela');
 	Route::get('/clients/pagarParcelaVA/{id}','ParcelaController@payParcelaVA');
 	Route::get('/clients/getRecibo/{id}','ParcelaController@getRecibo');
 	Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');
@@ -77,55 +77,4 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/vendas/viewWithClient/{id}/{name}','VendaController@returnViewWithClient');
 	Route::get('/vendas/searchClientByName/{name}','VendaController@getClientsName');
 	Route::get('/vendas/searchProdByName/{name}','VendaController@getProdsName');
-});
-
-/*
-                            <input type="checkbox" class="parcela" name="parcela[]" id="{{$p->id}}" value="{{$p->id}}">
-                            Cod.{{$p->id}}-R$ 
-                            <label for="{{$p->id}}">{{$p->value}}</label> <br>-->
-<!--    <tr>
-                                                    <td>Cod Parcela {{$p->id}}</td>
-                                                    <td>Cod Contrato {{$p->venda_id}}</td>
-                                                    <td>R${{$p->value}}</td>
-                                                    <td class="parcela{{$p->id}}">
-                                                        @if($p->status == 'Em aberto')
-                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
-                                                        @else
-                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                        @endif
-                                                    </td> 
-                                                </tr> -->
-
-<!--    @if(isset($parcelas_vendas_avulsas))
-                                            @foreach($parcelas_vendas_avulsas as $p)
-                                                <tr>
-                                                    <td>Cod Parcela {{$p->id}}</td>
-                                                    <td>Cod Venda {{$p->venda_avulsa_id}}</td>
-                                                    <td>R${{$p->value}}</td>
-                                                    <td class="parcela{{$p->id}}">
-                                                        @if($p->status == 'Em aberto')
-                                                        <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcelaVA({{$p->id}})">{{$p->status}}</a> 
-                                                        @else
-                                                        <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                        @endif
-                                                    </td>  
-                                                </tr>                                             
-                                            @endforeach
-                                        @endif -->
-
-
-                                                    <tr>
-                                                        <td>Cod Parcela {{$p->id}}</td>
-                                                        <td>Cod Contrato {{$p->venda_id}}</td>
-                                                        <td>R${{$p->value}}</td>
-                                                        <td class="parcela{{$p->id}}">
-                                                            @if($p->status == 'Em aberto')
-                                                            <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
-                                                            @else
-                                                            <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                            @endif
-                                                        </td> 
-                                                    </tr>                 
-
-                            */
-
+});  

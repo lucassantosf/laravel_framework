@@ -250,7 +250,7 @@
                                                         <td>R${{$p->value}}</td>
                                                         <td class="parcela{{$p->id}}">
                                                             @if($p->status == 'Em aberto')
-                                                            <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}})">{{$p->status}}</a> 
+                                                            <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}},{{$p->venda_id}})">{{$p->status}}</a> 
                                                             @else
                                                             <span class="border border-1 border-info rounded">{{$p->status}}</span>
                                                             @endif
@@ -316,35 +316,24 @@
             @endif 
         });
 
-        function pagarParcela(id){
+        function pagarParcela(id,hasContrato){
+            if(hasContrato) {
+                $.get("/clients/pagarParcela/"+id+"/"+hasContrato); 
+            }else{
+                $.get("/clients/pagarParcela/"+id+"/NULL");
+            }
             $("#"+id).remove();
             $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
-            $.get("/clients/pagarParcela/"+id);
             //$("#historicoPagamento").append('<tr><td>Nova linha 1</td><td>Nova linha 2</td></tr>');
             this.getRecibo(id);
-        }
-        /*
-        function pagarParcelaVA(id){
-            $("#"+id).remove();
-            $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
-            $.get("/clients/pagarParcelaVA/"+id);
-            this.getRecibo(id);
-        }*/
+        } 
 
         function getRecibo(parcela_id){
             $.getJSON("/clients/getRecibo/"+parcela_id, function(data){
                 $("#historicoPagamento").append('<tr><td>Recibo '+data.id+'</td><td>Forma de Pagamento - '+data.formaPagamento+'</td><td>Valor R$'+data.valorRecibo+'</td></tr>');
             });
         }
-
-        //function estornarParcela(id){
-        //    $("#"+id).html('Em aberto');            
-        //    //$("#parcelas_historico").append('<a href="#">Estornar</a>');
-        //    $.get("/clients/estornarParcela/"+id, function(data){
-        //        console.log('Estornar parcela id '+id);
-        //    });
-        //}
-
+  
         function mascaraCampos(){
             $("#dt_born").mask('00/00/0000', {reverse: true});
             $("#cpf").mask('000.000.000-00', {reverse: true});

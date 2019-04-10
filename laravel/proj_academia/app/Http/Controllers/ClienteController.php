@@ -11,18 +11,23 @@ use App\Venda;
 use App\Produto;
 use App\Parcela;
 use App\Recibo;
+use App\ItemRecibo;
+use Validator;
 
 class ClienteController extends Controller
-{
+{   
+    //Tela de consultar clientes
     public function indexClients(){
     	$clients = Cliente::all();
     	return view('cadastros.client',compact('clients'));
     }
 
+    //Retornar o formulário de incluir cliente
     public function indexClientsAdd(){
     	return view('cadastros.formClientAdd');
     }
 
+    //Este método trata o post da para salvar um cliente
     public function postClientsAdd(Request $request){
     	//validacao de campos com 'msgs' personalizadas
         $regras = [
@@ -33,8 +38,9 @@ class ClienteController extends Controller
         ];
         $mensagens = [
             'required'=>'O campo :attribute não pode ser vazio'
-        ];
+        ]; 
         $request->validate($regras,$mensagens);
+
         $cli = new Cliente();
 		$cli->name = $request->input('name');
         $cli->dt_born = date('Y/m/d',strtotime($request->input('dt_born')));
@@ -59,6 +65,7 @@ class ClienteController extends Controller
         return redirect('/clients');
     }
 
+    //Este método trata o post da edição dos dados pessoais
     public function postClientsEdit(Request $request){
         $cli = Cliente::find($request->input('id'));        
         $cli->name = $request->input('name');
@@ -84,6 +91,7 @@ class ClienteController extends Controller
         return redirect('/clients/'.$cli->id.'/show');
     }
 
+    //Este método busca dados de um cliente - plano, parcelas, recibos, compras, etc...
     public function showClient($id){
 
     	$client = Cliente::find($id);
@@ -99,7 +107,7 @@ class ClienteController extends Controller
             //Se aluno possuir plano - consultar detalhes cadastrais do plano
             if ($planoC) {
                 $isAtivo = true;
-                $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();                 
+                $plano_details = DB::table('planos')->where('id',$planoC->plano_id)->first();
             }
 
             //Consulta de Parcelas
@@ -107,28 +115,18 @@ class ClienteController extends Controller
                 ->where([['cliente_id',$client->id],['deleted_at',NULL],])
                 ->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
                 ->get();
-            //var_dump($parcelasConsulta1);
-            //exit();
-            /*
-            $parcelasConsulta2 = DB::table('parcelas')
-                ->where('cliente_id',$client->id)
-                ->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
-                ->get(); 
-                if (count($parcelasConsulta2)>0) {
-                array_push($parcelas, $parcelasConsulta2);
-            } 
-            */
+
             if (count($parcelasConsulta1)>0) {
                 array_push($parcelas, $parcelasConsulta1);
             } 
-               
-            //--------Fim consulta de Parcelas
+            
+            //--------Fim consulta de Parcelas 
  
             //Consultar Recibos do cliente
             $recibos = DB::table('recibos')->where([
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
-            ])->get();
+            ])->get(); 
 
             //Consultar Histórico de Compras de Vendas Avulsas
             $compras = DB::table('venda_avulsas')->where([
@@ -199,6 +197,7 @@ class ClienteController extends Controller
                         $recibo->delete();
                         $ir = DB::table('item_recibos')->where('recibo_id', $r->id)->get();
                         foreach ($ir as $i) {
+                            $item = ItemRecibo::find($i->id); if(isset($item)) $item->delete();
                             $parcela = Parcela::find($i->parcela_id);
                             if(isset($parcela->venda_avulsa_id)){
                                 DB::table('parcelas')

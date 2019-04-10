@@ -38,8 +38,7 @@
     <script type="text/javascript">
         
         $(document).ready(function() { 
-            //
-            //calcularValorTotal(0);
+             
         });
 
         function buscarParcelas(){

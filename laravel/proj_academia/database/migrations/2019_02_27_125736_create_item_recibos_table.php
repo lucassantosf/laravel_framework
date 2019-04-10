@@ -21,7 +21,7 @@ class CreateItemRecibosTable extends Migration
             $table->foreign('parcela_id')->references('id')->on('parcelas');
             $table->float('value');
             $table->softDeletes();
-            $table->timestamps();  
+            $table->timestamps();   
         });
     }
 

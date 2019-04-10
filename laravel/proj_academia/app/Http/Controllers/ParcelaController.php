@@ -16,12 +16,12 @@ class ParcelaController extends Controller
         return json_encode($parcelas);
     }
 
-    public function mostrarParcelas(){
-        $parcelas = DB::table('parcelas')->where('status','Em aberto')->get();        
-    	return view('operacao.emAbertoPrincipal',compact('parcelas'));
+    //Este método retorna apenas a view do Caixa em aberto
+    public function mostrarParcelas(){         
+    	return view('operacao.emAbertoPrincipal');
     }
 
-    //Esta função é utilizada na tela Caixa em Aberto quando tem o cliente individual, mostra todas parcelas em aberto
+    //Esta função é utilizada na tela Caixa em Aberto quando tem o cliente individual, mostra todas parcelas em aberto de um aluno
     public function parcelasEmAberto($id){
     	$cliente = Cliente::find($id);
     	if (isset($cliente)) {
@@ -35,6 +35,7 @@ class ParcelaController extends Controller
     	return view('operacao.emAberto',compact('cliente','parcelas'));
     }
 
+    //Este método retorna um json com os dados de um recibo apartir da parcela_id
     public function getRecibo($parcela_id){
         $parcela = DB::table('item_recibos')->where([
             ['parcela_id',$parcela_id],
@@ -46,7 +47,7 @@ class ParcelaController extends Controller
     }
 
     //Esta função paga uma parcela individualmente e gera um recibo em dinheiro
-    public function payParcela($id){
+    public function payParcela($id,$hasContrato = NULL){
     	$parcela = Parcela::find($id);
     	if (isset($parcela)) {
     		$parcela->status = 'Pago';
@@ -56,7 +57,8 @@ class ParcelaController extends Controller
         $recibo = new Recibo();
         $recibo->cliente_id = $parcela->cliente_id;
         $recibo->formaPagamento = 'dinheiro';
-        $recibo->valorRecibo = $parcela->value;
+        $recibo->valorRecibo = $parcela->value;        
+        if($hasContrato == NULL) {$recibo->venda_id = $hasContrato;} else {$recibo->venda_id = NULL;}
         $recibo->save();
         //Gerar o item do recibo
         $itemRecibo = new ItemRecibo();
@@ -66,6 +68,7 @@ class ParcelaController extends Controller
         $itemRecibo->save();
     } 
     
+    //Este método serve de intermediário apenas para receber os dados vindos do post do caixa em aberto e escolher a forma de pagamento
     public function pagarParcelas(Request $request){
     	$cliente_id = $request->input("cliente_id");        
         $parcelas =	$request->input("parcela");
