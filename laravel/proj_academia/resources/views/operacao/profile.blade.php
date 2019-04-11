@@ -288,6 +288,9 @@
                                                 <td>Recibo {{$r->id}}</td>
                                                 <td>Forma de Pagamento - {{$r->formaPagamento}} </td>
                                                 <td>Valor R${{$r->valorRecibo}} </td>
+                                                <td>
+                                                    <button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,{{$r->id}})">Estornar</button>
+                                                </td>
                                             </tr>
                                             @endforeach                                    
                                         @endif                                                  
@@ -318,19 +321,25 @@
 
         function pagarParcela(id,hasContrato){
             if(hasContrato) {
-                $.get("/clients/pagarParcela/"+id+"/"+hasContrato); 
+                $.get("/clients/pagarParcela/"+id+"/"+hasContrato);
             }else{
                 $.get("/clients/pagarParcela/"+id+"/NULL");
             }
             $("#"+id).remove();
             $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
-            //$("#historicoPagamento").append('<tr><td>Nova linha 1</td><td>Nova linha 2</td></tr>');
             this.getRecibo(id);
         } 
 
         function getRecibo(parcela_id){
             $.getJSON("/clients/getRecibo/"+parcela_id, function(data){
-                $("#historicoPagamento").append('<tr><td>Recibo '+data.id+'</td><td>Forma de Pagamento - '+data.formaPagamento+'</td><td>Valor R$'+data.valorRecibo+'</td></tr>');
+                $("#historicoPagamento").append(
+                    '<tr>'+
+                        '<td>Recibo '+data.id+'</td>'+
+                        '<td>Forma de Pagamento - '+data.formaPagamento+'</td>'+
+                        '<td>Valor R$'+data.valorRecibo+'</td>'+
+                        '<td>'+'<button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,'+data.id+')">Estornar</button>'+
+                        '</td>'+
+                    '</tr>');
             });
         }
   
@@ -367,13 +376,11 @@
         }
 
         function consultar(){
-
             cep = $('#cep').val();
             cep = cep.replace('-','');
             if(cep.length < 8) return false;
             if (cep != "" || cep.length >= 8) {
                 $.getJSON("https://viacep.com.br/ws/"+cep+"/json/?callback=?", function(dados) {
-
                 if (!("erro" in dados)) {
                     //Atualiza os campos com os valores da consulta.
                     $("#address").val(dados.logradouro);
@@ -393,6 +400,16 @@
             }else{
                 alert('Cep em branco!');
             }
+        }
+
+        function estornarRecibo(data,id){
+            $.getJSON("/clients/estornarRecibo/"+id,function(data){
+                $.each(data,function(index,value){
+                    $('.parcela'+value.id).html('');
+                    $('.parcela'+value.id).html('<a class="border border-1 border-info rounded" id="'+value.id+'" onclick="pagarParcela('+value.id+','+value.venda_id+')">Em aberto</a>');
+                });                
+            });
+            $(data).parents('tr').remove(); 
         }
     </script>
 @endsection

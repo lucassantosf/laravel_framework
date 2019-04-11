@@ -46,8 +46,38 @@ class ParcelaController extends Controller
         return json_encode($recibo);
     }
 
+    //Este recibo deleta um recibo aparte do recibo_id, e deleta os itens, e parcela do item torna em aberto para pagar novamente
+    public function estornarRecibo($recibo_id){
+        $recibo = Recibo::find($recibo_id);
+        $parcelas = [];
+        if(isset($recibo)){
+            $ir = DB::table('item_recibos')->where([
+            ['recibo_id',$recibo->id],
+            ['deleted_at',NULL],
+            ])->get();        
+            foreach ($ir as $i) {
+                //Buscar a parcela e tornar Em aberto
+                DB::table('parcelas')
+                    ->where('id', $i->parcela_id)
+                    ->update(['status' => 'Em aberto']);
+                //Deletar o item
+                $item = ItemRecibo::find($i->id);
+                if (isset($item)) {
+                    $item->delete();
+                }   
+                $p = Parcela::find($i->parcela_id);
+                array_push($parcelas, $p);            
+            }
+            //Deletar o recibo
+            $recibo->delete();
+        }else{
+            return redirect('/clients');
+        }
+        return json_encode($parcelas);
+    }
+
     //Esta função paga uma parcela individualmente e gera um recibo em dinheiro
-    public function payParcela($id,$hasContrato = NULL){
+    public function payParcela($id,$hasContrato = 'NULL'){
     	$parcela = Parcela::find($id);
     	if (isset($parcela)) {
     		$parcela->status = 'Pago';
@@ -58,7 +88,9 @@ class ParcelaController extends Controller
         $recibo->cliente_id = $parcela->cliente_id;
         $recibo->formaPagamento = 'dinheiro';
         $recibo->valorRecibo = $parcela->value;        
-        if($hasContrato == NULL) {$recibo->venda_id = $hasContrato;} else {$recibo->venda_id = NULL;}
+        if($hasContrato != 'NULL') {
+            $recibo->venda_id = $hasContrato;
+        } 
         $recibo->save();
         //Gerar o item do recibo
         $itemRecibo = new ItemRecibo();

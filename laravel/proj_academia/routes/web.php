@@ -67,9 +67,10 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/clients/pagarParcela/{id}/{hasContrato}','ParcelaController@payParcela');
 	Route::get('/clients/pagarParcelaVA/{id}','ParcelaController@payParcelaVA');
 	Route::get('/clients/getRecibo/{id}','ParcelaController@getRecibo');
+	Route::get('/clients/estornarRecibo/{id}','ParcelaController@estornarRecibo');
 	Route::get('/clients/caixaAberto/{id}','ParcelaController@parcelasEmAberto');
 	Route::post('/clients/caixaAberto/pagarParcela','ParcelaController@pagarParcelas');
-	Route::post('/clients/caixaAberto/post','ParcelaController@postCaixaAberto');
+	Route::post('/clients/caixaAberto/post','ParcelaController@postCaixaAberto'); 
 
 	//Vendas
 	Route::get('/vendas/view','VendaController@returnView');
