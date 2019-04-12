@@ -74,10 +74,10 @@ class ParcelaController extends Controller
             return redirect('/clients');
         }
         return json_encode($parcelas);
-    }
+    } 
 
     //Esta função paga uma parcela individualmente e gera um recibo em dinheiro
-    public function payParcela($id,$hasContrato = 'NULL'){
+    public function payParcela($id,$venda_id,$isVA=false){
     	$parcela = Parcela::find($id);
     	if (isset($parcela)) {
     		$parcela->status = 'Pago';
@@ -87,10 +87,15 @@ class ParcelaController extends Controller
         $recibo = new Recibo();
         $recibo->cliente_id = $parcela->cliente_id;
         $recibo->formaPagamento = 'dinheiro';
-        $recibo->valorRecibo = $parcela->value;        
-        if($hasContrato != 'NULL') {
-            $recibo->venda_id = $hasContrato;
-        } 
+        $recibo->valorRecibo = $parcela->value; 
+        //Aqui diferencia se a parcela paga é VA ou plano       
+        if(!$isVA) {
+            $recibo->venda_id = $venda_id;
+            $recibo->venda_avulsa_id = NULL;
+        }else{
+            $recibo->venda_id = NULL;
+            $recibo->venda_avulsa_id = $venda_id;
+        }
         $recibo->save();
         //Gerar o item do recibo
         $itemRecibo = new ItemRecibo();
@@ -99,6 +104,11 @@ class ParcelaController extends Controller
         $itemRecibo->value = $parcela->value;
         $itemRecibo->save();
     } 
+
+    //Este método paga também uma parcela mas manda as informações para o método payParcela processar
+    public function payParcelaVA($id,$venda_avulsa_id){ 
+        $this->payParcela($id,$venda_avulsa_id,true);
+    }
     
     //Este método serve de intermediário apenas para receber os dados vindos do post do caixa em aberto e escolher a forma de pagamento
     public function pagarParcelas(Request $request){
@@ -116,36 +126,21 @@ class ParcelaController extends Controller
         $recibo->cliente_id = $request->input("cliente_id");
         $recibo->formaPagamento = $request->input("formaPagamento");
         $recibo->valorRecibo = $request->input("valorTotal");
-
-        $lastVenda = DB::table('vendas')->where([
-            ['cliente_id',$recibo->cliente_id],
-            ['deleted_at',NULL],
-            ])->latest()->first();
-
-        if($lastVenda) $recibo->venda_id = $lastVenda->id;;
         
-        $recibo->save();
-
         //com o recibo salvo trabalhar em cada parcela para gerar os itens do recibo
-        $parcelas = $request->input("parcela");
-        
+        $parcelas = $request->input("parcela");  
         foreach($parcelas as $p){
-            $itemRecibo = new ItemRecibo();            
-            //alterar status da parcela
-            //Verificar se é parcela normal ou parcela VA
-            $a = DB::table('parcelas')->where([
-                ['id',$p],
-                ['cliente_id',$request->input("cliente_id")],
-            ])->get();
-            
-            if(count($a) != 0){
-                //Se parcela normal
-                DB::table('parcelas')
-                    ->where('id', $p)
-                    ->update(['status' => 'Pago']);
-                $parcela = Parcela::find($p);
-            } 
-            //Gerar os itens do recibo
+            DB::table('parcelas')
+                ->where('id', $p)
+                ->update(['status' => 'Pago']);
+            $parcela = Parcela::find($p);
+            $recibo->venda_id = $parcela->venda_id;
+            $recibo->venda_avulsa_id = $parcela->venda_avulsa_id;
+        }
+        $recibo->save();        
+        //Gerar os itens do recibo
+        foreach($parcelas as $p){
+            $itemRecibo = new ItemRecibo();  
             $itemRecibo->recibo_id = $recibo->id;
             $itemRecibo->parcela_id = $p;
             $itemRecibo->value = $parcela->value;

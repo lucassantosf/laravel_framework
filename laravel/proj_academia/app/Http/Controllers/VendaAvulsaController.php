@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\VendaAvulsa;
 use App\ItemVendaAvulsa;
 use App\Parcela;
 use App\Cliente;
 use App\Produto;
+use App\Recibo;
 
 class VendaAvulsaController extends Controller
 {
-    public function postVenda(Request $request){
+    //Este método trata o post da Venda Avulsa
+    public function postVendaAvulsa(Request $request){
     	//Salvar a venda avulsa	    
     	$cliente = Cliente::find($request->input("nomesClientes"));
         if(isset($cliente)){
@@ -38,6 +41,41 @@ class VendaAvulsaController extends Controller
     	$parcelaVendaAvulsa->nome_cliente = $cliente->name;
     	$parcelaVendaAvulsa->save();
         }
-    	return redirect('/home');
+    	return redirect('/clients/'.$cliente->id.'/show');
     }
+
+    //Este método trata o estorno de um item da venda avulsa - com isso toda os outros itens da mesma venda são estornados e a venda_avulsa também
+    public function estornarVendaAvulsa($id_venda_avulsa){
+        $data = [];
+        $venda_avulsa = VendaAvulsa::find($id_venda_avulsa);
+        if (isset($venda_avulsa)) {
+            //deletar a parcela vinculada à venda_avulsa - é unica 
+            $parcela = DB::table('parcelas')->where([
+                ['venda_avulsa_id',$venda_avulsa->id],
+                ['deleted_at',NULL],
+            ])->get();
+            if (count($parcela)>0) {
+                foreach ($parcela as $p) {
+                    $parcela = Parcela::find($p->id);
+                    $parcela->delete();                
+                    array_push($data,$p->id); 
+                }  
+            }
+            //deletar o recibo vinculado à venda_avulsa
+            $recibo = DB::table('recibos')->where([
+                ['venda_avulsa_id',$venda_avulsa->id],
+                ['deleted_at',NULL],
+            ])->get();
+            if (count($recibo)>0) {
+                foreach ($recibo as $r) {
+                    $re = Recibo::find($r->id);
+                    $re->delete();
+                }
+                array_push($data,$r->id);     
+            }
+            $venda_avulsa->delete();
+            return $data;
+        }     
+    }
+
 }

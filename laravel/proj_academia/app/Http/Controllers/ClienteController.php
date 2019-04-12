@@ -12,7 +12,6 @@ use App\Produto;
 use App\Parcela;
 use App\Recibo;
 use App\ItemRecibo;
-use Validator;
 
 class ClienteController extends Controller
 {   
@@ -113,43 +112,39 @@ class ClienteController extends Controller
             //Consulta de Parcelas
             $parcelasConsulta1 = DB::table('parcelas')
                 ->where([['cliente_id',$client->id],['deleted_at',NULL],])
-                ->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
+                //->orWhere([['venda_avulsa_id','!=',NULL],['cliente_id',$client->id],])
                 ->get();
 
             if (count($parcelasConsulta1)>0) {
                 array_push($parcelas, $parcelasConsulta1);
-            } 
-            
-            //--------Fim consulta de Parcelas 
- 
+            }             
+            //--------Fim consulta de Parcelas  
             //Consultar Recibos do cliente
             $recibos = DB::table('recibos')->where([
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->get(); 
 
-            //Consultar Histórico de Compras de Vendas Avulsas
+            //Consultar se o aluno alguma compra
             $compras = DB::table('venda_avulsas')->where([
                 ['cliente_id',$client->id],
                 ['deleted_at',NULL]
             ])->get();
-
-            $nomesprods = [];
+            $itens = [];
             if(count($compras) > 0){
                 //Para cada venda avulsa, consultar tabela itens venda avulsas
-                foreach ($compras as $c) {
-                    // $c->id é id de cada compra
-                    $itens = DB::table('item_venda_avulsas')->where([
+                foreach ($compras as $c) { 
+                    $item_venda_avulsas = DB::table('item_venda_avulsas')->where([
                         ['venda_avulsa_id',$c->id],
                         ['deleted_at',NULL]
                     ])->get();   
-                    foreach ($itens as $i) {
-                        //Adicionar no array nome_produtos_comprados o nome de cada vendido
-                        array_push($nomesprods, $i->descricao_produto);
+                    foreach ($item_venda_avulsas as $i) {
+                        //Incluir o objeto item no array
+                        array_push($itens, $i);
                     }
                 }
-            }  
-            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','nomesprods'));
+            }   
+            return view('operacao.profile',compact('client','isAtivo','plano_details','planoC','parcelas','recibos','itens'));
     	}else{
             echo 'Cliente inexistente';
         }
@@ -182,7 +177,7 @@ class ClienteController extends Controller
                 if(count($parcelas_venda)>0){
                     foreach ($parcelas_venda as $p) {   
                         $parcela = Parcela::find($p->id);
-                        $parcela->delete();
+                        if(isset($parcela)) $parcela->delete();
                     }
                 }  
 

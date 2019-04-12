@@ -239,67 +239,103 @@
                             </div>
                             <div class="tab-pane fade" id="parcelas_historico" role="tabpanel" aria-labelledby="pills-profile-tab">
                                 <table class="table table-hover">
-                                    <tbody>                                        
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" style="text-align: center">Cod Parcela</th>
+                                            <!--<th scope="col" style="text-align: center">Cod Contrato</th>-->
+                                            <th scope="col" style="text-align: center">Valor</th>
+                                            <th scope="col" style="text-align: center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                         
                                         @if(isset($parcelas))
-                                            <tr>
-                                            @foreach($parcelas as $pa)
-                                                @foreach($pa as $p) 
-                                                    <tr>
-                                                        <td>Cod Parcela {{$p->id}}</td>
-                                                        <td>Cod Contrato {{$p->venda_id}}</td>
-                                                        <td>R${{$p->value}}</td>
-                                                        <td class="parcela{{$p->id}}">
-                                                            @if($p->status == 'Em aberto')
-                                                            <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}},{{$p->venda_id}})">{{$p->status}}</a> 
-                                                            @else
-                                                            <span class="border border-1 border-info rounded">{{$p->status}}</span>
-                                                            @endif
-                                                        </td> 
-                                                    </tr>                                              
-                                                @endforeach 
-                                            @endforeach
+                                            @if(count($parcelas)==0)
+                                                <tr>
+                                                    <td colspan="4" style="text-align: center">Nenhuma parcela</td>
+                                                </tr>
+                                            @else
+                                                @foreach($parcelas as $pa)
+                                                    @foreach($pa as $p) 
+                                                        <tr>
+                                                            <td style="text-align: center">{{$p->id}}</td>
+                                                            <!--<td style="text-align: center">{{$p->venda_id}}{{$p->venda_avulsa_id}}</td>-->
+                                                            <td style="text-align: center">R${{$p->value}}</td>
+                                                            <td style="text-align: center" class="parcela{{$p->id}}">
+                                                                @if($p->status == 'Em aberto')
+                                                                <a class="border border-1 border-info rounded" id="{{$p->id}}" onclick="pagarParcela({{$p->id}},@if($p->venda_id == NULL) false @else{{$p->venda_id}}@endif,{{$p->venda_avulsa_id}})">{{$p->status}}</a> 
+                                                                @else
+                                                                <span class="border border-1 border-info rounded">{{$p->status}}</span>
+                                                                @endif
+                                                            </td> 
+                                                        </tr>                                              
+                                                    @endforeach 
+                                                @endforeach
+                                            @endif
                                         @endif     
                                     </tbody>
                                 </table> 
                             </div>
                             <div class="tab-pane fade" id="compras_historico" role="tabpanel" aria-labelledby="pills-contact-tab">
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="historicoCompras">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" style="text-align: center">Descrição produto</th>
+                                            <th scope="col" style="text-align: center">Nº Venda Avulsa</th>
+                                            <th scope="col" style="text-align: center">Ação</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        @if(isset($nomesprods))
-                                            @foreach($nomesprods as $c)
+                                        @if(isset($itens))
+                                            @if(count($itens)==0)
                                                 <tr>
-                                                    <td style="text-align: center">{{$c}}</td>
+                                                    <td colspan="3" style="text-align: center">Nenhuma venda realizada</td>
                                                 </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td>Sem compras realizadas ainda!</td>
-                                            </tr>
+                                            @else
+                                                @foreach($itens as $i)
+                                                    <tr>
+                                                        <td style="text-align: center">{{$i->descricao_produto}}</td>
+                                                        <td class="linhaVenda{{$i->venda_avulsa_id}}" style="text-align: center">{{$i->venda_avulsa_id}}</td>
+                                                        <td style="text-align: center"><button class="btn badge badge-pill badge-danger" onclick="estornarItemVendaAvulsa(this,{{$i->id}},{{$i->venda_avulsa_id}})">Estornar</button></td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         @endif              
                                   </tbody>
                                 </table> 
                             </div>
                             <div class="tab-pane fade" id="recibos_historico" role="tabpanel" aria-labelledby="pills-contact-tab">
                                 <table class="table table-hover" id="historicoPagamento">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" style="text-align: center">Nº Recibo</th>
+                                            <th scope="col" style="text-align: center">Forma Pagamento</th>
+                                            <th scope="col" style="text-align: center">Valor</th>
+                                            <th scope="col" style="text-align: center">Ação</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         @if(isset($recibos))
-                                            @foreach($recibos as $r)
+                                            @if(count($recibos)==0)
                                                 <tr>
-                                                <td>Recibo {{$r->id}}</td>
-                                                <td>Forma de Pagamento - {{$r->formaPagamento}} </td>
-                                                <td>Valor R${{$r->valorRecibo}} </td>
-                                                <td>
-                                                    <button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,{{$r->id}})">Estornar</button>
-                                                </td>
-                                            </tr>
-                                            @endforeach                                    
+                                                    <td colspan="4" class="firtRecibo" style="text-align: center">Nenhum pagamento realizado</td>
+                                                </tr>
+                                            @else
+                                                @foreach($recibos as $r)
+                                                    <tr>
+                                                        <td style="text-align: center">{{$r->id}}</td>
+                                                        <td style="text-align: center">{{$r->formaPagamento}}</td>
+                                                        <td style="text-align: center" class="linhaRecibo{{$r->id}}">R${{$r->valorRecibo}}</td>
+                                                        <td style="text-align: center">
+                                                            <button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,{{$r->id}})">Estornar</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach 
+                                            @endif                                   
                                         @endif                                                  
                                     </tbody>
                                 </table> 
                             </div>
-                        </div>
-                        
-                                                
+                        </div>    
                     @endif
                 </div>
             </div>
@@ -310,7 +346,7 @@
 @section('javascript')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
     <script type="text/javascript">
-        
+        //InitFunctions
         $(document).ready(function() {                
             mascaraCampos();
             //Se for ativo mostrar progressBar duracao do contrato
@@ -319,30 +355,36 @@
             @endif 
         });
 
-        function pagarParcela(id,hasContrato){
+        //Esta função paga uma parcela diretamente pelo profile e no final busca o recibo que acabou de ser gerado
+        function pagarParcela(id,hasContrato,hasVenda){
             if(hasContrato) {
                 $.get("/clients/pagarParcela/"+id+"/"+hasContrato);
             }else{
-                $.get("/clients/pagarParcela/"+id+"/NULL");
+                $.get("/clients/pagarParcelaVA/"+id+"/"+hasVenda);
             }
             $("#"+id).remove();
             $(".parcela"+id).html('<span class="border border-1 border-info rounded">Pago</span>');
+            //contabiliza quantas linhas tem na tabela de recibos - se não tiver retira a mensagem de 'Sem recibos'
+            let qtdLinhas = $('#historicoPagamento tr').length ;
+            if(qtdLinhas >= 2) {   $('.firtRecibo').remove();  }
             this.getRecibo(id);
         } 
 
+        //Esta função busca o recibo de acordo ao parcela_id - utilizado logo ao pagar a parcela de forma avulsa pelo perfil do aluno - inclui uma linha ta tabela historicoPagamento
         function getRecibo(parcela_id){
             $.getJSON("/clients/getRecibo/"+parcela_id, function(data){
                 $("#historicoPagamento").append(
                     '<tr>'+
-                        '<td>Recibo '+data.id+'</td>'+
-                        '<td>Forma de Pagamento - '+data.formaPagamento+'</td>'+
-                        '<td>Valor R$'+data.valorRecibo+'</td>'+
-                        '<td>'+'<button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,'+data.id+')">Estornar</button>'+
+                        '<td style="text-align: center">'+data.id+'</td>'+
+                        '<td style="text-align: center">'+data.formaPagamento+'</td>'+
+                        '<td style="text-align: center" class="linhaRecibo'+data.id+'">R$'+data.valorRecibo+'</td>'+
+                        '<td style="text-align: center">'+'<button class="btn badge badge-pill badge-danger" onclick="estornarRecibo(this,'+data.id+')">Estornar</button>'+
                         '</td>'+
                     '</tr>');
             });
         }
-  
+        
+        //Esta função define a mascara dos campos na edição de dados pessoais
         function mascaraCampos(){
             $("#dt_born").mask('00/00/0000', {reverse: true});
             $("#cpf").mask('000.000.000-00', {reverse: true});
@@ -351,6 +393,7 @@
             $("#cep").mask('00000-000', {reverse: true});
         }
 
+        //Esta função inicializa o progressBar da duração do contrato do aluno
         function progressBarDuracao(){
             //Barra de progresso duração do plano
             //recuperar valor das datas do plano
@@ -375,6 +418,7 @@
             $("#progressDt").css('width',x+'%');
         }
 
+        //Esta função é utilizada para consultar CEP
         function consultar(){
             cep = $('#cep').val();
             cep = cep.replace('-','');
@@ -402,14 +446,42 @@
             }
         }
 
+        //Esta função estorna o recibo de acordo ao seu id - e altera tabela parcelas_historico - parcela volta a ficar em aberto
         function estornarRecibo(data,id){
             $.getJSON("/clients/estornarRecibo/"+id,function(data){
                 $.each(data,function(index,value){
                     $('.parcela'+value.id).html('');
-                    $('.parcela'+value.id).html('<a class="border border-1 border-info rounded" id="'+value.id+'" onclick="pagarParcela('+value.id+','+value.venda_id+')">Em aberto</a>');
+                    $('.parcela'+value.id).html('<a class="border border-1 border-info rounded" id="'+value.id+'" onclick="pagarParcela('+value.id+','+value.venda_id+','+value.venda_avulsa_id+')">Em aberto</a>');
                 });                
             });
             $(data).parents('tr').remove(); 
+            let qtdLinhas = $('#historicoCompras td').length ; 
+            if(qtdLinhas == 0) {
+                $('#historicoCompras').append('<tr><td class="firtRecibo" colspan="4" style="text-align: center">Nenhum pagamento realizado</td></tr>');
+            }
+        }
+
+        //Esta função estorna a venda_avulsa que o item clicado esta relacionado
+        function estornarItemVendaAvulsa(data,id_item,id_venda){
+            apagar = confirm("Confirmar estornar venda "+id_venda+" ? Todos produtos e recibos serão excluidos!");
+            if(apagar){
+                $('.linhaVenda'+id_venda).parents('tr').remove();
+                $.getJSON("/vendas/estornarVendaAvulsa/"+id_venda,function(data){
+                    console.log(data);
+                    $('.linhaRecibo'+data[1]).parents('tr').remove();
+                    $('.parcela'+data[0]).parents('tr').remove();
+                    console.log('Parcela id deletado - '+data[0]);
+                    console.log('Recibo id deletado - '+data[1]);
+                }); 
+                //Contabilizador de colunas do historicoCompras
+                let qtdLinhas = $('#historicoPagamento tr').length ;
+                if(qtdLinhas >= 2) {   $('.firtRecibo').remove();  }
+            } 
+            //Contabilizador de colunas do historicoCompras
+            let qtdLinhas = $('#historicoCompras td').length ; 
+            if(qtdLinhas == 0) {
+                $('#historicoCompras').append('<tr><td colspan="3" style="text-align: center">Nenhuma venda realizada</td></tr>');
+            }
         }
     </script>
 @endsection
