@@ -44,7 +44,7 @@ class VendaAvulsaController extends Controller
     	return redirect('/clients/'.$cliente->id.'/show');
     }
 
-    //Este método trata o estorno de um item da venda avulsa - com isso toda os outros itens da mesma venda são estornados e a venda_avulsa também
+    //Este método trata o estorno de um item da venda avulsa - com isso toda os outros itens da mesma venda são estornados e a venda_avulsa também, retorna um array com o cod recibo, e parcelas com vinculos à venda para tratar no front sem ter que atualizar a tela
     public function estornarVendaAvulsa($id_venda_avulsa){
         $data = [];
         $venda_avulsa = VendaAvulsa::find($id_venda_avulsa);
@@ -54,6 +54,7 @@ class VendaAvulsaController extends Controller
                 ['venda_avulsa_id',$venda_avulsa->id],
                 ['deleted_at',NULL],
             ])->get();
+             
             if (count($parcela)>0) {
                 foreach ($parcela as $p) {
                     $parcela = Parcela::find($p->id);
@@ -66,12 +67,31 @@ class VendaAvulsaController extends Controller
                 ['venda_avulsa_id',$venda_avulsa->id],
                 ['deleted_at',NULL],
             ])->get();
+             
             if (count($recibo)>0) {
                 foreach ($recibo as $r) {
                     $re = Recibo::find($r->id);
+                    array_push($data,$r->id);     
+
+                    //Verificar se o recibo estornado na venda possui mais itens, e se possuir tornar as parcelas do recibo em aberto novamente
+                    $itens = DB::table('item_recibos')->where([
+                        ['recibo_id',$re->id],
+                        ['deleted_at',NULL],
+                    ])->get();
+                     
+                    if (count($itens)>0) {
+                        $parcelas = [];
+                        foreach ($itens as $i) { 
+                            DB::table('parcelas')
+                            ->where('id', $i->parcela_id)
+                            ->update(['status' => 'Em aberto']);
+                            $parc = Parcela::find($i->parcela_id);
+                            array_push($data,$parc);     
+                        }   
+                    } 
+                    array_push($data,$parcelas); 
                     $re->delete();
                 }
-                array_push($data,$r->id);     
             }
             $venda_avulsa->delete();
             return $data;

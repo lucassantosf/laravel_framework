@@ -41,6 +41,9 @@
                         <a class="navbar-brand" href="{{ url('/cadastros/modals') }}">
                             Modalidades
                         </a>
+                        <a class="navbar-brand" href="{{ url('/cadastros/turmas') }}">
+                            Turmas
+                        </a>
                     </div>
                 </div>
 

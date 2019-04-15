@@ -77,10 +77,8 @@
                     $("#durPlan").append('<input type="radio" value="'+item+'" name="duracao">'+item+'<br>');
                 });
                 //para cada obj vindo no array modal
-                for(i=0; i<obj["modals"].length ; i++){
-                    console.log(obj["modals"][i]['modal_id']);
-                    $.each(obj["modals"][i],function(name,value){
-                        console.log(name,value);
+                for(i=0; i<obj["modals"].length ; i++){ 
+                    $.each(obj["modals"][i],function(name,value){ 
                         $("#modalsPlan").append('<input type="checkbox" value="'+obj["modals"][i]['modal_id']+'" name="modals[]">'+name+' - R$'+value+'<br>');
                         return false;
                     }); 

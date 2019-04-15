@@ -218,8 +218,7 @@
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="planos_historico" role="tabpanel" aria-labelledby="pills_planos_historico">
-                                @if($isAtivo)
-                                    <br>
+                                @if($isAtivo) 
                                     <div class="alert alert-primary" role="alert">
                                         {{$plano_details->name}} <a href="/clients/estornarContrato/{{$planoC->id}}/{{$planoC->cliente_id}}" class="btn btn-outline-danger btn-sm">Estornar</a>
                                     </div>
@@ -228,7 +227,7 @@
                                         <label id="dt_inicio">{{$planoC->dt_inicio}} - </label>
                                         <label id="dt_fim">{{$planoC->dt_fim}}</label>
                                         <div class="progress">
-                                          <div class="progress-bar bg-success" role="progressbar"  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="progressDt"></div>
+                                            <div class="progress-bar bg-success" role="progressbar"  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="progressDt"></div>
                                         </div>
                                     </div><br>                            
                                     <div class="alert alert-primary" role="alert">
@@ -433,14 +432,12 @@
                     $("#city").val(dados.localidade);
                     $("#country").val('Brasil');
                     $("#uf").val(dados.uf);
-                }//end if.
-                    else {
-                        //CEP pesquisado não foi encontrado.
-                        $("#cep").val('');
-                        alert("CEP não encontrado.");
+                }else {
+                    //CEP pesquisado não foi encontrado.
+                    $("#cep").val('');
+                    alert("CEP não encontrado.");
                     }
                 });
-
             }else{
                 alert('Cep em branco!');
             }
@@ -466,12 +463,16 @@
             apagar = confirm("Confirmar estornar venda "+id_venda+" ? Todos produtos e recibos serão excluidos!");
             if(apagar){
                 $('.linhaVenda'+id_venda).parents('tr').remove();
-                $.getJSON("/vendas/estornarVendaAvulsa/"+id_venda,function(data){
-                    console.log(data);
-                    $('.linhaRecibo'+data[1]).parents('tr').remove();
+                $.getJSON("/vendas/estornarVendaAvulsa/"+id_venda,function(data){ 
                     $('.parcela'+data[0]).parents('tr').remove();
-                    console.log('Parcela id deletado - '+data[0]);
-                    console.log('Recibo id deletado - '+data[1]);
+                    $('.linhaRecibo'+data[1]).parents('tr').remove(); 
+                    for(i = 2; i < data.length; i++){
+                        ///console.log(data[i]);
+                        $.each( data[i], function( key, value ) { 
+                            $('.parcela'+data[i]['id']).html('');
+                            $('.parcela'+data[i]['id']).html('<a class="border border-1 border-info rounded" id="'+data[i]['id']+'" onclick="pagarParcela('+data[i]['id']+','+data[i]['venda_id']+','+data[i]['venda_avulsa_id']+')">Em aberto</a>');
+                        });                        
+                    } 
                 }); 
                 //Contabilizador de colunas do historicoCompras
                 let qtdLinhas = $('#historicoPagamento tr').length ;
