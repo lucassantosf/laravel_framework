@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         @if($i == 0)        
         <!-- Inicio card listagem -->
-        <div class="col-md-8">
+        <div class="col-md-9">
             <div class="card">
                 <div class="card-header">Modalidades</div>
                 <div class="card-body">
@@ -16,6 +16,7 @@
                               <th scope="col">Nome</th>
                               <th scope="col">Valor Mensal</th>
                               <th scope="col">Frequencia</th>
+                              <th scope="col">Turma</th>
                               <th scope="col">Situação</th>
                               <th scope="col">Ações</th>
                             </tr>
@@ -27,6 +28,7 @@
                                     <td>{{$m->name}}</td>
                                     <td>R${{$m->value}}</td>
                                     <td>{{$m->freq}}</td>
+                                    <td>@if($m->controlTurma == 1) Sim @else Não @endif</td>
                                     <td>@if($m->status == 1) Ativo @else Inativo @endif</td>
                                     <td>
                                         <a href="/cadastros/modal/{{$m->id}}/edit" class="btn btn-sm btn-warning">Editar</a>
@@ -50,15 +52,14 @@
             <div class="card">
                 <div class="card-header">Cadastrar modalidade</div>
                 <div class="card-body">
-                    @if(!isset($modal))
-
+                    @if(!isset($modal)) 
                     <form action="/cadastros/formModal" method="POST">
                         @csrf
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Nome</label>
                             <div class="col-sm-8">
                                 <input type="text" name="name" class="form-control" placeholder="Descrição"> 
-                            </div>
+                            </div> 
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Valor mensal</label>
@@ -81,9 +82,16 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="form-group row">
+                            <div class="col-sm-3">Controla Turma
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="turma" name="turma" value="T">
+                                </div>
+                            </div>
+                        </div>
                         @else
-
                         <form action="/cadastros/modal/{{$modal->id}}/edit" method="POST">
                         @csrf
                         <div class="form-group row">
@@ -110,6 +118,15 @@
                             <div class="col-sm-4">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" id="status" name="status" value="A" @if($modal->status == 1) checked  @endif>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">Controla Turma
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="turma" name="turma" value="T" @if($modal->controlTurma == 1) checked  @endif>
                                 </div>
                             </div>
                         </div>

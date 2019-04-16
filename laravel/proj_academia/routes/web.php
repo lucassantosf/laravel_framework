@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/cadastros/turmas','TurmaController@indexTurmas');
 	Route::get('/cadastros/formTurma','TurmaController@formTurma');
 	Route::post('/cadastros/formTurma','TurmaController@postFormTurma');
+	Route::get('/cadastros/turmas/{id}/edit','TurmaController@formTurmaEdit'); 
+	Route::get('/cadastros/turmas/{id}/delete','TurmaController@destroyTurma');
+	Route::post('/cadastros/turmas/{id}/edit','TurmaController@postformTurmaEdit');
 
 
 	// Relatórios

@@ -92,7 +92,6 @@ class ClienteController extends Controller
 
     //Este método busca dados de um cliente - plano, parcelas, recibos, compras, etc...
     public function showClient($id){
-
     	$client = Cliente::find($id);
     	if(isset($client)){
             $isAtivo = false;

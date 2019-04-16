@@ -23,7 +23,7 @@ class CreateVendasTable extends Migration
             $table->string('dt_inicio');
             $table->string('dt_fim');
             $table->softDeletes();
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 

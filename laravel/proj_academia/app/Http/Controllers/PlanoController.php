@@ -183,6 +183,7 @@ class PlanoController extends Controller
         ])->delete();
     }
 
+    //Método para tratar a exclusão do cadastro do plano apartir de seu id
     public function destroyPlan($id){
         $plan = Plano::find($id);
         if($plan){
@@ -199,8 +200,7 @@ class PlanoController extends Controller
         $plan = Plano::find($id);
         $duracoes = [];
         $modals = [];
-        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get();
-
+        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get(); 
         foreach ($duracoes_bd as $d) {            
             array_push($duracoes, $d->duracao);
         }

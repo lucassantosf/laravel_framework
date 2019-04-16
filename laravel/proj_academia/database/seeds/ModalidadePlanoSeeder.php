@@ -20,7 +20,7 @@ class ModalidadePlanoSeeder extends Seeder
         DB::table('modalidades_planos')->insert([
             'plano_id' => 2, 
             'modal_id' => 1,             
-        ]);
+        ]); 
 
         DB::table('modalidades_planos')->insert([
             'plano_id' => 2, 

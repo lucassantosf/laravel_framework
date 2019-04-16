@@ -24,7 +24,8 @@ class ModalidadeController extends Controller
         $modal->value = $request->input('value');
         $modal->freq = $request->input('freq');
         $modal->status = $request->input('status') == 'A' ? true : false;
-        $modal->save();
+        $modal->controlTurma = $request->input('turma') == 'T' ? true : false;
+        $modal->save(); 
         return redirect('/cadastros/modals');
     }   
 
@@ -45,6 +46,7 @@ class ModalidadeController extends Controller
             $modal->value = $request->input('value');
             $modal->freq = $request->input('freq');
             $modal->status = $request->input('status') == 'A' ? true : false;
+            $modal->controlTurma = $request->input('turma') == 'T' ? true : false;
             $modal->save();
         }
         return redirect('/cadastros/modals');
