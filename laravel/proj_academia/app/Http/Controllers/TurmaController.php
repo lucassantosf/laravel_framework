@@ -77,28 +77,39 @@ class TurmaController extends Controller
     		$horariosFim = $request->input('horarioFim');
     		$qtdTurma = $request->input('qtdTurma');
     		$diaSemana = $request->input('diaSemana'); 
-
-	    	var_dump($item_id);
-	    	
-	    	echo '<br>';
-
-	    	var_dump($horariosInicio);
-
-	    	echo '<br>';
-	    	
-    		if (isset($item_id)) {
-    			for($i = 0 ; $i < count($item_id) ; $i++){
-	    			var_dump($item_id);
-	    			echo '<br>';
+  
+  			//22 - Verificar se os itens do banco estão no post
+	    	$itens_turma = DB::table('item_turmas')->where([
+                ['turma_id',$turma->id],
+                ['deleted_at',NULL],
+        	])->get();
+	    	foreach ($itens_turma as $i) {	    		
+	    		if(isset($item_id)){	    			 
+	    			for($x = 0 ; $x < count($item_id) ; $x++){
+	    				if($i->id == $item_id){
+	    				}else{
+		    				//Apagar
+		    				$item = ItemTurma::find($item_id[$x]);
+			        		$item->delete();
+	    				}
+	    			} 
+	    		}else{
+		    		$item = ItemTurma::find($i->id);
+			        $item->delete();
 	    		}
-    		}else{
-    			DB::table('item_turmas')->where([
-                	['turma_id',$turma->id],
-                	['deleted_at',NULL],
-        		])->get();
-    		} 
-
-	    	exit(); 
+	    	}
+	    	//22 - Fim da verificação
+  			if (isset($horariosInicio)) {
+  				for($i = 0 ; $i < count($horariosInicio) ; $i++){
+		    		$ItemTurma = new ItemTurma();
+		    		$ItemTurma->hora_inicio = $horariosInicio[$i];
+		    		$ItemTurma->hora_fim = $horariosFim[$i];
+		    		$ItemTurma->capacidade = $qtdTurma[$i];
+		    		$ItemTurma->dia_semana  = $diaSemana[$i]; 
+		    		$ItemTurma->turma_id = $turma->id;
+		    		$ItemTurma->save();
+	    		}
+  			}  
     	}
     	return redirect("/cadastros/turmas");
     }
