@@ -67,39 +67,52 @@ class TurmaController extends Controller
     public function postformTurmaEdit(Request $request, $id){
     	$turma = Turma::find($id);
     	if (isset($turma)) {
-    		$turma->name = $request->input('descricao_turma'); 
-	    	$turma->modal_id = $request->input('modal_id');
-	    	$turma->status = $request->input('status') == 'A' ? true : false;
+    		//1-Editar os detalhes da turma
+    		$turma->name = $request->input('descricao_turma_edit'); 
+	    	$turma->modal_id = $request->input('modal_id_edit');
+	    	$turma->status = $request->input('status_edit') == 'A' ? true : false;
 	    	$turma->save();
-
-	    	$item_id = $request->input('item_id');
-	    	$horariosInicio = $request->input('horarioInicio');
-    		$horariosFim = $request->input('horarioFim');
-    		$qtdTurma = $request->input('qtdTurma');
-    		$diaSemana = $request->input('diaSemana'); 
-  
-  			//22 - Verificar se os itens do banco estão no post
+	    	//1-Fim editar detalhes
+	    	 
+	    	//2-Editar os itens do array lista 1
+	    	$horariosInicio_edit = $request->input('horarioInicio_edit');
+    		$horariosFim_edit = $request->input('horarioFim_edit');
+    		$qtdTurma_edit = $request->input('qtdTurma_edit');
+    		$diaSemana_edit = $request->input('diaSemana_edit'); 
+	    	$lista1 = $request->input('lista1');
+	    	if (isset($lista1)) {	    	
+		    	for($x=0; $x < count($lista1); $x++) {
+		    		$item_turmas = ItemTurma::find($lista1[$x]);
+		    		if (isset($item_turmas)) {
+		    			$item_turmas->hora_inicio = $horariosInicio_edit[$x];
+			    		$item_turmas->hora_fim = $horariosFim_edit[$x];
+			    		$item_turmas->capacidade = $qtdTurma_edit[$x];
+			    		$item_turmas->dia_semana  = $diaSemana_edit[$x]; 
+			    		$item_turmas->save();
+		    		}
+		    	}
+	    	}
+	    	//2-Fim editar itens
+	    	
+	    	//3-Verificar se os itens do banco estão no post do array1 - senão estiver apagar
 	    	$itens_turma = DB::table('item_turmas')->where([
                 ['turma_id',$turma->id],
                 ['deleted_at',NULL],
         	])->get();
-	    	foreach ($itens_turma as $i) {	    		
-	    		if(isset($item_id)){	    			 
-	    			for($x = 0 ; $x < count($item_id) ; $x++){
-	    				if($i->id == $item_id){
-	    				}else{
-		    				//Apagar
-		    				$item = ItemTurma::find($item_id[$x]);
-			        		$item->delete();
-	    				}
-	    			} 
-	    		}else{
-		    		$item = ItemTurma::find($i->id);
-			        $item->delete();
-	    		}
-	    	}
-	    	//22 - Fim da verificação
-  			if (isset($horariosInicio)) {
+	    	foreach ($itens_turma as $i) {
+	    		if(!in_array($i->id,$lista1)){
+	    			$item = ItemTurma::find($i->id);
+	    			$item->delete();
+	    		} 
+	    	} 
+	    	//3-Fim verificar itens
+	    	
+	    	//4-Salvar os itens do array lista 2
+	    	$horariosInicio = $request->input('horarioInicio');
+    		$horariosFim = $request->input('horarioFim');
+    		$qtdTurma = $request->input('qtdTurma');
+    		$diaSemana = $request->input('diaSemana'); 
+	    	if (isset($horariosInicio)) {
   				for($i = 0 ; $i < count($horariosInicio) ; $i++){
 		    		$ItemTurma = new ItemTurma();
 		    		$ItemTurma->hora_inicio = $horariosInicio[$i];
@@ -109,7 +122,9 @@ class TurmaController extends Controller
 		    		$ItemTurma->turma_id = $turma->id;
 		    		$ItemTurma->save();
 	    		}
-  			}  
+  			} 
+	    	//4-Fim salvar itens do array lista 2
+	    	
     	}
     	return redirect("/cadastros/turmas");
     }
@@ -127,4 +142,8 @@ class TurmaController extends Controller
         return redirect('/cadastros/turmas');
     } 
 
+    //Retornar View da Gestão de Turmas
+    public function gestaoTurmasView(){
+        return view('operacao.gestaoTurmas');
+    }
 }	

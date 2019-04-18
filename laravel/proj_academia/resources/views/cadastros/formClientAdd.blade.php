@@ -3,12 +3,10 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">Incluir clientes</div>
-<?php
-if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
-?>
+                
                 <div class="card-body">
                     <form action="/incluir/clients" method="POST" id="formClient">
                         @csrf
@@ -125,7 +123,7 @@ if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
                                     <input type="text" id="cep" name="cep" class="form-control" placeholder="00000-000">
                                 </div>
                                 <div class="col-md-2">
-                                    <button class="btn btn-primary list-inline-item" id="consultarCep" onclick="consultar()" type="button">Consultar</button>
+                                    <button class="btn btn-info list-inline-item" id="consultarCep" onclick="consultar()" type="button">Consultar</button>
                                 </div>
                             </div>   
                         </div> 
@@ -180,7 +178,7 @@ if(isset($_SESSION['errors'])) var_dump($_SESSION['errors']);
                         </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-primary" type="submit">Salvar</button>
+                    <button class="btn btn-info" type="submit">Salvar</button>
                     </form>
                 </div>
 

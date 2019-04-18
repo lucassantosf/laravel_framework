@@ -1,47 +1,56 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
         <!-- Listagem de Turmas -->
         @if($i==0) 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col-sm-1">#</th>
-                        <th scope="col-sm-1">Descrição</th>
-                        <th scope="col-sm-1">Modalidade</th> 
-                        <th scope="col">Status</th>
-                        <th scope="col"><a href="/cadastros/formTurma" class="btn btn-outline-info">Cadastre</a></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($turmas as $t) 
-                        <tr>
-                            <td><span class="badge badge-light">{{$t->id}}</span></td>
-                            <td><span class="badge badge-success">{{$t->name}}</span></td>
-                            <td>
-                                <span class="badge badge-primary">
-                                    @foreach($modalidades as $m)
-                                        @if($t->modal_id == $m->id)
-                                            {{$m->name}}
-                                        @endif
-                                    @endforeach
-                                </span>
-                            </td>
-                            <td><span class="badge badge-dark">@if($t->status == 1) Ativo @else Inativo @endif</span></td>
-                            <td>
-                                <a href="/cadastros/turmas/{{$t->id}}/edit" class="btn btn-sm btn-warning">Editar</a>
-                                <a href="/cadastros/turmas/{{$t->id}}/delete" class="btn btn-sm  btn-danger">Apagar</a>
-                            </td>
-                        </tr> 
-                    @endforeach
-                </tbody>   
-            </table>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Turmas
+                        <a style="float: right" href="/cadastros/formTurma" class="btn btn-outline-info btn-sm">Cadastrar</a>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-responsive-sm table-striped table-borderless table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Descrição</th>
+                                    <th>Modalidade</th> 
+                                    <th scope="col" colspan="2">Situação</th> 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($turmas as $t) 
+                                    <tr>
+                                        <th>{{$t->id}}</th>
+                                        <td>{{$t->name}}</td>
+                                        <td>
+                                            @foreach($modalidades as $m)
+                                                @if($t->modal_id == $m->id)
+                                                    {{$m->name}}
+                                                @endif
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @if($t->status == 1) Ativo 
+                                            @else Inativo 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="/cadastros/turmas/{{$t->id}}/edit" class="btn btn-sm btn-info">Editar</a>
+                                            <a href="/cadastros/turmas/{{$t->id}}/delete" class="btn btn-sm  btn-danger">Apagar</a>
+                                        </td>
+                                    </tr> 
+                                @endforeach
+                            </tbody>   
+                        </table>
+                    </div>
+                </div>
+            </div>
         @endif
         <!-- Cadastro de Turmas -->
         @if($i==1)
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header" style="text-align: center">Cadastrar Turmas < <a href="/cadastros/turmas">Voltar</a></div>
                     <div class="card-body">                         
@@ -93,6 +102,7 @@
                     </div>                 
                     <div class="card-footer">
                         <button class="btn btn-sm btn-info" type="submit">Salvar</button>
+                        <a href="/cadastros/turmas" class="btn btn-sm btn-danger">Cancelar</a>
                         </form>
                         @if($errors->any())
                             @foreach($errors->all() as $error)
@@ -119,14 +129,14 @@
                                 <div class="form-group row">
                                     <label for="staticEmail" class="col-sm-3 col-form-label">Descrição da turma</label>
                                     <div class="col-sm-9">
-                                      <input type="text" class="form-control-plaintext" id="descricao_turma" name="descricao_turma"  value="{{$turma->name}}">
+                                      <input type="text" class="form-control-plaintext" id="descricao_turma_edit" name="descricao_turma_edit"  value="{{$turma->name}}">
                                     </div>
                                 </div> 
                                 <div class="form-row">
                                     <label class="col-sm-3">Modalidade</label>
                                     @if(isset($modalidades))
                                         <div class="col-sm-9">
-                                            <select class="custom-select" name="modal_id">
+                                            <select class="custom-select" name="modal_id_edit">
                                                 @foreach($modalidades as $m)                                    
                                                     <option value="{{$m->id}}" @if($m->id == $turma->modal_id) selected @endif >{{$m->name}}</option>
                                                 @endforeach
@@ -138,7 +148,7 @@
                                     <label class="col-sm-2">Ativo</label> 
                                     <div class="col-sm-2">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="status" name="status" value="A" @if($turma->status == 1) checked @endif>
+                                            <input class="form-check-input" type="checkbox" id="status" name="status_edit" value="A" @if($turma->status == 1) checked @endif>
                                         </div>
                                     </div>
                                     <div class="col-sm-8">
@@ -161,12 +171,12 @@
                                         <tbody>
                                             @foreach($itens_turma as $i)
                                                 <tr>
-                                                    <input type="hidden" name="item_id[]" value="{{$i->id}}">
-                                                    <td><input type="text" class="form-control horarioInput" name="horarioInicio[]" value="{{$i->hora_inicio}}"></td>
-                                                    <td><input type="text" class="form-control horarioInput" name="horarioFim[]" value="{{$i->hora_fim}}"></td>
-                                                    <td><input type="text" class="form-control qtdTurma" name="qtdTurma[]" value="{{$i->capacidade}}"></td>
+                                                    <input type="hidden" name="lista1[]" value="{{$i->id}}">
+                                                    <td><input type="text" class="form-control horarioInputInicio" name="horarioInicio_edit[]" value="{{$i->hora_inicio}}"></td>
+                                                    <td><input type="text" class="form-control horarioInputFim" name="horarioFim_edit[]" value="{{$i->hora_fim}}"></td>
+                                                    <td><input type="text" class="form-control qtdTurma" name="qtdTurma_edit[]" value="{{$i->capacidade}}"></td>
                                                     <td>
-                                                        <select class="custom-select" name="diaSemana[]"> 
+                                                        <select class="custom-select" name="diaSemana_edit[]"> 
                                                             <option value="0" @if($i->dia_semana==0) selected @endif>Domingo</option>
                                                             <option value="1" @if($i->dia_semana==1) selected @endif>Segunda-feira</option>
                                                             <option value="2" @if($i->dia_semana==2) selected @endif>Terça-feira</option>
@@ -207,7 +217,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
     <script type="text/javascript">
         $(document).ready(function() { 
-                       
+            incluirMascara(); 
         });
 
         function apagarLinhaHora(data){
@@ -237,7 +247,9 @@
         }
 
         function incluirMascara(){
-            $(".horarioInput").mask('23:59', {reverse: true});  
+            $(".horarioInput").mask('00:00', {reverse: true});  
+            $(".horarioInputInicio").mask('00:00', {reverse: true});  
+            $(".horarioInputFim").mask('00:00', {reverse: true});  
             $(".qtdTurma").mask('999', {reverse: true});  
         }
 
