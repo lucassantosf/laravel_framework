@@ -144,6 +144,29 @@ class TurmaController extends Controller
 
     //Retornar View da Gestão de Turmas
     public function gestaoTurmasView(){
-        return view('operacao.gestaoTurmas');
+        $modalidades = DB::table('modalidades')->where([
+                ['controlTurma',1],
+                ['deleted_at',NULL],
+        ])->get();
+        return view('operacao.gestaoTurmas',compact('modalidades'));
     }
+
+    //Este método serve para consultar quais turmas estão relacionadas à modalidade pesquisada, de acordo ao id da modalidade- utilizado na tela Gestão de Turmas
+    public function getTurmasFromModalId($id){
+        $turmas = DB::table('turmas')->where([
+                ['modal_id',$id],
+                ['deleted_at',NULL],
+        ])->get(); 
+        return json_encode($turmas);
+    }
+
+    //Este método serve para consultar itens de uma turma de acordo ao id selecionado - utilizado na tela Gestão de Turmas
+    public function getItensFromTurmaId($id){
+        $itens = DB::table('item_turmas')->where([
+                ['turma_id',$id],
+                ['deleted_at',NULL],
+        ])->get(); 
+        return json_encode($itens);
+    }
+
 }	

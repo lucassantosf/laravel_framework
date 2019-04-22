@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <fieldset disabled>
                             <div class="form-row">@if(isset($client))
-                            <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">Aluno{{$client->name}}</label>
+                            <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">{{$client->name}}</label>
                             <input type="hidden" name="client_id" value="{{$client->id}}">
                             </div>
                     </fieldset>

@@ -12,22 +12,23 @@
             		<div class="form-group row" style="padding-bottom: 10px">
 					    <label class="col-sm-2 col-form-label"></label>
 					    <label class="col-sm-3 col-form-label">Modalidade</label>
-					    <select style="margin-top: 5px" class="col-sm-5 form-control form-control-sm">
-						  	<option></option>
-						  	<option>Modal 1</option>
-						  	<option>Modal 2</option>
+					    @if(isset($modalidades))
+					    <select style="margin-top: 5px" class="col-sm-5 form-control form-control-sm" id="selectModal">
+						  		<option value="0">...</option> 
+						  	@foreach($modalidades as $m)
+						  		<option value="{{$m->id}}">{{$m->name}}</option> 
+						  	@endforeach
 						</select>
+						@endif
 					</div>            		
 					<div class="form-group row">
 					    <label class="col-sm-2 col-form-label"></label>
 					    <label class="col-sm-3 col-form-label">Turma</label>
-					    <select style="margin-top: 5px" class="col-sm-5 form-control form-control-sm">
-						  	<option></option>
-						  	<option>Turma 1</option>
-						  	<option>Turma 2</option>
-						</select>
+					    <select style="margin-top: 5px" class="col-sm-5 form-control form-control-sm" id="selectTurma"> 
+						</select><!--
+						<button class="btn btn-sm btn-info" style="text-align: center;" onclick="buscarItensTurma()">Consultar</button> -->
 					</div>
-					<table class="table table-sm table-responsive-sm table-borderless table-striped table-hover" style="font-size: 5">
+					<table class="table table-sm table-responsive-sm table-borderless table-striped table-hover" style="font-size: 5" >
 						<thead>
 						    <tr> 
 							    <th>Cod</th>
@@ -43,34 +44,9 @@
 							    <th>Sáb</th>
 						    </tr>
 						</thead>
-						<tbody>
-						    <tr>
-							    <td><a onclick="openModal()">12</a></td>
-							    <td>00:00</td>
-							    <td>00:00</td>
-							    <td>50%</td>
-							    <td><a onclick="openModal()">2</a></td>
-							    <td> </td>
-							    <td> </td>
-							    <td><a onclick="openModal()">1</a></td>
-							    <td><a onclick="openModal()">3</a></td>
-							    <td><a onclick="openModal()">4</a></td>
-							    <td></td>
-						    </tr>
-						    <tr>
-							    <td><a onclick="openModal()">51</a></td>
-							    <td>00:00</td>
-							    <td>00:00</td>
-							    <td>50%</td>
-							    <td><a onclick="openModal()">3</a></td>
-							    <td> </td>
-							    <td> </td>
-							    <td><a onclick="openModal()">4</a></td>
-							    <td><a onclick="openModal()">5</a></td>
-							    <td><a onclick="openModal()">2</a></td>
-							    <td></td>
-						    </tr> 
-					  	</tbody>
+						<tbody id="table_details_turma">
+							
+						</tbody>
 					</table>
             	</div>
             </div>
@@ -96,12 +72,65 @@
 @endsection
 @section('javascript')
     <script type="text/javascript">
-        $(document).ready(function() {    
-            console.log('Gestão de Turmas');
+        $(document).ready(function() {   
+			
+			$("#selectModal").change(function() {
+			  	buscarTurmaFromModalId();
+			});
+ 			
+ 			$("#selectTurma").change(function() {
+			  	buscarItensFromTurmaId();
+			});
         });     
 
         function openModal(){ 
         	$('#modalDetailsTurma').modal();
+        }
+
+        function buscarTurmaFromModalId(){ 
+			$("#selectTurma").html('');
+			$("#table_details_turma").html('');  
+			$("#selectTurma").append('<option></option>');
+        	let modal_id = $('#selectModal').val(); 
+        	$.getJSON("/home/turmas/gestaoturmasview/consultarTurmasFromModalId/"+modal_id, function(data){
+			    $.each(data, function(i, field){
+			      	$("#selectTurma").append('<option value="'+field.id+'">'+field.name+'</option'); 
+			    });
+			});
+        }
+
+        function buscarItensFromTurmaId(){
+        	let semana = [0,1,2,3,4,5,6];
+        	let turma_id = $('#selectTurma').val(); 
+        	$.getJSON("/home/turmas/gestaoturmasview/consultarItensFromTurmaId/"+turma_id, function(data){
+			    $("#table_details_turma").html('');  
+			    $.each(data, function(i, field){
+			    	 
+			      	$("#table_details_turma").append(
+			      		'<tr>'+
+			      			'<td>'+field.id+'</td>'+  
+			      			'<td>'+field.hora_inicio+'</td>'+  
+			      			'<td>'+field.hora_fim+'</td>'+  
+			      			'<td>0%</td>'+  
+			      			'<td>'+getCapacidade(0,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(1,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(2,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(3,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(4,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(5,field.dia_semana,field.capacidade)+'</td>'+  
+			      			'<td>'+getCapacidade(6,field.dia_semana,field.capacidade)+'</td>'+   
+			      		'</tr>'
+			      	); 
+			    });
+			});
+        }
+
+        function getCapacidade(dia_array,field,capacidade){
+        	if (dia_array==field) {
+        		return '<a onclick="openModal()">'+capacidade+'</a>';
+        	}else{
+        		return '';
+        	} 
         }
     </script>
 @endsection

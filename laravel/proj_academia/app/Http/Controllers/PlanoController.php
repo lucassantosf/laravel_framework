@@ -15,24 +15,28 @@ class PlanoController extends Controller
 {
     public $duracao;
 
+    //Exibe a listagem de planos cadastrados
     public function indexPlans(){
         //$plans = Plano::withTrashed()->get(); //Traz todos os registros mesmo apagados
         $plans = Plano::all(); //Apagados não trazem
-        $duracoes = DB::table('duracoes_planos')->orderBy('duracao')->get();
-        
+        $duracoes = DB::table('duracoes_planos')->orderBy('duracao')->get(); 
         $modals = Modalidade::all();
-        $mp_id = DB::table('modalidades_planos')->get();
-        
+        $mp_id = DB::table('modalidades_planos')->get(); 
         $i = 0;
         return view('cadastros.formPlan',compact('plans','i','duracoes','modals','mp_id'));
     }
 
+    //Este método apenas exibe a view do formulário de cadastro de planos
     public function formPlan(){
-        $modals = Modalidade::all();
+        $modals = DB::table('modalidades')->where([
+            ['status',1],
+            ['deleted_at',NULL],
+        ])->get();
         $i = 1;
         return view('cadastros.formPlan',compact('modals','i'));
-    }  
+    }   
 
+    //Este método trata o post do formulário de cadastro do plano
     public function postFormPlan(Request $request){
     	// Criar o plano e retornar o ID
         $id_plan = DB::table('planos')->insertGetId([
@@ -58,15 +62,20 @@ class PlanoController extends Controller
         return redirect('/cadastros/plans'); 	    	
     }
 
+    //Este método exibe formulário para edição cadastral de planos
     public function formPlanEdit($id){
         $plan = Plano::find($id);
         $duracoes = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get();
-        $modals = Modalidade::all();
+        $modals = DB::table('modalidades')->where([
+            ['status',1],
+            ['deleted_at',NULL],
+        ])->get();
         $mt = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();       
         $i=2;        
         return view('cadastros.formPlan',compact('plan','i','duracoes','modals','mt'));
     }
 
+    //Este método irá tratar o post do formulário de edição do plano
     public function postformPlanEdit(Request $request, $id){
         $plan = Plano::find($id); 
         
@@ -102,6 +111,7 @@ class PlanoController extends Controller
         return redirect('/cadastros/plans');        
     }
 
+    //Este método verifica se há as modalidades do BD no post de edição
     public function hasModalInPost($post, $plan){
         $modals_bd = DB::table('modalidades_planos')->where('plano_id',$plan->id)->get();
         if (isset($modals_bd)) {
@@ -118,6 +128,7 @@ class PlanoController extends Controller
         }
     }
 
+    //Este método verifica a modalidade no post de edição vindo do post já esta no banco
     public function hasModalInDatabase($data, $plano_id){
         $hasModalPlan = DB::table('modalidades_planos')->where([
             ['plano_id','=',$plano_id],
@@ -134,6 +145,7 @@ class PlanoController extends Controller
         }        
     }
 
+    //Este método deleta todas as modalidades que não estão relacionadas no post da edição
     public function deleteAllModals($plan){
         // Deletar todas duracoes do post
         DB::table('modalidades_planos')->where([
@@ -141,10 +153,9 @@ class PlanoController extends Controller
         ])->delete();
     }
 
-    public function hasDurationInPost($post, $plan){
-        
+    //Este método verifica se as durações do plano relacionadas do banco, estão no post
+    public function hasDurationInPost($post, $plan){        
         $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->get();
-
         foreach ($duracoes_bd as $d) {
             if (in_array($d->duracao, $post)){
                 // Não precisa fazer nada
@@ -158,13 +169,12 @@ class PlanoController extends Controller
         }
     }
 
-    public function hasDurationInDatabase($plano_id,$duracao){
-
+    //Este método verifica se as durações do plano relacionadas do post, estão no banco
+    public function hasDurationInDatabase($plano_id,$duracao){ 
         $hasDurationPlan = DB::table('duracoes_planos')->where([
             ['plano_id','=',$plano_id],
             ['duracao','=',$duracao],                
-            ])->get();     
-
+            ])->get();  
         if(count($hasDurationPlan)>0){
             //Caiu aqui - duracao tem no banco, não precisa fazer nada
         }else{
@@ -176,6 +186,7 @@ class PlanoController extends Controller
         }
     }
 
+    //Este método deleta todas as durações que não estão relacionadas no post da edição
     public function deleteAllDurations($plan){
         // Deletar todas duracoes do post
         DB::table('duracoes_planos')->where([
@@ -196,6 +207,7 @@ class PlanoController extends Controller
         return redirect('/cadastros/plans');
     }
 
+    //Este método retorna um json com os detalhes cadastrais de um plano de acordo ao seu ID
     public function detailsPlans($id){
         $plan = Plano::find($id);
         $duracoes = [];
@@ -203,22 +215,23 @@ class PlanoController extends Controller
         $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get(); 
         foreach ($duracoes_bd as $d) {            
             array_push($duracoes, $d->duracao);
-        }
-        
+        } 
         $modals_bd = DB::table('modalidades_planos')->where([
             ['plano_id','=',$plan->id],           
-        ])->get();
-
+        ])->get(); 
         foreach ($modals_bd as $m) {  
             $modal = Modalidade::find($m->modal_id);
             array_push($modals, [$modal->name=>$modal->value,'modal_id'=>$m->modal_id]);            
-        }
-
+        } 
         $dados = array('plano_nome'=>$plan->name,'duracoes'=>$duracoes,'modals'=>$modals);
         return json_encode($dados);
     }
 
+    //Este método trata os dados para a tela de conferir o plano na negociação
     public function postConferirNeg(Request $request){
+        $turmas = [];
+        $modal_turmas = [];
+        $itens_turma = [];
         $plano_id = $request->input('selectPlan');
         $cliente_id = $request->input('id_cliente');
         $plano = Plano::find($plano_id);
@@ -226,13 +239,29 @@ class PlanoController extends Controller
         $duracao = $request->input('duracao');
         $value_total = 0;
         foreach ($request->input('modals') as $m_id) {
-            $modal = Modalidade::find($m_id);
+            $modal = Modalidade::find($m_id); 
+            $consulta = DB::table('turmas')->where([
+                ['modal_id',$modal->id],
+                ['deleted_at',NULL],
+            ])->get();  
+            if (count($consulta)>0) {
+                foreach ($consulta as $c) {
+                    $itens = DB::table('item_turmas')->where([
+                        ['turma_id',$c->id],
+                        ['deleted_at',NULL],
+                    ])->get();
+                    array_push($itens_turma, $itens); 
+                }  
+                array_push($turmas, $consulta); 
+            } 
+            array_push($modal_turmas, $modal->name);
             $value_total += $modal->value;
         }
-        $valor_contrato = $duracao*$value_total;
-        return view('operacao.conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id'));
+        $valor_contrato = $duracao*$value_total;  
+        return view('operacao.conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id','modal_turmas','turmas','itens_turma'));
     }
 
+    //Este método trata o post da venda do plano, gera todas as parcelas e torna o aluno para 'ativo'
     public function postVenda(Request $request){
         $venda = new Venda();
         $venda->cliente_id = $request->input('cliente_id');
@@ -267,6 +296,5 @@ class PlanoController extends Controller
         $cliente->save();
         $msg = 'Venda realizada com sucesso';
         return view('operacao.conferirContrato',compact('msg'));
-    }
-
+    } 
 }

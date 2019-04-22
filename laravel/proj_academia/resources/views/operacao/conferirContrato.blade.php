@@ -6,7 +6,7 @@
         @if(isset($msg))
             {{$msg}}
         @else
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-header">Conferir Negociação do contrato</div>
                 <form action="/cadastros/plans/postVenda" method="POST">
@@ -15,7 +15,7 @@
                     <div class="form-row"> 
                         <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">Detalhes</label>
                     </div>
-                    <table class="table table-borderles">
+                    <table class="table table-borderles table-responsive-sm">
                       <tbody>
                         <tr>
                           <td>Plano</td>
@@ -39,12 +39,56 @@
                                 <input type="button" class=" btn btn-primary btn-sm" id="add_desconto" value="+">
                             </td>
                         </tr>
+                        @if(count($turmas)>0) 
+                        <tr>
+                            <td>Adicionar</td>
+                            <td id="tdDesconto">
+                                <a class="btn btn-primary btn-sm" data-target="#myLargeModalLabel" data-toggle="modal">Horários</a>
+                            </td>
+                        </tr> 
+                        @endif
                       </tbody> 
-                    </table> 
+                    </table>   
+                    <div class="form-row" style="text-align: center"> 
+                    </div> 
+
+                    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content"> 
+                                @if(isset($turmas)) 
+                                    @foreach($turmas as $tu)
+                                        @foreach($tu as $t)
+                                            
+                                            Horários da turma id {{$t->id}} {{$t->name}} <br>
+
+                                            @foreach($itens_turma as $it)
+                                                @foreach($it as $i)
+                                                     
+                                                    @if ($i->turma_id == $t->id) 
+                                                        Id {{$i->id}}
+                                                        Hora Inicio {{$i->hora_inicio}}
+                                                        Hora Fim {{$i->hora_fim}}
+                                                        Capacidade {{$i->capacidade}}<br>
+                                                    @endif
+                                                
+
+                                                @endforeach
+                                            @endforeach 
+ 
+                                        @endforeach
+
+                                    @endforeach
+
+                                @endif
+                            </div>
+                        </div>
+                    </div> 
+
                     <div class="form-row"> 
-                        <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">Condição de Pagamento</label>
+                        <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">Condição de Pagamento
+                        </label>
                     </div>         
-                    <table class="table table-borderles">
+                    <table class="table table-borderles table-responsive-sm">
                         <tr>
                           <td><input type="radio" value="1" name="condicao" class="condicao">1 Vez</td>
                           <td><input type="radio" value="2" name="condicao" class="condicao">2 Vezes</td> 
@@ -62,21 +106,23 @@
                           <td><input type="radio" value="12" name="condicao" class="condicao">12 Vezes</td> 
                         </tr>
                     </table> 
-                    <div id="footer">
-                        
+                    <div id="footer"> 
                     </div>
                     
                 </div>
 
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">Fechar negociação</button>
-                    </form>
+                    </form> 
                 </div>
             </div>
+            
         </div>
         @endif
+
     </div>
 </div>
+ 
 @endsection
 @section('javascript')
     <script type="text/javascript">

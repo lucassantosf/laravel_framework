@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/cadastros/plan/{id}/edit','PlanoController@postformPlanEdit');
 	Route::get('/cadastros/plan/{id}/delete','PlanoController@destroyPlan');
 	Route::get('/cadastros/plans/{id}/details','PlanoController@detailsPlans');
-	Route::post('/cadastros/plans/postConferirNeg','PlanoController@postConferirNeg');
+	Route::post('/cadastros/plans/postConferirNeg','PlanoController@postConferirNeg'); 
 	Route::post('/cadastros/plans/postVenda','PlanoController@postVenda');
 
 	Route::get('/cadastros/turmas','TurmaController@indexTurmas');
@@ -57,8 +57,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/cadastros/turmas/{id}/delete','TurmaController@destroyTurma');
 	Route::post('/cadastros/turmas/{id}/edit','TurmaController@postformTurmaEdit');
 	Route::get('/home/turmas/gestaoturmasview','TurmaController@gestaoTurmasView');
-
-
+	Route::get('/home/turmas/gestaoturmasview/consultarTurmasFromModalId/{id}','TurmaController@getTurmasFromModalId');
+	Route::get('/home/turmas/gestaoturmasview/consultarItensFromTurmaId/{id}','TurmaController@getItensFromTurmaId');
+ 
 	// Relatórios
 	// Clientes e Incluir Clientes
 	Route::get('/clients','ClienteController@indexClients');
