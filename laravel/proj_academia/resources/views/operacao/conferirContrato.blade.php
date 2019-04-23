@@ -38,52 +38,9 @@
                             <td id="tdDesconto">
                                 <input type="button" class=" btn btn-primary btn-sm" id="add_desconto" value="+">
                             </td>
-                        </tr>
-                        @if(count($turmas)>0) 
-                        <tr>
-                            <td>Adicionar</td>
-                            <td id="tdDesconto">
-                                <a class="btn btn-primary btn-sm" data-target="#myLargeModalLabel" data-toggle="modal">Horários</a>
-                            </td>
                         </tr> 
-                        @endif
                       </tbody> 
-                    </table>   
-                    <div class="form-row" style="text-align: center"> 
-                    </div> 
-
-                    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="myLargeModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content"> 
-                                @if(isset($turmas)) 
-                                    @foreach($turmas as $tu)
-                                        @foreach($tu as $t)
-                                            
-                                            Horários da turma id {{$t->id}} {{$t->name}} <br>
-
-                                            @foreach($itens_turma as $it)
-                                                @foreach($it as $i)
-                                                     
-                                                    @if ($i->turma_id == $t->id) 
-                                                        Id {{$i->id}}
-                                                        Hora Inicio {{$i->hora_inicio}}
-                                                        Hora Fim {{$i->hora_fim}}
-                                                        Capacidade {{$i->capacidade}}<br>
-                                                    @endif
-                                                
-
-                                                @endforeach
-                                            @endforeach 
- 
-                                        @endforeach
-
-                                    @endforeach
-
-                                @endif
-                            </div>
-                        </div>
-                    </div> 
-
+                    </table>     
                     <div class="form-row"> 
                         <label class="form-control center" for="id_cliente" style="text-align:center; margin: 0 auto;">Condição de Pagamento
                         </label>

@@ -22,6 +22,8 @@ class CreateItemTurmasTable extends Migration
             $table->integer('capacidade');
             $table->integer('turma_id')->unsigned();
             $table->foreign('turma_id')->references('id')->on('turmas');
+            $table->integer('modal_id')->unsigned();
+            $table->foreign('modal_id')->references('id')->on('modalidades');
             $table->softDeletes();
             $table->timestamps();
         });

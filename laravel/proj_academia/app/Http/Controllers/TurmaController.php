@@ -45,8 +45,9 @@ class TurmaController extends Controller
     		$ItemTurma->hora_fim = $horariosFim[$i];
     		$ItemTurma->capacidade = $qtdTurma[$i];
     		$ItemTurma->dia_semana  = $diaSemana[$i]; 
-    		$ItemTurma->turma_id = $turma->id;
-    		$ItemTurma->save();
+            $ItemTurma->turma_id = $turma->id;
+    		$ItemTurma->modal_id = $turma->modal_id;
+    		$ItemTurma->save(); 
     	}
     	return redirect('/cadastros/turmas');
     }
@@ -88,6 +89,7 @@ class TurmaController extends Controller
 			    		$item_turmas->hora_fim = $horariosFim_edit[$x];
 			    		$item_turmas->capacidade = $qtdTurma_edit[$x];
 			    		$item_turmas->dia_semana  = $diaSemana_edit[$x]; 
+                        $item_turmas->modal_id = $turma->modal_id; 
 			    		$item_turmas->save();
 		    		}
 		    	}
@@ -120,6 +122,7 @@ class TurmaController extends Controller
 		    		$ItemTurma->capacidade = $qtdTurma[$i];
 		    		$ItemTurma->dia_semana  = $diaSemana[$i]; 
 		    		$ItemTurma->turma_id = $turma->id;
+                    $ItemTurma->modal_id = $turma->modal_id; 
 		    		$ItemTurma->save();
 	    		}
   			} 

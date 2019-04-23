@@ -207,24 +207,50 @@ class PlanoController extends Controller
         return redirect('/cadastros/plans');
     }
 
-    //Este método retorna um json com os detalhes cadastrais de um plano de acordo ao seu ID
+    //Este método retorna um json com os detalhes cadastrais de um plano de acordo ao seu ID - utilizado no select na tela de negociação de planos
     public function detailsPlans($id){
         $plan = Plano::find($id);
-        $duracoes = [];
-        $modals = [];
-        $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get(); 
-        foreach ($duracoes_bd as $d) {            
-            array_push($duracoes, $d->duracao);
+        if (isset($plan)) {
+            //arrays da estrutura do json  
+            $duracoes = [];
+            $modals = [];
+            $itens = [];
+            //Consulta pelas durações do plano
+            $duracoes_bd = DB::table('duracoes_planos')->where('plano_id',$plan->id)->orderBy('duracao')->get(); 
+            foreach ($duracoes_bd as $d) {            
+                array_push($duracoes, $d->duracao);
+            }
+            //Consulta pelas modalidades do plano 
+            $modals_bd = DB::table('modalidades_planos')->where([
+                ['plano_id','=',$plan->id],           
+            ])->get(); 
+            //Para cada modalidade existente - procurar os detalhes de cada modalidade e os horários caso for modalidade de turma
+            foreach ($modals_bd as $m) {  
+                $modal = Modalidade::find($m->modal_id);
+
+                //Incluir no json os detalhes das turmas se houver
+                $turmas = DB::table('turmas')->where([['modal_id',$m->modal_id],['deleted_at',NULL],])->get();
+                if(count($turmas)>0){
+                    array_push($modals, [$modal->name=>$modal->value,'modal_id'=>$m->modal_id,'has_turma'=>TRUE]);  
+
+                    foreach ($turmas as $t) {
+                        $itens_consulta = DB::table('item_turmas')->where([['turma_id',$t->id],['deleted_at',NULL],])->get();
+                        if(count($itens_consulta)>0){
+                            foreach ($itens_consulta as $i) {
+                                array_push($itens, $i);
+                            } 
+                        } 
+                    }    
+                }else{ 
+                    array_push($modals, [$modal->name=>$modal->value,'modal_id'=>$m->modal_id,'has_turma'=>FALSE]);   
+                }          
+            } 
+            //Preparar o json principal e fazer seu retorno
+            $dados = array('plano_nome'=>$plan->name,'duracoes'=>$duracoes,'modals'=>$modals,'itens'=>$itens);
+            return json_encode($dados);
+        }else{
+            return 'Plano '.$id.' Inexistente';
         } 
-        $modals_bd = DB::table('modalidades_planos')->where([
-            ['plano_id','=',$plan->id],           
-        ])->get(); 
-        foreach ($modals_bd as $m) {  
-            $modal = Modalidade::find($m->modal_id);
-            array_push($modals, [$modal->name=>$modal->value,'modal_id'=>$m->modal_id]);            
-        } 
-        $dados = array('plano_nome'=>$plan->name,'duracoes'=>$duracoes,'modals'=>$modals);
-        return json_encode($dados);
     }
 
     //Este método trata os dados para a tela de conferir o plano na negociação
