@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/cadastros/plans/{id}/details','PlanoController@detailsPlans');
 	Route::post('/cadastros/plans/postConferirNeg','PlanoController@postConferirNeg'); 
 	Route::post('/cadastros/plans/postVenda','PlanoController@postVenda');
-
+ 
 	Route::get('/cadastros/turmas','TurmaController@indexTurmas');
 	Route::get('/cadastros/formTurma','TurmaController@formTurma');
 	Route::post('/cadastros/formTurma','TurmaController@postFormTurma'); 

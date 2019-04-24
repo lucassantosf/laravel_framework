@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PlanosSeeder::class);
         $this->call(DuracaoPlanoSeeder::class);
         $this->call(ModalidadePlanoSeeder::class);
+        $this->call(TurmasSeeder::class);
+        $this->call(ItensTurmaSeeder::class);
     }
 }

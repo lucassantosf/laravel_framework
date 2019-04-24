@@ -255,6 +255,11 @@ class PlanoController extends Controller
 
     //Este método trata os dados para a tela de conferir o plano na negociação
     public function postConferirNeg(Request $request){
+
+        $itens = $request->input('itens_turmas');
+        var_dump($itens);
+        exit();
+
         $turmas = [];
         $modal_turmas = [];
         $itens_turma = [];

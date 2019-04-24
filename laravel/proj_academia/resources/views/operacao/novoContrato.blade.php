@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header" style="text-align:center">Negociação de Contratos</div>
+                <div class="card-header" style="text-align:center">Negociação de Contrato</div>
                 <form action="/cadastros/plans/postConferirNeg" method="POST">
                 @csrf
                 <div class="card-body">
@@ -99,7 +99,7 @@
                 //montar a linha de duração
                 exibirDetalhesPlano(this.value);
             });
-        });
+        }); 
 
         //Getter's and Setter's
         let obj;
@@ -111,7 +111,6 @@
         function getObj(){
             return this.obj;
         }
-
         //Fim Getter's and Setter's
 
         //
@@ -124,6 +123,8 @@
             //Requisição AJAX retornando dados do plano seleciondo
             $.get("/cadastros/plans/"+plan_id+"/details", function(data){
                 obj = JSON.parse(data);
+                //setar obj
+                setObj(obj);
                 $("#durPlan").html('');                
                 $("#modalsPlan").html('');     
                 //para cada obj vindo no array duracao           
@@ -137,11 +138,9 @@
                 });
                 //para cada obj vindo no array modal
                 for(i=0; i<obj["modals"].length ; i++){ 
-
-                    //setar obj
-                    setObj(obj);
-
+   
                     $.each(obj["modals"][i],function(name,value){ 
+                        
                         $("#modalsPlan").append(
                             '<tr>'+
                                 '<td>'+
@@ -174,25 +173,33 @@
                             '<td>'+value.id+'</td>'+
                             '<td>'+value.hora_inicio+'</td>'+
                             '<td>'+value.hora_fim+'</td>'+
-                            '<td>'+getDiaSemana(0,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(1,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(2,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(3,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(4,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(5,value.dia_semana,value.capacidade)+'</td>'+
-                            '<td>'+getDiaSemana(6,value.dia_semana,value.capacidade)+'</td>'+ 
+                            '<td>'+getDiaSemana(0,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(1,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(2,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(3,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(4,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(5,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
+                            '<td>'+getDiaSemana(6,value.dia_semana,value.vagas_livres,value.id)+'</td>'+ 
                         '</tr>'
                     ); 
                 }
             }); 
         }
 
-        function getDiaSemana(dia,valor,capacidade){
+        function getDiaSemana(dia,valor,vagas_livres,item_id){
             if(dia==valor){
-                return capacidade;
+                return '<input type="checkbox" name="itens_turmas[]" value="'+item_id+'" onclick="horarioSelecionado(this,'+vagas_livres+','+item_id+')">'+vagas_livres;
             }else{
                 return '';
             }
         }
+
+        function horarioSelecionado(data,vagas,item_id){ 
+            if(data.checked){
+                $(data).closest('td').html('<input type="checkbox" checked name="itens_turmas[]" value="'+item_id+'" onclick="horarioSelecionado(this,'+vagas+','+item_id+')">'+(vagas-1)); 
+            }else{
+                $(data).closest('td').html('<input type="checkbox" name="itens_turmas[]" value="'+item_id+'" onclick="horarioSelecionado(this,'+vagas+','+item_id+')">'+(vagas)); 
+            } 
+        } 
     </script>
 @endsection

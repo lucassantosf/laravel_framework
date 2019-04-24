@@ -16,7 +16,7 @@ class CreateTurmasTable extends Migration
         Schema::create('turmas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->boolean('status');
+            $table->boolean('status'); 
             $table->integer('modal_id')->unsigned();
             $table->foreign('modal_id')->references('id')->on('modalidades');
             $table->softDeletes();
