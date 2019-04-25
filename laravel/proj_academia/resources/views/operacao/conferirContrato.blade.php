@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row justify-content-center">
         @if(isset($msg))
-            {{$msg}}
+            {{$msg}} para &nbsp<a href="/clients/{{$cliente->id}}/show">{{$cliente->name}}</a>
         @else
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">Conferir Negociação do contrato</div>
+                <div class="card-header" style="text-align:center">Conferir Negociação do contrato</div>
                 <form action="/cadastros/plans/postVenda" method="POST">
                 @csrf
                 <div class="card-body">
@@ -27,6 +27,11 @@
                             <input type="hidden" name="plano_id" value="{{$plano_id}}">
                             <input type="hidden" name="cliente_id" value="{{$cliente_id}}">
                             <input type="hidden" name="duracao" value="{{$duracao}}">{{$duracao}}</td> 
+                            @if(isset($itens))
+                                @foreach($itens as $i) 
+                                <input type="hidden" name="itens[]" value="{{$i}}"> 
+                                @endforeach
+                            @endif
                         </tr>
                         <tr>
                           <td>Valor do contrato</td>
@@ -52,7 +57,7 @@
                           <td><input type="radio" value="3" name="condicao" class="condicao">3 Vezes</td> 
                           <td><input type="radio" value="4" name="condicao" class="condicao">4 Vezes</td> 
                           <td><input type="radio" value="5" name="condicao" class="condicao">5 Vezes</td> 
-                          <td><input type="radio" value="6" name="condicao" class="condicao" onclick="getValorFinal(this.value)">6 Vezes</td> 
+                          <td><input type="radio" value="6" name="condicao" class="condicao">6 Vezes</td> 
                         </tr>
                         <tr>
                           <td><input type="radio" value="7" name="condicao" class="condicao">7 Vezes</td>
@@ -65,7 +70,6 @@
                     </table> 
                     <div id="footer"> 
                     </div>
-                    
                 </div>
 
                 <div class="card-footer">
@@ -73,7 +77,7 @@
                     </form> 
                 </div>
             </div>
-            
+    
         </div>
         @endif
 

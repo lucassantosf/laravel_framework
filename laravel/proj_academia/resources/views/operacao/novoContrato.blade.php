@@ -52,32 +52,83 @@
                     </div>
 
                     <!-- Modal para os horários de turmas-->
-                    <div class="modal fade bd-example-modal-lg" aria-hidden="true" id="modalHorarios">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Id Turma</th>
-                                                <th>Hora Inicio</th>
-                                                <th>Hora Fim</th>
-                                                <th>Dom</th>
-                                                <th>Seg</th>
-                                                <th>Ter</th>
-                                                <th>Qua</th>
-                                                <th>Qui</th>
-                                                <th>Sex</th>
-                                                <th>Sab</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="contentModalHorarios">  
-                                        </tbody>
-                                    </table>
+                    @if(isset($modals))
+                        @foreach($modals as $m)
+                            <div class="modal fade bd-example-modal-lg" aria-hidden="true" id="modalHorarios{{$m->id}}" >
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="10" style="text-align: center">Grade horária de {{$m->name}}</th> 
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Id Turma</th>
+                                                        <th>Hora Inicio</th>
+                                                        <th>Hora Fim</th>
+                                                        <th>Dom</th>
+                                                        <th>Seg</th>
+                                                        <th>Ter</th>
+                                                        <th>Qua</th>
+                                                        <th>Qui</th>
+                                                        <th>Sex</th>
+                                                        <th>Sab</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($itens as $i)
+                                                        @if($i->modal_id == $m->id)
+                                                            <tr>
+                                                                <td>{{$i->id}}</td>
+                                                                <td>{{$i->hora_inicio}}</td>
+                                                                <td>{{$i->hora_fim}}</td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 0) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 1) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 2) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 3) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 4) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 5) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if($i->dia_semana == 6) 
+                                                                        <input type="checkbox" name="itens_turmas[]" value="{{$i->id}}" onclick="horarioSelecionado(this,{{$i->vagas_livres}},{{$i->id}})">{{$i->vagas_livres}} 
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        @endforeach
+                    @endif
                 </div>
 
                 <div class="card-footer">
@@ -91,31 +142,18 @@
 @endsection
 @section('javascript')
     <script type="text/javascript">
-
-        $(document).ready(function() {    
-            
+        $(document).ready(function() { 
             //Evento quando o select para plano é alterado
             $("#selectPlan").change(function(){
                 //montar a linha de duração
                 exibirDetalhesPlano(this.value);
-            });
+            }); 
         }); 
 
-        //Getter's and Setter's
-        let obj;
-        
-        function setObj(value){
-            this.obj = value;
-        }
-
-        function getObj(){
-            return this.obj;
-        }
-        //Fim Getter's and Setter's
-
-        //
+        //Ao selecionar o plano, os detalhes(durações e modalidades) são consultados e inseridos na tela 
         function exibirDetalhesPlano(plan_id){
-            if (plan_id==0) {
+            //Se id não estiver definido
+            if (plan_id==0 || !plan_id) {
                 $("#durPlan").html('');
                 $("#modalsPlan").html('');                
                 return false;  
@@ -123,8 +161,6 @@
             //Requisição AJAX retornando dados do plano seleciondo
             $.get("/cadastros/plans/"+plan_id+"/details", function(data){
                 obj = JSON.parse(data);
-                //setar obj
-                setObj(obj);
                 $("#durPlan").html('');                
                 $("#modalsPlan").html('');     
                 //para cada obj vindo no array duracao           
@@ -137,10 +173,9 @@
                         '</tr>');
                 });
                 //para cada obj vindo no array modal
-                for(i=0; i<obj["modals"].length ; i++){ 
-   
+                for(i=0; i<obj["modals"].length ; i++){  
                     $.each(obj["modals"][i],function(name,value){ 
-                        
+                        //Inclusão das modalidades que o plano possui
                         $("#modalsPlan").append(
                             '<tr>'+
                                 '<td>'+
@@ -151,7 +186,7 @@
                                 '</td>'+
                             '</tr>'
                         ); 
-
+                        //Se a modalidade possuir turmas, mostrar botão para exibir modal de exibir os horários
                         if(obj["modals"][i]['has_turma']){ 
                             $("#modalsPlan").append('<button onclick="selecionarHorarios('+obj["modals"][i]['modal_id']+')" class="btn btn-primary btn-sm" type="button">Escolher horários</button><br>');
                         } 
@@ -161,39 +196,13 @@
             }); 
         }         
 
+        //Exibir modal de acordo ao id da modalidade
         function selecionarHorarios(modal_id){
-            let obj = getObj();
-            $("#modalHorarios").modal('show');
-            $("#contentModalHorarios").html('');
-            
-            $.each(obj["itens"],function(name,value){  
-                if(value.modal_id == modal_id){
-                    $("#contentModalHorarios").append(
-                        '<tr>'+
-                            '<td>'+value.id+'</td>'+
-                            '<td>'+value.hora_inicio+'</td>'+
-                            '<td>'+value.hora_fim+'</td>'+
-                            '<td>'+getDiaSemana(0,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(1,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(2,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(3,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(4,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(5,value.dia_semana,value.vagas_livres,value.id)+'</td>'+
-                            '<td>'+getDiaSemana(6,value.dia_semana,value.vagas_livres,value.id)+'</td>'+ 
-                        '</tr>'
-                    ); 
-                }
-            }); 
-        }
 
-        function getDiaSemana(dia,valor,vagas_livres,item_id){
-            if(dia==valor){
-                return '<input type="checkbox" name="itens_turmas[]" value="'+item_id+'" onclick="horarioSelecionado(this,'+vagas_livres+','+item_id+')">'+vagas_livres;
-            }else{
-                return '';
-            }
-        }
+            $("#modalHorarios"+modal_id).modal('show');  
+        }  
 
+        //Controlar quantidade que será exibida quando clicar no checkbox selecionado
         function horarioSelecionado(data,vagas,item_id){ 
             if(data.checked){
                 $(data).closest('td').html('<input type="checkbox" checked name="itens_turmas[]" value="'+item_id+'" onclick="horarioSelecionado(this,'+vagas+','+item_id+')">'+(vagas-1)); 

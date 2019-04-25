@@ -158,7 +158,8 @@ class ClienteController extends Controller
         $duracoes = DB::table('duracoes_planos')->get();
         $plan_id = 0;
         $modals = Modalidade::all();
-    	return view('operacao.novoContrato',compact('client','plans','duracoes','plan_id','modals'));
+        $itens = DB::table('item_turmas')->get();
+    	return view('operacao.novoContrato',compact('client','plans','duracoes','plan_id','modals','itens'));
     }
 
     //Esta função faz o estorno do plano, junto com recibos

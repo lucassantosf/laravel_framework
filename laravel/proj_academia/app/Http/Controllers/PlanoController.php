@@ -254,15 +254,7 @@ class PlanoController extends Controller
     }
 
     //Este método trata os dados para a tela de conferir o plano na negociação
-    public function postConferirNeg(Request $request){
-
-        $itens = $request->input('itens_turmas');
-        var_dump($itens);
-        exit();
-
-        $turmas = [];
-        $modal_turmas = [];
-        $itens_turma = [];
+    public function postConferirNeg(Request $request){  
         $plano_id = $request->input('selectPlan');
         $cliente_id = $request->input('id_cliente');
         $plano = Plano::find($plano_id);
@@ -271,25 +263,11 @@ class PlanoController extends Controller
         $value_total = 0;
         foreach ($request->input('modals') as $m_id) {
             $modal = Modalidade::find($m_id); 
-            $consulta = DB::table('turmas')->where([
-                ['modal_id',$modal->id],
-                ['deleted_at',NULL],
-            ])->get();  
-            if (count($consulta)>0) {
-                foreach ($consulta as $c) {
-                    $itens = DB::table('item_turmas')->where([
-                        ['turma_id',$c->id],
-                        ['deleted_at',NULL],
-                    ])->get();
-                    array_push($itens_turma, $itens); 
-                }  
-                array_push($turmas, $consulta); 
-            } 
-            array_push($modal_turmas, $modal->name);
             $value_total += $modal->value;
         }
-        $valor_contrato = $duracao*$value_total;  
-        return view('operacao.conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id','modal_turmas','turmas','itens_turma'));
+        $valor_contrato = $duracao*$value_total;
+        $itens = $request->input('itens_turmas');  
+        return view('operacao.conferirContrato',compact('valor_contrato','plano_descricao','duracao','plano_id','cliente_id','itens'));
     }
 
     //Este método trata o post da venda do plano, gera todas as parcelas e torna o aluno para 'ativo'
@@ -322,10 +300,21 @@ class PlanoController extends Controller
             $parcela->save(); 
 
         }
+        //Se houver itens_turmas selecionados indica que a negociação tem modalidade com turma, logo incluir nestes horários
+        $itens = $request->input('itens');  
+        if (count($itens)>0) {
+            foreach ($itens as $i) {
+                DB::table('alunos_em_turmas')->insert([
+                    'item_turma_id'=>$i,
+                    'cliente_id'=>$cliente->id,
+                    'name_cliente'=>$cliente->name,
+                ]);
+            }  
+        } 
         //Tornar aluno ativo
         $cliente->situaçao = 'Ativo';
         $cliente->save();
         $msg = 'Venda realizada com sucesso';
-        return view('operacao.conferirContrato',compact('msg'));
+        return view('operacao.conferirContrato',compact('msg','cliente'));
     } 
 }
