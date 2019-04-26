@@ -7,15 +7,19 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Academia System</title>    
+    <title>Aladin System</title>    
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-     
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet"> 
+    <style type="text/css">
+        body{ 
+            background: url({{url('svg/academia.png')}}) no-repeat center top; 
+        }
+    </style>
 </head>
 <body>
     <div id="app">

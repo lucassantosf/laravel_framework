@@ -9,6 +9,7 @@ use App\Plano;
 use App\Venda;
 use App\Cliente;
 use App\Parcela;
+use App\ItemTurma;
 use DateTime;
 
 class PlanoController extends Controller
@@ -302,13 +303,22 @@ class PlanoController extends Controller
         }
         //Se houver itens_turmas selecionados indica que a negociação tem modalidade com turma, logo incluir nestes horários
         $itens = $request->input('itens');  
-        if (count($itens)>0) {
+        if (isset($itens)) {
             foreach ($itens as $i) {
+                
+                //Registrar o aluno na turma
                 DB::table('alunos_em_turmas')->insert([
                     'item_turma_id'=>$i,
                     'cliente_id'=>$cliente->id,
                     'name_cliente'=>$cliente->name,
                 ]);
+
+                //Debitar uma vaga disponível
+                $item = ItemTurma::find($i);
+                if (isset($item)) {
+                    $item->vagas_livres = ($item->vagas_livres - 1);
+                    $item->save();
+                } 
             }  
         } 
         //Tornar aluno ativo

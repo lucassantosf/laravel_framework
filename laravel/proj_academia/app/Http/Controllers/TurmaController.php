@@ -43,7 +43,8 @@ class TurmaController extends Controller
     		$ItemTurma = new ItemTurma();
     		$ItemTurma->hora_inicio = $horariosInicio[$i];
     		$ItemTurma->hora_fim = $horariosFim[$i];
-    		$ItemTurma->capacidade = $qtdTurma[$i];
+            $ItemTurma->capacidade = $qtdTurma[$i];
+    		$ItemTurma->vagas_livres = $qtdTurma[$i];
     		$ItemTurma->dia_semana  = $diaSemana[$i]; 
             $ItemTurma->turma_id = $turma->id;
     		$ItemTurma->modal_id = $turma->modal_id;
@@ -154,7 +155,7 @@ class TurmaController extends Controller
         return view('operacao.gestaoTurmas',compact('modalidades'));
     }
 
-    //Este método serve para consultar quais turmas estão relacionadas à modalidade pesquisada, de acordo ao id da modalidade- utilizado na tela Gestão de Turmas
+    //Este método serve para consultar quais turmas estão relacionadas à modalidade pesquisada, de acordo ao id da modalidade - utilizado na tela Gestão de Turmas
     public function getTurmasFromModalId($id){
         $turmas = DB::table('turmas')->where([
                 ['modal_id',$id],
@@ -165,11 +166,21 @@ class TurmaController extends Controller
 
     //Este método serve para consultar itens de uma turma de acordo ao id selecionado - utilizado na tela Gestão de Turmas
     public function getItensFromTurmaId($id){
+        $dados = [];
+        $alunos = [];
         $itens = DB::table('item_turmas')->where([
                 ['turma_id',$id],
                 ['deleted_at',NULL],
         ])->get(); 
-        return json_encode($itens);
+        array_push($dados, $itens);
+        foreach ($itens as $i) {
+            $alunos_consulta_em_turma = DB::table('alunos_em_turmas')->where([
+                    ['item_turma_id',$i->id], 
+            ])->get(); 
+            array_push($alunos, $alunos_consulta_em_turma);
+        }
+        array_push($dados, $alunos); 
+        return json_encode($dados);
     }
 
 }	

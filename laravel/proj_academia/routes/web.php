@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/cadastros/turmas/{id}/edit','TurmaController@postformTurmaEdit');
 	Route::get('/home/turmas/gestaoturmasview','TurmaController@gestaoTurmasView');
 	Route::get('/home/turmas/gestaoturmasview/consultarTurmasFromModalId/{id}','TurmaController@getTurmasFromModalId');
-	Route::get('/home/turmas/gestaoturmasview/consultarItensFromTurmaId/{id}','TurmaController@getItensFromTurmaId');
+	Route::get('/home/turmas/gestaoturmasview/consultarItensFromTurmaId/{id}','TurmaController@getItensFromTurmaId'); 
  
 	// Relatórios
 	// Clientes e Incluir Clientes

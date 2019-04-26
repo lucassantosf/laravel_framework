@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Academia System</title>
+	<title>Aladin System</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="{{asset('css/app.css')}}">
 	<meta name="csrf-token" content="{{csrf_token()}}" charset="utf-8">
 	<style type="text/css">
 		body{
-			padding: 30px;
-			background-image: url("../imgs/academia.png");
+			padding: 30px; 
+			background-image: url({{url('svg/503.svg')}}); 
 			background-repeat: no-repeat;
+			overflow: hidden;
 		}
 		#rowLogin{
 			width: 100%;
@@ -24,7 +25,7 @@
 		<div class="main">
 			@hasSection('body')
 				@yield('body')
-			@endif	
+			@endif	 
 		</div>
 
 	</div>
