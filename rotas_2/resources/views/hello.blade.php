@@ -1,1 +1,0 @@
-<h1>Minha view Hello! {{$nome}} {{$sobrenome}}</h1>
